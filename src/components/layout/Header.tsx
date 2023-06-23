@@ -11,7 +11,7 @@ const links = [
 
 export default function Header() {
   return (
-    <header className='sticky top-0 z-50 bg-white'>
+    <header className='sticky top-0 z-50 border-b border-gray-300 bg-white'>
       <div className='layout flex h-14 items-center justify-around'>
         <h3 className='font-bold'>Exclusive</h3>
         <nav>
