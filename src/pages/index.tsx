@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import * as React from 'react';
+import { ArrowRight } from 'react-feather';
 
 import NextImage from '@/components/NextImage';
 import Seo from '@/components/Seo';
@@ -80,10 +81,13 @@ export default function HomePage() {
             </span>
             <div>
               <Link
-                className='text-white'
+                className='flex items-center gap-2'
                 href={`/products/${promotionInfo.id}`}
               >
-                Shop now
+                <p className='border-spacing-4 border-b border-white pb-[0.15rem] text-white'>
+                  Shop now
+                </p>
+                <ArrowRight color='#FFFFFF' />
               </Link>
             </div>
           </div>
