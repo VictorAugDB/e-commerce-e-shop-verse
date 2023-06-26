@@ -10,6 +10,9 @@ export default {
       colors: {
         bg: 'rgb(var(--tw-color-bg) / <alpha-value>)',
         dark: '#222222',
+        green: {
+          700: 'var(--green-700)',
+        },
       },
       keyframes: {
         flicker: {
