@@ -2,6 +2,7 @@ import Link from 'next/link';
 import * as React from 'react';
 import { ArrowRight } from 'react-feather';
 
+import ListProducts from '@/components/ListProducts';
 import NextImage from '@/components/NextImage';
 import Seo from '@/components/Seo';
 
@@ -99,6 +100,7 @@ export default function HomePage() {
           ></NextImage>
         </section>
       </div>
+      <ListProducts />
     </div>
   );
 }
