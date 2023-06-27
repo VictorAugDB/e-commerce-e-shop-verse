@@ -1,3 +1,5 @@
+import { Eye, Heart } from 'react-feather';
+
 import NextImage from '@/components/NextImage';
 
 const endDate = new Date();
@@ -54,8 +56,17 @@ export default function ListProducts() {
           </div>
         </div>
       </div>
-      <div className='flex flex-col gap-4'>
-        <div>
+      <div className='flex w-fit flex-col gap-4'>
+        <div className='relative'>
+          <div className='w-fit rounded bg-green-700 px-3 py-1 text-xs leading-[1.125rem] text-white'>
+            -40%
+          </div>
+          <div className='absolute right-0 top-0 flex h-8 w-8 items-center justify-center rounded-full bg-white'>
+            <Heart className='h-[1.125rem] w-[1.125rem]' />
+          </div>
+          <div className='absolute right-0 mt-2 flex h-8 w-8 items-center justify-center rounded-full bg-white'>
+            <Eye className='h-[1.125rem] w-[1.125rem]' />
+          </div>
           <NextImage
             alt='product-image'
             src='/images/control.png'
