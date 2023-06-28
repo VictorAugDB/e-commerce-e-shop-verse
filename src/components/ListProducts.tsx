@@ -22,43 +22,35 @@ export default function ListProducts() {
         <h1>Flash Sales</h1>
         <div className='flex items-center gap-4'>
           <div>
-            <span className='block text-xs leading-[1.125rem]'>Days</span>
+            <span className='block text-xs'>Days</span>
             <div className='flex gap-x-4'>
-              <span className='text-[2rem] leading-[1.875rem]'>
-                {remainingDays}
-              </span>
-              <span className='text-[2rem] leading-[1.875rem]'>:</span>
+              <span className='text-3xl'>{remainingDays}</span>
+              <span className='text-3xl'>:</span>
             </div>
           </div>
           <div>
-            <span className='block text-xs leading-[1.125rem]'>Hours</span>
+            <span className='block text-xs'>Hours</span>
             <div className='flex gap-x-4'>
-              <span className='text-[2rem] leading-[1.875rem]'>
-                {remainingHours}
-              </span>
-              <span className='text-[2rem] leading-[1.875rem]'>:</span>
+              <span className='text-3xl'>{remainingHours}</span>
+              <span className='text-3xl'>:</span>
             </div>
           </div>
           <div>
-            <span className='block text-xs leading-[1.125rem]'>Minutes</span>
+            <span className='block text-xs'>Minutes</span>
             <div className='flex gap-x-4'>
-              <span className='text-[2rem] leading-[1.875rem]'>
-                {remainingMinutes}
-              </span>
-              <span className='text-[2rem] leading-[1.875rem]'>:</span>
+              <span className='text-3xl'>{remainingMinutes}</span>
+              <span className='text-3xl'>:</span>
             </div>
           </div>
           <div>
-            <span className='block text-xs leading-[1.125rem]'>Seconds</span>
-            <span className='block text-[2rem] leading-[1.875rem]'>
-              {remainingSeconds}
-            </span>
+            <span className='block text-xs'>Seconds</span>
+            <span className='block text-3xl'>{remainingSeconds}</span>
           </div>
         </div>
       </div>
       <div className='flex w-fit flex-col gap-4'>
         <div className='relative'>
-          <div className='w-fit rounded bg-green-700 px-3 py-1 text-xs leading-[1.125rem] text-white'>
+          <div className='w-fit rounded bg-green-700 px-3 py-1 text-xs text-white'>
             -40%
           </div>
           <div className='absolute right-0 top-0 flex h-8 w-8 items-center justify-center rounded-full bg-white'>

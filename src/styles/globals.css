@@ -24,7 +24,7 @@ body,
 
   /* #region  /**=========== Typography =========== */
   .h0 {
-    @apply font-sans text-3xl font-bold md:text-5xl;
+    @apply leading-14 font-sans text-3xl font-bold md:text-5xl;
   }
 
   h1,
