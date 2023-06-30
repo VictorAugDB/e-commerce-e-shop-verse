@@ -3,7 +3,15 @@ import { Eye, Heart } from 'react-feather';
 import Button from '@/components/buttons/Button';
 import NextImage from '@/components/NextImage';
 
-export default function Product() {
+type ProductProps = {
+  hasButton?: boolean;
+  imagePath: string;
+};
+
+export default function Product({
+  imagePath,
+  hasButton = false,
+}: ProductProps) {
   return (
     <div className='flex w-full max-w-[16.875rem] flex-col gap-4'>
       <div className='relative flex h-[15.625rem] w-full flex-col items-center justify-end gap-[14px]'>
@@ -16,18 +24,26 @@ export default function Product() {
         <div className='absolute right-3 top-11 mt-2 flex h-8 w-8 items-center justify-center rounded-full bg-white'>
           <Eye className='h-[1.125rem] w-[1.125rem]' />
         </div>
-        <NextImage
-          alt='product-image'
-          src='/images/control.png'
-          width={172}
-          height={152}
-        ></NextImage>
-        <Button
-          variant='dark'
-          className='flex w-full justify-center rounded-t-none'
-        >
-          Add To Cart
-        </Button>
+        <div className='relative h-[70%] w-[60%] p-8'>
+          <NextImage
+            alt='product-image'
+            src={imagePath}
+            sizes='100vw'
+            fill
+            style={{
+              objectFit: 'contain',
+              width: '100%',
+            }}
+          ></NextImage>
+        </div>
+        {hasButton && (
+          <Button
+            variant='dark'
+            className='flex w-full justify-center rounded-t-none'
+          >
+            Add To Cart
+          </Button>
+        )}
       </div>
       <div className='flex flex-col gap-2'>
         <p className='font-medium'>Havit HV-G92 Gamepad</p>
