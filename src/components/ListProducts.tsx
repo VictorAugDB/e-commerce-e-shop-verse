@@ -75,10 +75,31 @@ export default function ListProducts() {
         </div>
       </div>
       <div className='flex flex-1 items-center gap-[1.875rem]'>
-        <Product imagePath='/images/control.png' />
-        <Product imagePath='/images/keyboard.png' hasButton={true} />
-        <Product imagePath='/images/monitor.png' />
-        <Product imagePath='/images/chair.png' />
+        <Product
+          imagePath='/images/control.png'
+          price={160}
+          discount={40}
+          numberOfStars={5}
+        />
+        <Product
+          imagePath='/images/keyboard.png'
+          price={1160}
+          discount={35}
+          hasButton={true}
+          numberOfStars={4}
+        />
+        <Product
+          imagePath='/images/monitor.png'
+          price={400}
+          discount={30}
+          numberOfStars={4.1}
+        />
+        <Product
+          imagePath='/images/chair.png'
+          price={400}
+          discount={25}
+          numberOfStars={4.9}
+        />
       </div>
     </div>
   );
