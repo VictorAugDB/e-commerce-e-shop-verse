@@ -2,10 +2,14 @@ import { useEffect, useState } from 'react';
 
 import Product from '@/components/Product';
 
+type ListProductsProps = {
+  title: string;
+};
+
 const endDate = new Date();
 endDate.setDate(endDate.getDate() + 3);
 
-export default function ListProducts() {
+export default function ListProducts({ title }: ListProductsProps) {
   const [currentDate, setCurrentDate] = useState(
     new Date(endDate.getTime() - new Date().getTime())
   );
@@ -27,10 +31,10 @@ export default function ListProducts() {
   }, []);
 
   return (
-    <div className='flex flex-col gap-10'>
-      <div className='flex items-center'>
-        <span></span>
-        <p className='font-medium text-green-700'>Today's</p>
+    <div className='flex w-full flex-col gap-10'>
+      <div className='flex items-center gap-4'>
+        <span className='h-10 w-5 rounded bg-green-700'></span>
+        <p className='font-medium text-green-700'>{title}</p>
       </div>
       <div className='flex gap-20'>
         <h1>Flash Sales</h1>
@@ -74,12 +78,14 @@ export default function ListProducts() {
           </div>
         </div>
       </div>
-      <div className='flex flex-1 items-center gap-[1.875rem]'>
+      <div className='mr-[-10.625rem] flex max-w-[calc(100vw-9.825rem)] flex-1 items-center gap-[1.875rem] overflow-auto'>
         <Product
           imagePath='/images/control.png'
           price={160}
           discount={40}
           numberOfStars={5}
+          numberOfEvalitions={88}
+          name='HAVIT HV-G92 Gamepad'
         />
         <Product
           imagePath='/images/keyboard.png'
@@ -87,18 +93,136 @@ export default function ListProducts() {
           discount={35}
           hasButton={true}
           numberOfStars={4}
+          numberOfEvalitions={89}
+          name='AK-900 Wired Keyboard'
         />
         <Product
           imagePath='/images/monitor.png'
           price={400}
           discount={30}
           numberOfStars={4.1}
+          numberOfEvalitions={88}
+          name='IPS LCD Gaming Monitor'
         />
         <Product
           imagePath='/images/chair.png'
           price={400}
           discount={25}
           numberOfStars={4.9}
+          numberOfEvalitions={100}
+          name='S-Series Comfort Chair '
+        />
+        <Product
+          imagePath='/images/chair.png'
+          price={400}
+          discount={25}
+          numberOfStars={4.9}
+          numberOfEvalitions={100}
+          name='S-Series Comfort Chair '
+        />
+        <Product
+          imagePath='/images/chair.png'
+          price={400}
+          discount={25}
+          numberOfStars={4.9}
+          numberOfEvalitions={100}
+          name='S-Series Comfort Chair '
+        />
+        <Product
+          imagePath='/images/chair.png'
+          price={400}
+          discount={25}
+          numberOfStars={4.9}
+          numberOfEvalitions={100}
+          name='S-Series Comfort Chair '
+        />
+        <Product
+          imagePath='/images/chair.png'
+          price={400}
+          discount={25}
+          numberOfStars={4.9}
+          numberOfEvalitions={100}
+          name='S-Series Comfort Chair '
+        />
+        <Product
+          imagePath='/images/chair.png'
+          price={400}
+          discount={25}
+          numberOfStars={4.9}
+          numberOfEvalitions={100}
+          name='S-Series Comfort Chair '
+        />
+        <Product
+          imagePath='/images/chair.png'
+          price={400}
+          discount={25}
+          numberOfStars={4.9}
+          numberOfEvalitions={100}
+          name='S-Series Comfort Chair '
+        />
+        <Product
+          imagePath='/images/chair.png'
+          price={400}
+          discount={25}
+          numberOfStars={4.9}
+          numberOfEvalitions={100}
+          name='S-Series Comfort Chair '
+        />
+        <Product
+          imagePath='/images/chair.png'
+          price={400}
+          discount={25}
+          numberOfStars={4.9}
+          numberOfEvalitions={100}
+          name='S-Series Comfort Chair '
+        />
+        <Product
+          imagePath='/images/chair.png'
+          price={400}
+          discount={25}
+          numberOfStars={4.9}
+          numberOfEvalitions={100}
+          name='S-Series Comfort Chair '
+        />
+        <Product
+          imagePath='/images/chair.png'
+          price={400}
+          discount={25}
+          numberOfStars={4.9}
+          numberOfEvalitions={100}
+          name='S-Series Comfort Chair '
+        />
+        <Product
+          imagePath='/images/chair.png'
+          price={400}
+          discount={25}
+          numberOfStars={4.9}
+          numberOfEvalitions={100}
+          name='S-Series Comfort Chair '
+        />
+        <Product
+          imagePath='/images/chair.png'
+          price={400}
+          discount={25}
+          numberOfStars={4.9}
+          numberOfEvalitions={100}
+          name='S-Series Comfort Chair '
+        />
+        <Product
+          imagePath='/images/chair.png'
+          price={400}
+          discount={25}
+          numberOfStars={4.9}
+          numberOfEvalitions={100}
+          name='S-Series Comfort Chair '
+        />
+        <Product
+          imagePath='/images/chair.png'
+          price={400}
+          discount={25}
+          numberOfStars={4.9}
+          numberOfEvalitions={100}
+          name='S-Series Comfort Chair '
         />
       </div>
     </div>

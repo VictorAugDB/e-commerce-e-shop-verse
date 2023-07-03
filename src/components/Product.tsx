@@ -9,6 +9,8 @@ type ProductProps = {
   discount?: number;
   price: number;
   numberOfStars: number;
+  numberOfEvalitions: number;
+  name: string;
 };
 
 export default function Product({
@@ -17,6 +19,8 @@ export default function Product({
   discount,
   price,
   numberOfStars,
+  numberOfEvalitions,
+  name,
 }: ProductProps) {
   const stars = new Array(5)
     .fill(0)
@@ -29,7 +33,7 @@ export default function Product({
     );
 
   return (
-    <div className='flex w-full max-w-[16.875rem] flex-col gap-4'>
+    <div className='flex min-w-[16.875rem] flex-col gap-4'>
       <div className='relative flex h-[15.625rem] w-full flex-col items-center justify-end gap-[14px]'>
         {discount && (
           <div className='absolute left-3 top-3 w-fit rounded bg-green-700 px-3 py-1 text-xs text-white'>
@@ -64,7 +68,7 @@ export default function Product({
         )}
       </div>
       <div className='flex flex-col gap-2'>
-        <p className='font-medium'>Havit HV-G92 Gamepad</p>
+        <p className='font-medium'>{name}</p>
         <div className='flex items-center gap-3'>
           {discount ? (
             <>
@@ -98,7 +102,9 @@ export default function Product({
               ></NextImage>
             )
           )}
-          <p className='ml-2 font-semibold text-gray-500'>(88)</p>
+          <p className='ml-2 font-semibold text-gray-500'>
+            ({numberOfEvalitions})
+          </p>
         </div>
       </div>
     </div>

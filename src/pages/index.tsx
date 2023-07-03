@@ -40,11 +40,11 @@ export default function HomePage() {
   };
 
   return (
-    <div className='flex flex-col px-[8.4375rem]'>
+    <div className='flex flex-col items-center px-[8.4375rem]'>
       {/* <Seo templateTitle='Home' /> */}
       <Seo />
 
-      <div className='flex gap-[2.8125rem]'>
+      <div className='flex w-full gap-[2.8125rem]'>
         <nav
           className='
           flex w-full max-w-[13.5625rem] 
@@ -61,7 +61,6 @@ export default function HomePage() {
           className='
           mt-10 flex
           h-[21.5rem] w-full 
-          max-w-[55.75rem]
           justify-between
           rounded-sm bg-black
           px-16
@@ -100,7 +99,7 @@ export default function HomePage() {
           ></NextImage>
         </section>
       </div>
-      <ListProducts />
+      <ListProducts title="Today's" />
     </div>
   );
 }
