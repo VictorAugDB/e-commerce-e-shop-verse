@@ -33,7 +33,7 @@ export default function Product({
     );
 
   return (
-    <div className='flex min-w-[16.875rem] flex-col gap-4'>
+    <div className='flex min-w-[16.875rem] flex-1 flex-col gap-4'>
       <div className='relative flex h-[15.625rem] w-full flex-col items-center justify-end gap-[14px]'>
         {discount && (
           <div className='absolute left-3 top-3 w-fit rounded bg-green-700 px-3 py-1 text-xs text-white'>

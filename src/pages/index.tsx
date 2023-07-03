@@ -1,10 +1,22 @@
 import Link from 'next/link';
 import * as React from 'react';
 import { ArrowRight } from 'react-feather';
+import { IconType } from 'react-icons';
+import { AiOutlineCamera } from 'react-icons/ai';
+import { BsPhone, BsSmartwatch } from 'react-icons/bs';
+import { FiHeadphones } from 'react-icons/fi';
+import { HiOutlineDesktopComputer } from 'react-icons/hi';
+import { LuGamepad } from 'react-icons/lu';
 
+import Categories from '@/components/Categories';
 import ListProducts from '@/components/ListProducts';
 import NextImage from '@/components/NextImage';
 import Seo from '@/components/Seo';
+
+export type CategoriesWithIcons = {
+  name: string;
+  icon: IconType;
+};
 
 /**
  * SVGR Support
@@ -29,6 +41,33 @@ export default function HomePage() {
     "Baby's & Toys",
     'Groceries & Pets',
     'Health & Beauty',
+  ];
+
+  const categoriesWithIcons: CategoriesWithIcons[] = [
+    {
+      name: 'Phones',
+      icon: BsPhone,
+    },
+    {
+      name: 'Computers',
+      icon: HiOutlineDesktopComputer,
+    },
+    {
+      name: 'SmartWatch',
+      icon: BsSmartwatch,
+    },
+    {
+      name: 'Camera',
+      icon: AiOutlineCamera,
+    },
+    {
+      name: 'HeadPhones',
+      icon: FiHeadphones,
+    },
+    {
+      name: 'Gaming',
+      icon: LuGamepad,
+    },
   ];
 
   const promotionInfo = {
@@ -99,7 +138,8 @@ export default function HomePage() {
           ></NextImage>
         </section>
       </div>
-      <ListProducts title="Today's" />
+      <ListProducts topic="Today's" title='Flash Sales' hasTimer={true} />
+      <Categories categories={categoriesWithIcons} />
     </div>
   );
 }
