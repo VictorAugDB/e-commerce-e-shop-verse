@@ -40,7 +40,7 @@ export default function HomePage() {
   };
 
   return (
-    <div className='flex flex-col items-center px-[8.4375rem]'>
+    <div className='flex flex-col items-center gap-20 px-[8.4375rem]'>
       {/* <Seo templateTitle='Home' /> */}
       <Seo />
 
