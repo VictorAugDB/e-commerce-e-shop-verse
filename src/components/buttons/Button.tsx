@@ -4,7 +4,14 @@ import { ImSpinner2 } from 'react-icons/im';
 
 import clsxm from '@/lib/clsxm';
 
-const ButtonVariant = ['primary', 'outline', 'ghost', 'light', 'dark'] as const;
+const ButtonVariant = [
+  'primary',
+  'outline',
+  'ghost',
+  'light',
+  'dark',
+  'green',
+] as const;
 const ButtonSize = ['sm', 'base'] as const;
 
 type ButtonProps = {
@@ -87,6 +94,10 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
               'bg-gray-900 text-white',
               'border border-gray-600',
               'hover:bg-gray-800 active:bg-gray-700 disabled:bg-gray-700',
+            ],
+            variant === 'green' && [
+              'bg-green-700 text-white',
+              'hover:bg-green-600 active:bg-green-600 disabled:bg-green-800',
             ],
           ],
           //#endregion  //*======== Variants ===========

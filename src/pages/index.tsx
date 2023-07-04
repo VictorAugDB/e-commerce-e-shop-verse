@@ -8,8 +8,9 @@ import { FiHeadphones } from 'react-icons/fi';
 import { HiOutlineDesktopComputer } from 'react-icons/hi';
 import { LuGamepad } from 'react-icons/lu';
 
-import Categories from '@/components/Categories';
-import ListProducts from '@/components/ListProducts';
+import Divider from '@/components/Divider';
+import Categories from '@/components/lists/Categories';
+import ListProducts from '@/components/lists/ListProducts';
 import NextImage from '@/components/NextImage';
 import Seo from '@/components/Seo';
 
@@ -139,7 +140,9 @@ export default function HomePage() {
         </section>
       </div>
       <ListProducts topic="Today's" title='Flash Sales' hasTimer={true} />
+      <Divider />
       <Categories categories={categoriesWithIcons} />
+      <Divider />
     </div>
   );
 }
