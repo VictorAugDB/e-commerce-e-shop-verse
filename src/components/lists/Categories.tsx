@@ -12,7 +12,7 @@ export default function Categories({ categories }: CategoriesProps) {
       {categories.map((category) => (
         <div
           key={category.name}
-          className='flex flex-1 flex-col items-center justify-center gap-4 rounded border border-solid border-[rgba(0,0,0,0.3)] px-14 py-6'
+          className='flex flex-1 flex-col items-center justify-center gap-4 rounded border border-solid border-black/30 px-14 py-6'
         >
           <DynamicIcon width={56} height={56} icon={category.icon} />
           <p>{category.name}</p>

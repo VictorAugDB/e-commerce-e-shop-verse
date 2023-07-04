@@ -1,4 +1,5 @@
-import ListHeader from '@/components/ListHeader';
+import Button from '@/components/buttons/Button';
+import ListHeader from '@/components/lists/ListHeader';
 import Product from '@/components/Product';
 
 type ListProductsProps = {
@@ -50,6 +51,9 @@ export default function ListProducts({
           name='S-Series Comfort Chair '
         />
       </div>
+      <Button className='mx-auto w-fit px-12 py-4' variant='green'>
+        View All Products
+      </Button>
     </div>
   );
 }
