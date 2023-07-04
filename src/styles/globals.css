@@ -7,7 +7,9 @@
   /* !STARTERCONF Customize these variable, copy and paste from /styles/colors.css for list of colors */
   --tw-color-bg: 243 244 246;
   --color-bg: rgb(var(--tw-color-primary-100)); /* #f3f4f6 */
+  --green-800: #21371e;
   --green-700: #32502e;
+  --green-600: #3a6434;
   /* #endregion  /**======== Primary Color =========== */
 }
 

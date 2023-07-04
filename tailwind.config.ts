@@ -11,7 +11,9 @@ export default {
         bg: 'rgb(var(--tw-color-bg) / <alpha-value>)',
         dark: '#222222',
         green: {
+          800: 'var(--green-800)',
           700: 'var(--green-700)',
+          600: 'var(--green-600)',
         },
       },
       lineHeight: {
