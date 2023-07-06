@@ -10,6 +10,8 @@
   --green-800: #21371e;
   --green-700: #32502e;
   --green-600: #3a6434;
+  --brown-300: #aa5656;
+  --gray-400: #d9d9d9;
   /* #endregion  /**======== Primary Color =========== */
 }
 
@@ -26,12 +28,12 @@ body,
 
   /* #region  /**=========== Typography =========== */
   .h0 {
-    @apply leading-14 font-sans text-3xl font-bold md:text-5xl;
+    @apply md:leading-14 font-sans text-3xl font-bold md:text-5xl;
   }
 
   h1,
   .h1 {
-    @apply font-sans text-2xl font-bold leading-[3rem] md:text-4xl;
+    @apply font-sans text-2xl font-bold md:text-4xl md:leading-[3rem];
   }
 
   h2,

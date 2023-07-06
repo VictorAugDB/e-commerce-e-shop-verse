@@ -15,6 +15,12 @@ export default {
           700: 'var(--green-700)',
           600: 'var(--green-600)',
         },
+        brown: {
+          300: 'var(--brown-300)',
+        },
+        gray: {
+          400: 'var(--gray-400)',
+        },
       },
       lineHeight: {
         '14': '3.25rem',
