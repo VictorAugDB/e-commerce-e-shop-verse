@@ -6,12 +6,14 @@ type ListProductsProps = {
   topic: string;
   title: string;
   hasTimer?: boolean;
+  hasButton?: boolean;
 };
 
 export default function ListProducts({
   title,
   topic,
-  hasTimer,
+  hasTimer = false,
+  hasButton = false,
 }: ListProductsProps) {
   return (
     <div className='flex w-full flex-col gap-10'>
@@ -51,9 +53,11 @@ export default function ListProducts({
           name='S-Series Comfort Chair '
         />
       </div>
-      <Button className='mx-auto w-fit px-12 py-4' variant='green'>
-        View All Products
-      </Button>
+      {hasButton && (
+        <Button className='mx-auto w-fit px-12 py-4' variant='green'>
+          View All Products
+        </Button>
+      )}
     </div>
   );
 }

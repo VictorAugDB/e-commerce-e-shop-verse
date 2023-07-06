@@ -8,6 +8,7 @@ import { FiHeadphones } from 'react-icons/fi';
 import { HiOutlineDesktopComputer } from 'react-icons/hi';
 import { LuGamepad } from 'react-icons/lu';
 
+import Button from '@/components/buttons/Button';
 import Divider from '@/components/Divider';
 import Categories from '@/components/lists/Categories';
 import ListProducts from '@/components/lists/ListProducts';
@@ -139,10 +140,66 @@ export default function HomePage() {
           ></NextImage>
         </section>
       </div>
-      <ListProducts topic="Today's" title='Flash Sales' hasTimer={true} />
+      <ListProducts
+        topic="Today's"
+        title='Flash Sales'
+        hasTimer={true}
+        hasButton={true}
+      />
       <Divider />
       <Categories categories={categoriesWithIcons} />
       <Divider />
+      <ListProducts
+        topic='This Month'
+        title='Best Selling Products'
+        hasTimer={true}
+        hasButton={true}
+      />
+      <div className='grid h-[31.25rem] grid-cols-2 gap-7 bg-black px-14 py-[4.3125rem]'>
+        <div className='flex flex-col'>
+          <p className='text-brown-300 mb-7 font-semibold'>Categories</p>
+          <h1 className='h0 mb-8 text-white'>Enhance Your Music Experience</h1>
+          <div className='mb-8 flex items-center gap-10'>
+            <div className='flex h-[3.875rem] w-[3.875rem] flex-col items-center justify-center rounded-full bg-white text-center'>
+              <p className='font-semibold'>23</p>
+              <p className='text-xs'>Hours</p>
+            </div>
+            <div className='flex h-[3.875rem] w-[3.875rem] flex-col items-center justify-center rounded-full bg-white text-center'>
+              <p className='font-semibold'>05</p>
+              <p className='text-xs'>Days</p>
+            </div>
+            <div className='flex h-[3.875rem] w-[3.875rem] flex-col items-center justify-center rounded-full bg-white text-center'>
+              <p className='font-semibold'>59</p>
+              <p className='text-xs'>Minutes</p>
+            </div>
+            <div className='flex h-[3.875rem] w-[3.875rem] flex-col items-center justify-center rounded-full bg-white text-center'>
+              <p className='font-semibold'>35</p>
+              <p className='text-xs'>Seconds</p>
+            </div>
+          </div>
+          <Button className='w-fit px-12 py-4'>Buy Now!</Button>
+        </div>
+        <div className='relative flex items-center justify-center rounded-full'>
+          <div className='absolute h-1 w-1 rounded-full shadow-[0_35px_200px_150px] shadow-gray-400'></div>
+
+          <NextImage
+            alt='product-image'
+            src='/images/jbl-radio.png'
+            sizes='100vw'
+            fill
+            style={{
+              objectFit: 'contain',
+              width: '100%',
+            }}
+          ></NextImage>
+        </div>
+      </div>
+      <ListProducts
+        topic='This Month'
+        title='Best Selling Products'
+        hasTimer={true}
+        hasButton={true}
+      />
     </div>
   );
 }
