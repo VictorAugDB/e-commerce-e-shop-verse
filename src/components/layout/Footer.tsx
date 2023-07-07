@@ -1,6 +1,10 @@
+import { Facebook, Instagram, Linkedin, Twitter } from 'react-feather';
+
+import NextImage from '@/components/NextImage';
+
 export default function Footer() {
   return (
-    <div className='h-[27.5rem] bg-black px-[8.4375rem] pb-6 pt-20'>
+    <div className='mt-[8.75rem] h-[27.5rem] bg-black px-[8.4375rem] pb-6 pt-20'>
       <div className='flex items-start gap-[5.4375rem]'>
         <div className='flex flex-col gap-6'>
           <h3>Exclusive</h3>
@@ -34,7 +38,42 @@ export default function Footer() {
             <p>Contact</p>
           </div>
         </div>
-        <div></div>
+        <div className='flex flex-col gap-6'>
+          <h4 className='font-medium'>Quick Link</h4>
+          <div className='flex flex-col gap-2'>
+            <p className='text-xs'>Save $3 with App New User Only</p>
+            <div className='flex gap-2'>
+              <div className='bg-brown-300 h-20 w-20'>QR Code Here!</div>
+              <div className='flex flex-col gap-2'>
+                <NextImage
+                  alt='product-image'
+                  src='/images/google-play_button.png'
+                  width={104}
+                  height={30}
+                  style={{
+                    objectFit: 'contain',
+                  }}
+                ></NextImage>
+                <NextImage
+                  alt='product-image'
+                  src='/images/apple_button.png'
+                  sizes='100vw'
+                  width={104}
+                  height={30}
+                  style={{
+                    objectFit: 'contain',
+                  }}
+                ></NextImage>
+              </div>
+            </div>
+          </div>
+          <div className='flex items-center gap-6'>
+            <Facebook />
+            <Twitter />
+            <Instagram />
+            <Linkedin />
+          </div>
+        </div>
       </div>
     </div>
   );
