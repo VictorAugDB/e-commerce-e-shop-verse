@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import * as React from 'react';
 import { ArrowRight } from 'react-feather';
 import { IconType } from 'react-icons';
@@ -8,12 +7,14 @@ import { FiHeadphones } from 'react-icons/fi';
 import { HiOutlineDesktopComputer } from 'react-icons/hi';
 import { LuGamepad } from 'react-icons/lu';
 
+import BackgroundProduct from '@/components/BackgroundProduct';
 import Button from '@/components/buttons/Button';
 import Divider from '@/components/Divider';
 import Categories from '@/components/lists/Categories';
 import ListProducts from '@/components/lists/ListProducts';
 import NextImage from '@/components/NextImage';
 import Seo from '@/components/Seo';
+import ShopNowButton from '@/components/ShopNowButton';
 
 export type CategoriesWithIcons = {
   name: string;
@@ -121,15 +122,9 @@ export default function HomePage() {
               {promotionInfo.description}
             </span>
             <div>
-              <Link
-                className='flex items-center gap-2'
-                href={`/products/${promotionInfo.id}`}
-              >
-                <p className='border-spacing-4 border-b border-white pb-[0.15rem] text-white'>
-                  Shop now
-                </p>
+              <ShopNowButton href={`/products/${promotionInfo.id}`}>
                 <ArrowRight color='#FFFFFF' />
-              </Link>
+              </ShopNowButton>
             </div>
           </div>
           <NextImage
@@ -200,6 +195,14 @@ export default function HomePage() {
         hasTimer={true}
         hasButton={true}
       />
+      <div className='flex h-[48rem] w-full'>
+        <BackgroundProduct
+          name='PlayStation 5'
+          description='Black and White version of the PS5 coming out on sale.'
+          href='/produts/ps-5id'
+          imagePath='/images/ps5.png'
+        />
+      </div>
     </div>
   );
 }
