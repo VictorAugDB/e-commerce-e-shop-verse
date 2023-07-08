@@ -157,7 +157,7 @@ export default function HomePage() {
       />
       <div className='grid h-[31.25rem] grid-cols-2 gap-7 bg-black px-14 py-[4.3125rem]'>
         <div className='flex flex-col'>
-          <p className='text-brown-300 mb-7 font-semibold'>Categories</p>
+          <p className='mb-7 font-semibold text-brown-300'>Categories</p>
           <h1 className='h0 mb-8 text-white'>Enhance Your Music Experience</h1>
           <div className='mb-8 flex items-center gap-10'>
             <div className='flex h-[3.875rem] w-[3.875rem] flex-col items-center justify-center rounded-full bg-white text-center'>

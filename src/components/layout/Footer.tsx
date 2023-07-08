@@ -43,7 +43,7 @@ export default function Footer() {
           <div className='flex flex-col gap-2'>
             <p className='text-xs'>Save $3 with App New User Only</p>
             <div className='flex gap-2'>
-              <div className='bg-brown-300 h-20 w-20'>QR Code Here!</div>
+              <div className='h-20 w-20 bg-brown-300'>QR Code Here!</div>
               <div className='flex flex-col gap-2'>
                 <NextImage
                   alt='product-image'
