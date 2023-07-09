@@ -1,4 +1,4 @@
-/* eslint-disable @next/next/no-img-element */
+import NextImage from '@/components/NextImage';
 import ShopNowButton from '@/components/ShopNowButton';
 
 type BackgroundProductProps = {
@@ -6,6 +6,7 @@ type BackgroundProductProps = {
   name: string;
   description: string;
   href: string;
+  className?: string;
 };
 
 export default function BackgroundProduct({
@@ -13,20 +14,30 @@ export default function BackgroundProduct({
   name,
   description,
   href,
+  className,
 }: BackgroundProductProps) {
   return (
-    <div className='relative flex flex-1 flex-col justify-end gap-4 bg-black'>
-      <div className='z-10 flex flex-col gap-4'>
+    <div
+      className={
+        className +
+        ' relative flex flex-1 flex-col justify-end gap-4 bg-black p-6 rounded'
+      }
+    >
+      <div className='absolute bottom-6 z-10 flex flex-col gap-4 text-white'>
         <h3>{name}</h3>
         <p className='text-sm'>{description}</p>
         <ShopNowButton href={href} />
       </div>
-      <div
-        style={{ '--image-url': `url(${imagePath})` } as React.CSSProperties}
-        className='absolute bottom-0 bg-[image:var(--image-url)] bg-no-repeat'
-      >
-        <img src={imagePath} alt='' className='' />
-      </div>
+      <NextImage
+        alt='product-image'
+        src={imagePath}
+        sizes='100vw'
+        fill
+        style={{
+          objectFit: 'contain',
+          width: '100%',
+        }}
+      ></NextImage>
     </div>
   );
 }

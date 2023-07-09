@@ -11,6 +11,7 @@ import BackgroundProduct from '@/components/BackgroundProduct';
 import Button from '@/components/buttons/Button';
 import Divider from '@/components/Divider';
 import Categories from '@/components/lists/Categories';
+import ListHeader from '@/components/lists/ListHeader';
 import ListProducts from '@/components/lists/ListProducts';
 import NextImage from '@/components/NextImage';
 import Seo from '@/components/Seo';
@@ -195,13 +196,36 @@ export default function HomePage() {
         hasTimer={true}
         hasButton={true}
       />
-      <div className='flex h-[48rem] w-full'>
-        <BackgroundProduct
-          name='PlayStation 5'
-          description='Black and White version of the PS5 coming out on sale.'
-          href='/produts/ps-5id'
-          imagePath='/images/ps5.png'
-        />
+      <div className='flex h-[48rem] w-full flex-col'>
+        <ListHeader topic='Featured' title='New Arrival' />
+        <div className='mt-[3.75rem] grid h-full w-full grid-cols-[50%,repeat(2,minmax(0,1fr))] grid-rows-2 gap-8'>
+          <BackgroundProduct
+            className='col-span-1 row-span-2'
+            name='PlayStation 5'
+            description='Black and White version of the PS5 coming out on sale.'
+            href='/produts/ps-5id'
+            imagePath='/images/ps5.png'
+          />
+          <BackgroundProduct
+            className='col-span-2'
+            name='PlayStation 5'
+            description='Black and White version of the PS5 coming out on sale.'
+            href='/produts/ps-5id'
+            imagePath='/images/ps5.png'
+          />
+          <BackgroundProduct
+            name='PlayStation 5'
+            description='Black and White version of the PS5 coming out on sale.'
+            href='/produts/ps-5id'
+            imagePath='/images/ps5.png'
+          />
+          <BackgroundProduct
+            name='PlayStation 5'
+            description='Black and White version of the PS5 coming out on sale.'
+            href='/produts/ps-5id'
+            imagePath='/images/ps5.png'
+          />
+        </div>
       </div>
     </div>
   );

@@ -4,7 +4,7 @@ import NextImage from '@/components/NextImage';
 
 export default function Footer() {
   return (
-    <div className='mt-[8.75rem] h-[27.5rem] bg-black px-[8.4375rem] pb-6 pt-20'>
+    <div className='mt-[8.75rem] h-[27.5rem] bg-black px-[8.4375rem] pb-6 pt-20 text-white'>
       <div className='flex items-start gap-[5.4375rem]'>
         <div className='flex flex-col gap-6'>
           <h3>Exclusive</h3>
