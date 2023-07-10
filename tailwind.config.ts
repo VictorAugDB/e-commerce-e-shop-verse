@@ -20,6 +20,7 @@ export default {
         },
         gray: {
           400: 'var(--gray-400)',
+          600: 'var(--gray-600)',
         },
       },
       lineHeight: {

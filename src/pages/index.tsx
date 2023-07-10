@@ -6,6 +6,7 @@ import { BsPhone, BsSmartwatch } from 'react-icons/bs';
 import { FiHeadphones } from 'react-icons/fi';
 import { HiOutlineDesktopComputer } from 'react-icons/hi';
 import { LuGamepad } from 'react-icons/lu';
+import { TbTruckDelivery } from 'react-icons/tb';
 
 import BackgroundProduct from '@/components/BackgroundProduct';
 import Button from '@/components/buttons/Button';
@@ -14,6 +15,7 @@ import Categories from '@/components/lists/Categories';
 import ListHeader from '@/components/lists/ListHeader';
 import ListProducts from '@/components/lists/ListProducts';
 import NextImage from '@/components/NextImage';
+import RoundedBackgroundIcon from '@/components/RoundedBackgroundIcon';
 import Seo from '@/components/Seo';
 import ShopNowButton from '@/components/ShopNowButton';
 
@@ -226,6 +228,9 @@ export default function HomePage() {
             imagePath='/images/ps5.png'
           />
         </div>
+      </div>
+      <div className='flex items-center'>
+        <RoundedBackgroundIcon icon={TbTruckDelivery} />
       </div>
     </div>
   );
