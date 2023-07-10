@@ -4,7 +4,7 @@ type DynamicIconProps = {
   icon: IconType;
   width: number;
   height: number;
-  color: string;
+  color?: string;
 };
 
 export function DynamicIcon({ icon, width, height, color }: DynamicIconProps) {
