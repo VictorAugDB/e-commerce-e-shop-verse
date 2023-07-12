@@ -105,38 +105,47 @@ export default function HomePage() {
 
         <section
           className='
-          mt-10 flex
-          h-[21.5rem] w-full 
-          justify-between
-          rounded-sm bg-black
-          px-16
-        '
+            mt-10 flex h-full
+            w-full flex-col items-center
+            gap-[1.5625rem] rounded-sm
+            bg-black px-16 pb-[11px]
+          '
         >
-          <div className='flex flex-col gap-y-5'>
-            <div className='mt-14 flex h-14 items-center gap-6'>
-              <NextImage
-                src={promotionInfo.imageLogoPath}
-                width={40}
-                height={49}
-                alt='promotion-logo'
-              ></NextImage>
-              <p className='text-white'>{promotionInfo.name}</p>
+          <div className='flex h-full w-full justify-between'>
+            <div className='flex flex-col gap-y-5'>
+              <div className='mt-14 flex items-center gap-6'>
+                <NextImage
+                  src={promotionInfo.imageLogoPath}
+                  width={40}
+                  height={49}
+                  alt='promotion-logo'
+                ></NextImage>
+                <p className='text-white'>{promotionInfo.name}</p>
+              </div>
+              <span className='max-w-[18.375rem] text-5xl leading-[3.75rem] text-white'>
+                {promotionInfo.description}
+              </span>
+              <div>
+                <ShopNowButton href={`/products/${promotionInfo.id}`}>
+                  <ArrowRight color='#FFFFFF' />
+                </ShopNowButton>
+              </div>
             </div>
-            <span className='max-w-[18.375rem] text-5xl leading-[3.75rem] text-white'>
-              {promotionInfo.description}
-            </span>
-            <div>
-              <ShopNowButton href={`/products/${promotionInfo.id}`}>
-                <ArrowRight color='#FFFFFF' />
-              </ShopNowButton>
+            <div className='relative flex h-full w-full justify-end'>
+              <img
+                className='h-auto w-auto'
+                src={promotionInfo.imagePath}
+                alt='product-image'
+              ></img>
             </div>
           </div>
-          <NextImage
-            src={promotionInfo.imagePath}
-            width={349}
-            height={344}
-            alt='promotion-image'
-          ></NextImage>
+          <div className='flex items-center gap-3'>
+            <span className='h-3 w-3 rounded-full bg-gray-600'></span>
+            <span className='h-3 w-3 rounded-full bg-gray-600'></span>
+            <span className='h-3 w-3 rounded-full bg-gray-600'></span>
+            <span className='h-3 w-3 rounded-full bg-gray-600'></span>
+            <span className='h-3 w-3 rounded-full bg-gray-600'></span>
+          </div>
         </section>
       </div>
       <ListProducts
