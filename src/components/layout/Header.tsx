@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Heart, Search, ShoppingCart } from 'react-feather';
 
 import UnstyledLink from '@/components/links/UnstyledLink';
 
@@ -30,6 +31,16 @@ export default function Header() {
             ))}
           </ul>
         </nav>
+        <div className='flex items-center gap-6'>
+          <div className='flex items-center gap-[2.375rem]'>
+            <input type='text' placeholder='What are you looking for?' />
+            <Search />
+          </div>
+          <div className='flex items-center gap-6'>
+            <Heart />
+            <ShoppingCart />
+          </div>
+        </div>
       </div>
     </header>
   );
