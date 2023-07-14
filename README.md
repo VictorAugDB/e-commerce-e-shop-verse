@@ -1,6 +1,6 @@
 # E-Commerce-e-shop-verse
 
-This is a e-commerce built using nextjs, reactjs and tailwind.
+This is a e-commerce built using nextjs, reactjs and tailwind
 
 # How to run
 
