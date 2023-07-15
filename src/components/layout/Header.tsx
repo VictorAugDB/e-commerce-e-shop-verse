@@ -13,7 +13,7 @@ const links = [
 export default function Header() {
   return (
     <header className='sticky top-0 z-50 border-b border-gray-300 bg-white'>
-      <div className='layout flex h-14 items-center justify-around'>
+      <div className='flex h-14 items-center justify-between px-[8.4375rem]'>
         <h3 className='font-bold'>Exclusive</h3>
         <nav>
           <ul className='flex items-center justify-between gap-x-12'>
@@ -33,7 +33,11 @@ export default function Header() {
         </nav>
         <div className='flex items-center gap-6'>
           <div className='flex items-center gap-[2.375rem]'>
-            <input type='text' placeholder='What are you looking for?' />
+            <input
+              type='text'
+              placeholder='What are you looking for?'
+              className='w-full rounded border-0 text-xs'
+            />
             <Search />
           </div>
           <div className='flex items-center gap-6'>

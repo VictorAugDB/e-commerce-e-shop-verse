@@ -122,7 +122,7 @@ export default function HomePage() {
                 ></NextImage>
                 <p className='text-white'>{promotionInfo.name}</p>
               </div>
-              <span className='max-w-[18.375rem] text-5xl leading-[3.75rem] text-white'>
+              <span className='text-5xl leading-[3.75rem] text-white'>
                 {promotionInfo.description}
               </span>
               <div>
@@ -160,7 +160,6 @@ export default function HomePage() {
       <ListProducts
         topic='This Month'
         title='Best Selling Products'
-        hasTimer={true}
         hasButton={true}
       />
       <div className='grid h-[31.25rem] grid-cols-2 gap-7 bg-black px-14 py-[4.3125rem]'>
@@ -203,9 +202,8 @@ export default function HomePage() {
         </div>
       </div>
       <ListProducts
-        topic='This Month'
-        title='Best Selling Products'
-        hasTimer={true}
+        topic='Our Products'
+        title='Explore Our Products'
         hasButton={true}
       />
       <div className='flex h-[48rem] w-full flex-col'>

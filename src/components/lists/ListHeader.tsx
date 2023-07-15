@@ -40,7 +40,7 @@ export default function ListHeader({
   }, [hasTimer]);
 
   return (
-    <>
+    <div className='flex flex-col gap-5'>
       <div className='flex items-center gap-4'>
         <span className='h-10 w-5 rounded bg-green-700'></span>
         <p className='font-medium text-green-700'>{topic}</p>
@@ -89,6 +89,6 @@ export default function ListHeader({
           </div>
         )}
       </div>
-    </>
+    </div>
   );
 }
