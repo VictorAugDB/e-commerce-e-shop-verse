@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ArrowRight } from 'react-feather';
+import { ArrowRight, ArrowUp } from 'react-feather';
 import { IconType } from 'react-icons';
 import { AiOutlineCamera } from 'react-icons/ai';
 import { BsPhone, BsSmartwatch } from 'react-icons/bs';
@@ -84,6 +84,10 @@ export default function HomePage() {
     imagePath: '/images/promotion-image.png',
     id: '123',
   };
+
+  function handleScrollTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
 
   return (
     <div className='flex flex-col items-center gap-20 px-[8.4375rem]'>
@@ -260,6 +264,13 @@ export default function HomePage() {
           </div>
         </div>
       </div>
+
+      <button
+        onClick={handleScrollTop}
+        className='mb-[-6.75rem] ml-auto flex h-[2.875rem] w-[2.875rem] items-center justify-center rounded-full border-none bg-white hover:shadow-lg'
+      >
+        <ArrowUp />
+      </button>
     </div>
   );
 }
