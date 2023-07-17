@@ -1,4 +1,5 @@
 import { Facebook, Instagram, Linkedin, Twitter } from 'react-feather';
+import { MdSend } from 'react-icons/md';
 
 import NextImage from '@/components/NextImage';
 
@@ -6,10 +7,20 @@ export default function Footer() {
   return (
     <div className='mt-[8.75rem] h-[27.5rem] bg-black px-[8.4375rem] pb-6 pt-20 text-white'>
       <div className='flex items-start gap-[5.4375rem]'>
-        <div className='flex flex-col gap-6'>
-          <h3>Exclusive</h3>
-          <h4 className='font-medium'>Subscribe</h4>
-          <p>Get 10% off your first order</p>
+        <div className='flex flex-col gap-4'>
+          <div className='flex flex-col gap-6'>
+            <h3>Exclusive</h3>
+            <h4 className='font-medium'>Subscribe</h4>
+            <p>Get 10% off your first order</p>
+          </div>
+          <div className='flex items-center gap-8 rounded border border-white px-3 py-4 focus-within:border-green-700 hover:border-green-700'>
+            <input
+              className=' border-none bg-black p-0 placeholder:text-gray-400 focus:ring-0'
+              placeholder='Enter your e-mail'
+              type='text'
+            />
+            <MdSend className='h-6 w-6 cursor-pointer transition hover:fill-gray-600' />
+          </div>
         </div>
         <div className='flex flex-col gap-6'>
           <h4 className='font-medium'>Support</h4>
