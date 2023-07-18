@@ -13,7 +13,7 @@ export default function Footer() {
             <h4 className='font-medium'>Subscribe</h4>
             <p>Get 10% off your first order</p>
           </div>
-          <div className='flex items-center gap-8 rounded border border-white px-3 py-4 focus-within:border-green-700 hover:border-green-700'>
+          <div className='flex items-center gap-8 rounded border border-white px-3 py-4 transition focus-within:border-green-700 hover:border-green-700'>
             <input
               className=' border-none bg-black p-0 placeholder:text-gray-400 focus:ring-0'
               placeholder='Enter your e-mail'

@@ -13,7 +13,9 @@ export default function Layout({
 }) {
   // Put Header or Footer Here
   return (
-    <main className={`${font.variable} w-full font-sans`}>
+    <main
+      className={`${font.variable} grid w-full grid-rows-[1fr_1fr_1fr] font-sans`}
+    >
       <Header />
       <div>{children}</div>
       <Footer />
