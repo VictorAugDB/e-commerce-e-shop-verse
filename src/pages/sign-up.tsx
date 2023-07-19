@@ -1,15 +1,19 @@
+import Link from 'next/link';
+
 import Button from '@/components/buttons/Button';
 import NextImage from '@/components/NextImage';
 
 export default function signUp() {
   return (
     <div className='grid grid-cols-2 gap-32 pt-[3.75rem]'>
-      <div className='relative'>
-        <NextImage
-          alt='product-image'
-          src='/images/cart-cellphone.png'
-          fill
-        ></NextImage>
+      <div className='h-[48.8125rem] bg-green-50'>
+        <div className='relative h-[44.125rem]'>
+          <NextImage
+            alt='product-image'
+            src='/images/cart-cellphone.png'
+            fill
+          ></NextImage>
+        </div>
       </div>
       <div className='flex w-max flex-col gap-12'>
         <div className='flex flex-col gap-6 pr-[3.4375rem]'>
@@ -17,9 +21,9 @@ export default function signUp() {
           <p>Enter your details below</p>
         </div>
         <div className='flex flex-col gap-10'>
-          <Input placeholder='Name' />
-          <Input placeholder='E-mail Phone Number' />
-          <Input placeholder='Password' />
+          <InputBorderBottom placeholder='Name' />
+          <InputBorderBottom placeholder='E-mail Phone Number' />
+          <InputBorderBottom placeholder='Password' />
         </div>
         <div className='flex flex-col gap-8'>
           <div className='flex flex-col gap-4'>
@@ -36,12 +40,12 @@ export default function signUp() {
           </div>
           <div className='flex justify-center gap-4'>
             <p>Already have account?</p>
-            <a
+            <Link
               href='/sign-in'
-              className='border-b border-gray-800 pb-1 font-medium text-gray-800 hover:font-bold'
+              className='border-b border-transparent pb-1 font-medium text-gray-800 transition hover:border-gray-800 hover:font-semibold'
             >
               Log in
-            </a>
+            </Link>
           </div>
         </div>
       </div>
@@ -53,7 +57,7 @@ type InputProps = {
   placeholder: string;
 };
 
-function Input({ placeholder }: InputProps) {
+export function InputBorderBottom({ placeholder }: InputProps) {
   return (
     <div className='border-b border-gray-600 transition focus-within:border-green-700'>
       <input
