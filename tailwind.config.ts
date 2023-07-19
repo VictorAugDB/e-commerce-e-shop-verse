@@ -14,6 +14,7 @@ export default {
           800: 'var(--green-800)',
           700: 'var(--green-700)',
           600: 'var(--green-600)',
+          50: 'var(--green-50)',
         },
         brown: {
           300: 'var(--brown-300)',

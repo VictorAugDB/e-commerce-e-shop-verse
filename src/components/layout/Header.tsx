@@ -14,7 +14,7 @@ export default function Header() {
   return (
     <header className='sticky top-0 z-50 border-b border-gray-300 bg-white'>
       <div className='flex h-14 items-center justify-between px-[8.4375rem]'>
-        <h3 className='font-bold'>Exclusive</h3>
+        <h3 className='font-bold'>E-Shopverse</h3>
         <nav>
           <ul className='flex items-center justify-between gap-x-12'>
             {links.map(({ href, label }) => (

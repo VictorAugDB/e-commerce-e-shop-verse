@@ -9,7 +9,7 @@ export default function Footer() {
       <div className='flex items-start gap-[5.4375rem]'>
         <div className='flex flex-col gap-4'>
           <div className='flex flex-col gap-6'>
-            <h3>Exclusive</h3>
+            <h3>E-Shopverse</h3>
             <h4 className='font-medium'>Subscribe</h4>
             <p>Get 10% off your first order</p>
           </div>
@@ -26,7 +26,7 @@ export default function Footer() {
           <h4 className='font-medium'>Support</h4>
           <div className='flex flex-col gap-4'>
             <p>111 Bijoy sarani, Dhaka, DH 1515, Bangladesh.</p>
-            <p>exclusive@gmail.com</p>
+            <p>eshopeverse@gmail.com</p>
             <p>+88015-88888-9999</p>
           </div>
         </div>
