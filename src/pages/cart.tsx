@@ -53,10 +53,16 @@ export default function Cart() {
     event: React.ChangeEvent<HTMLInputElement>,
     id: string
   ) {
-    const value = Number(event.target.value);
-    const updatedProducts = products.map((p) =>
-      p.id === id ? { ...p, quantity: value } : p
-    );
+    const quantity = Number(event.target.value);
+
+    if (quantity <= 0) {
+      // message the user that if he is sure that the want to remove the product
+    }
+
+    const updatedProducts =
+      quantity > 0
+        ? products.map((p) => (p.id === id ? { ...p, quantity } : p))
+        : products.filter((p) => p.id !== id);
 
     setProducts(updatedProducts);
 
@@ -220,7 +226,7 @@ export default function Cart() {
               <p>${subtotal + shipping - discounts}</p>
             </div>
             <Button variant='green' className='mx-auto w-fit px-12 py-4'>
-              Procees to checkout
+              Proceed to checkout
             </Button>
           </div>
         </div>
