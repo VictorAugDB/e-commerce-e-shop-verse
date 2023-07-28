@@ -1,16 +1,18 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+
+import { getCoupons, getProducts } from '@/lib/http';
 
 import Button from '@/components/buttons/Button';
 import Steps from '@/components/Steps';
 
-type Product = {
+export type Product = {
   id: string;
   image: string;
   price: number;
   quantity: number;
 };
 
-type Coupon = {
+export type Coupon = {
   name: string;
   minVal: number;
   percentage: number;
@@ -19,26 +21,24 @@ type Coupon = {
 };
 
 export default function Cart() {
-  const [products, setProducts] = useState<Product[]>([
-    {
-      id: '1',
-      image: '/images/monitor.png',
-      price: 650,
-      quantity: 1,
-    },
-    {
-      id: '2',
-      image: '/images/monitor.png',
-      price: 650,
-      quantity: 1,
-    },
-  ]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [subtotal, setSubtotal] = useState(calculateSubTotal(products));
   // TODO add set state shipping when create the shipping calc
   const [shipping] = useState(calculateShipping());
   const [discounts, setDiscounts] = useState(0);
   const couponRef = useRef<HTMLInputElement>(null);
   const [currentCoupon, setCurrentCoupon] = useState<Coupon | null>(null);
+
+  useEffect(() => {
+    (async () => {
+      const productsData = await getProducts();
+      // call shipping api and set shipping val
+      setProducts(productsData);
+
+      const initialSubtotal = calculateSubTotal(productsData);
+      setSubtotal(initialSubtotal);
+    })();
+  }, []);
 
   function calculateShipping() {
     // get user cep and call the API of the shipping service
@@ -79,24 +79,18 @@ export default function Cart() {
     }
   }
 
-  function handleApplyDiscount() {
+  async function handleApplyDiscount() {
     if (!couponRef.current) {
       return;
     }
 
     const coupon = couponRef.current.value;
     // call the api to check the coupons
-    const availableCoupons = [
-      {
-        name: 'Shopverse10',
-        minVal: 500,
-        percentage: 10,
-        limit: 200,
-        quantity: 10,
-      },
-    ];
+    const availableCoupons = await getCoupons();
 
-    const couponInfo = availableCoupons.find((ac) => ac.name === coupon);
+    const couponInfo = availableCoupons.find(
+      (ac) => ac.name.toLowerCase() === coupon
+    );
 
     if (!couponInfo) {
       // add message saying that the coupon not exists
@@ -189,6 +183,7 @@ export default function Cart() {
       <div className='flex justify-between pt-20'>
         <div className='flex h-fit items-center gap-4'>
           <input
+            name='discount'
             ref={couponRef}
             type='text'
             className='rounded border border-gray-800 bg-transparent py-4 pl-6 focus:border-gray-600 focus:ring-green-600'
@@ -217,13 +212,13 @@ export default function Cart() {
             <span className='h-px w-full bg-gray-400'></span>
             <div className='flex items-center justify-between'>
               <p>Discounts:</p>
-              <p>${discounts}</p>
+              <p data-testid='discount-val'>${discounts}</p>
             </div>
             <span className='h-px w-full bg-gray-400'></span>
 
             <div className='flex items-center justify-between'>
               <p>Total:</p>
-              <p>${subtotal + shipping - discounts}</p>
+              <p data-testid='total-val'>${subtotal + shipping - discounts}</p>
             </div>
             <Button variant='green' className='mx-auto w-fit px-12 py-4'>
               Proceed to checkout

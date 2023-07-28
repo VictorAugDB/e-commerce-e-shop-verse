@@ -1,3 +1,5 @@
+import React from 'react';
+
 type StepsProps = {
   flow: 'buy';
   currentStep: number;
@@ -17,9 +19,8 @@ export default function Steps({ flow, currentStep, className }: StepsProps) {
   return (
     <div className={className + ' flex items-center gap-3'}>
       {steps.map((step, idx) => (
-        <>
+        <React.Fragment key={step}>
           <p
-            key={step}
             className={`${
               idx === currentStep ? 'text-black' : 'text-gray-400'
             } text-sm`}
@@ -27,7 +28,7 @@ export default function Steps({ flow, currentStep, className }: StepsProps) {
             {step}
           </p>
           <p className='text-sm text-gray-400 last:hidden'>/</p>
-        </>
+        </React.Fragment>
       ))}
     </div>
   );
