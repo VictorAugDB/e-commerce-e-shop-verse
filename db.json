@@ -1,0 +1,25 @@
+{
+  "products": [
+    {
+      "id": "1",
+      "image": "/images/monitor.png",
+      "price": 650,
+      "quantity": 1
+    },
+    {
+      "id": "2",
+      "image": "/images/monitor.png",
+      "price": 650,
+      "quantity": 1
+    }
+  ],
+  "coupons": [
+    {
+      "name": "shopverse10",
+      "minVal": 500,
+      "percentage": 10,
+      "limit": 200,
+      "quantity": 10
+    }
+  ]
+}
