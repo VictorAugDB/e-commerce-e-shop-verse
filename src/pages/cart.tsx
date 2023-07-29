@@ -131,7 +131,7 @@ export default function Cart() {
             {products.map((product) => (
               <React.Fragment key={product.id}>
                 <tr className='h-10'></tr>
-                <tr className='rounded bg-white'>
+                <tr data-testid='product-row' className='rounded bg-white'>
                   <td
                     className='rounded py-10 pl-10 text-center align-middle before:content-[attr(data-heading)] md:before:content-[]'
                     data-heading='Product: '
@@ -158,11 +158,13 @@ export default function Cart() {
                       value={product.quantity}
                       onChange={(e) => handleChangeQuantity(e, product.id)}
                       className='w-[4.5rem] rounded border border-gray-600 py-[.375rem]'
+                      data-testid='quantity-input'
                     />
                   </td>
                   <td
                     className='rounded py-10 pr-10 text-center before:content-[attr(data-heading)] md:before:content-[]'
                     data-heading='Subtotal: '
+                    data-testid='product-subtotal-val'
                   >
                     ${product.price * product.quantity}
                   </td>
@@ -202,7 +204,7 @@ export default function Cart() {
           <div className='flex flex-col gap-4'>
             <div className='flex items-center justify-between'>
               <p>Subtotal:</p>
-              <p>${subtotal}</p>
+              <p data-testid='cart-subtotal-val'>${subtotal}</p>
             </div>
             <span className='h-px w-full bg-gray-400'></span>
             <div className='flex items-center justify-between'>
