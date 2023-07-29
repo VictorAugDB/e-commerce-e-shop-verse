@@ -1,6 +1,7 @@
 import Link from 'next/link';
 
 import Button from '@/components/buttons/Button';
+import InputBorderBottom from '@/components/InputBorderBottom';
 import NextImage from '@/components/NextImage';
 
 export default function signUp() {
@@ -21,9 +22,19 @@ export default function signUp() {
           <p>Enter your details below</p>
         </div>
         <div className='flex flex-col gap-10'>
-          <InputBorderBottom placeholder='Name' />
-          <InputBorderBottom placeholder='E-mail Phone Number' />
-          <InputBorderBottom placeholder='Password' />
+          <InputBorderBottom name='name' id='name' placeholder='Name' />
+          <InputBorderBottom
+            name='e-mail'
+            id='e-mail'
+            type='email'
+            placeholder='E-mail / Phone Number'
+          />
+          <InputBorderBottom
+            name='password'
+            id='password'
+            type='password'
+            placeholder='Password'
+          />
         </div>
         <div className='flex flex-col gap-8'>
           <div className='flex flex-col gap-4'>
@@ -49,22 +60,6 @@ export default function signUp() {
           </div>
         </div>
       </div>
-    </div>
-  );
-}
-
-type InputProps = {
-  placeholder: string;
-};
-
-export function InputBorderBottom({ placeholder }: InputProps) {
-  return (
-    <div className='border-b border-gray-600 transition focus-within:border-green-700'>
-      <input
-        type='text'
-        className='w-full border-0 bg-transparent p-0 pb-2 outline-none focus:ring-0'
-        placeholder={placeholder}
-      />
     </div>
   );
 }

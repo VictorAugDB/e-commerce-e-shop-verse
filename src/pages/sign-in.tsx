@@ -1,9 +1,8 @@
 import Link from 'next/link';
 
 import Button from '@/components/buttons/Button';
+import InputBorderBottom from '@/components/InputBorderBottom';
 import NextImage from '@/components/NextImage';
-
-import { InputBorderBottom } from '@/pages/sign-up';
 
 export default function SignIn() {
   return (
@@ -23,8 +22,18 @@ export default function SignIn() {
           <p>Enter your details below</p>
         </div>
         <div className='flex flex-col gap-10'>
-          <InputBorderBottom placeholder='E-mail Phone Number' />
-          <InputBorderBottom placeholder='Password' />
+          <InputBorderBottom
+            name='e-mail'
+            id='e-mail'
+            type='email'
+            placeholder='E-mail / Phone Number'
+          />
+          <InputBorderBottom
+            name='password'
+            id='password'
+            type='password'
+            placeholder='Password'
+          />
         </div>
         <div className='flex flex-col gap-8'>
           <div className='flex items-center justify-between gap-4'>
