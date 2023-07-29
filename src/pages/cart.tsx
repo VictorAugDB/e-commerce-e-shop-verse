@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router';
 import React, { useEffect, useRef, useState } from 'react';
 
 import { getCoupons, getProducts } from '@/lib/http';
@@ -28,6 +29,7 @@ export default function Cart() {
   const [discounts, setDiscounts] = useState(0);
   const couponRef = useRef<HTMLInputElement>(null);
   const [currentCoupon, setCurrentCoupon] = useState<Coupon | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     (async () => {
@@ -112,6 +114,10 @@ export default function Cart() {
         Math.min(couponInfo.limit, (subtotal * couponInfo.percentage) / 100)
       );
     }
+  }
+
+  function redirectToCheckout() {
+    router.push('/checkout?from=cart');
   }
 
   return (
@@ -222,7 +228,11 @@ export default function Cart() {
               <p>Total:</p>
               <p data-testid='total-val'>${subtotal + shipping - discounts}</p>
             </div>
-            <Button variant='green' className='mx-auto w-fit px-12 py-4'>
+            <Button
+              onClick={redirectToCheckout}
+              variant='green'
+              className='mx-auto w-fit px-12 py-4'
+            >
               Proceed to checkout
             </Button>
           </div>

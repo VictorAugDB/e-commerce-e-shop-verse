@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import * as React from 'react';
 import { Heart, Search, ShoppingCart } from 'react-feather';
 
@@ -14,16 +15,17 @@ export default function Header() {
   return (
     <header className='sticky top-0 z-50 border-b border-gray-300 bg-white'>
       <div className='flex h-14 items-center justify-between px-[8.4375rem]'>
-        <h3 className='font-bold'>E-Shopverse</h3>
+        <Link href='/' className='text-lg font-bold md:text-2xl'>
+          E-Shopverse
+        </Link>
         <nav>
           <ul className='flex items-center justify-between gap-x-12'>
             {links.map(({ href, label }) => (
               <li key={`${href}${label}`}>
                 <UnstyledLink
                   href={href}
-                  className={`text-base hover:text-gray-600 ${
-                    label === 'Home' && 'border-b border-gray-500'
-                  }`}
+                  data-home={label === 'Home'}
+                  className='text-base hover:text-gray-600 data-[home=true]:border-b data-[home=true]:border-gray-500'
                 >
                   {label}
                 </UnstyledLink>
@@ -42,7 +44,9 @@ export default function Header() {
           </div>
           <div className='flex items-center gap-6'>
             <Heart />
-            <ShoppingCart />
+            <Link href='/cart'>
+              <ShoppingCart />
+            </Link>
           </div>
         </div>
       </div>
