@@ -3,8 +3,8 @@ import React, { useContext, useEffect, useState } from 'react';
 
 import { getProducts } from '@/lib/http';
 
+import ApplyCoupon from '@/components/ApplyCoupon';
 import Button from '@/components/buttons/Button';
-import Coupon from '@/components/Coupon';
 import Steps from '@/components/Steps';
 
 import { CouponContext } from '@/contexts/CouponContext';
@@ -154,7 +154,7 @@ export default function Cart() {
         </div>
       </div>
       <div className='flex justify-between pt-20'>
-        <Coupon subtotal={subtotal} />
+        <ApplyCoupon subtotal={subtotal} />
         <div className='w-full max-w-[29.375rem] rounded border-[1.5px] border-black px-6 py-8'>
           <h4 className='mb-6'>Cart Total</h4>
           <div className='flex flex-col gap-4'>

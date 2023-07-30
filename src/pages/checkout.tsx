@@ -1,8 +1,8 @@
 import { useSearchParams } from 'next/navigation';
 import { ComponentProps, useContext, useEffect, useState } from 'react';
 
+import ApplyCoupon from '@/components/ApplyCoupon';
 import Button from '@/components/buttons/Button';
-import Coupon from '@/components/Coupon';
 import InputBorderBottom from '@/components/InputBorderBottom';
 import NextImage from '@/components/NextImage';
 import Steps from '@/components/Steps';
@@ -133,7 +133,7 @@ export default function Checkout() {
               label='Cash on delivery'
             />
           </div>
-          <Coupon subtotal={subtotal} />
+          <ApplyCoupon subtotal={subtotal} />
           <Button variant='green' className='w-fit px-12 py-4'>
             Place Order
           </Button>

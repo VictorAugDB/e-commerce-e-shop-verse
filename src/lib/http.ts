@@ -1,4 +1,5 @@
-import { Coupon, Product } from '@/pages/cart';
+import { Coupon } from '@/contexts/CouponContext';
+import { Product } from '@/pages/cart';
 
 export const getProducts = async (): Promise<Product[]> => {
   const res = await fetch('http://localhost:3002/products');

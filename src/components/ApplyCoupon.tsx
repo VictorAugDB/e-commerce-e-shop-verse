@@ -4,11 +4,11 @@ import Button from '@/components/buttons/Button';
 
 import { CouponContext } from '@/contexts/CouponContext';
 
-type CouponProps = {
+type ApplyCouponProps = {
   subtotal: number;
 };
 
-export default function Coupon({ subtotal }: CouponProps) {
+export default function ApplyCoupon({ subtotal }: ApplyCouponProps) {
   const couponRef = useRef<HTMLInputElement>(null);
   const { handleApplyCoupon } = useContext(CouponContext);
 
