@@ -1,10 +1,13 @@
 import { useRouter } from 'next/router';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 
-import { getCoupons, getProducts } from '@/lib/http';
+import { getProducts } from '@/lib/http';
 
 import Button from '@/components/buttons/Button';
+import Coupon from '@/components/Coupon';
 import Steps from '@/components/Steps';
+
+import { CouponContext } from '@/contexts/CouponContext';
 
 export type Product = {
   id: string;
@@ -13,23 +16,13 @@ export type Product = {
   quantity: number;
 };
 
-export type Coupon = {
-  name: string;
-  minVal: number;
-  percentage: number;
-  limit: number;
-  quantity: number;
-};
-
 export default function Cart() {
   const [products, setProducts] = useState<Product[]>([]);
   const [subtotal, setSubtotal] = useState(calculateSubTotal(products));
   // TODO add set state shipping when create the shipping calc
   const [shipping] = useState(calculateShipping());
-  const [discounts, setDiscounts] = useState(0);
-  const couponRef = useRef<HTMLInputElement>(null);
-  const [currentCoupon, setCurrentCoupon] = useState<Coupon | null>(null);
   const router = useRouter();
+  const { currentCoupon, discounts, setDiscounts } = useContext(CouponContext);
 
   useEffect(() => {
     (async () => {
@@ -81,43 +74,15 @@ export default function Cart() {
     }
   }
 
-  async function handleApplyDiscount() {
-    if (!couponRef.current) {
-      return;
-    }
-
-    const coupon = couponRef.current.value;
-    // call the api to check the coupons
-    const availableCoupons = await getCoupons();
-
-    const couponInfo = availableCoupons.find(
-      (ac) => ac.name.toLowerCase() === coupon
-    );
-
-    if (!couponInfo) {
-      // add message saying that the coupon not exists
-      return;
-    } else {
-      if (couponInfo.quantity === 0) {
-        // add message saying that the coupon ended
-        return;
-      }
-
-      if (subtotal < couponInfo.minVal) {
-        // add message saying that the subtotal is not enough to apply the coupon
-        return;
-      }
-
-      // The coupon will be passed to the checkout there when the user pay the quantity will be decreased
-      setCurrentCoupon(couponInfo);
-      setDiscounts(
-        Math.min(couponInfo.limit, (subtotal * couponInfo.percentage) / 100)
-      );
-    }
-  }
-
   function redirectToCheckout() {
-    router.push('/checkout?from=cart');
+    router.push({
+      pathname: '/checkout',
+      query: {
+        from: 'cart',
+        subtotal: subtotal,
+        shipping: shipping,
+      },
+    });
   }
 
   return (
@@ -189,22 +154,7 @@ export default function Cart() {
         </div>
       </div>
       <div className='flex justify-between pt-20'>
-        <div className='flex h-fit items-center gap-4'>
-          <input
-            name='discount'
-            ref={couponRef}
-            type='text'
-            className='rounded border border-gray-800 bg-transparent py-4 pl-6 focus:border-gray-600 focus:ring-green-600'
-            placeholder='Coupon here'
-          />
-          <Button
-            onClick={handleApplyDiscount}
-            variant='green'
-            className='px-12 py-4'
-          >
-            Apply Coupon
-          </Button>
-        </div>
+        <Coupon subtotal={subtotal} />
         <div className='w-full max-w-[29.375rem] rounded border-[1.5px] border-black px-6 py-8'>
           <h4 className='mb-6'>Cart Total</h4>
           <div className='flex flex-col gap-4'>
