@@ -1,14 +1,33 @@
-import { useRouter } from 'next/router';
+import { useSearchParams } from 'next/navigation';
+import { ComponentProps, useContext, useEffect, useState } from 'react';
 
+import Button from '@/components/buttons/Button';
+import Coupon from '@/components/Coupon';
 import InputBorderBottom from '@/components/InputBorderBottom';
+import NextImage from '@/components/NextImage';
 import Steps from '@/components/Steps';
 
+import { CouponContext } from '@/contexts/CouponContext';
+
 export default function Checkout() {
-  const from = useRouter().query.from;
-  const shipping = 0;
-  const discounts = 0;
-  const subtotal = 1750;
-  const total = 1750;
+  const searchParams = useSearchParams();
+  const queryShipping = Number(searchParams.get('shipping'));
+  const [shipping, setShipping] = useState(queryShipping ?? 0);
+
+  const from = searchParams.get('from');
+  const subtotal = Number(searchParams.get('subtotal')) ?? 0;
+
+  const { discounts } = useContext(CouponContext);
+
+  useEffect(() => {
+    (async () => {
+      if (queryShipping === undefined || queryShipping === null) {
+        const shipping = 0;
+
+        setShipping(shipping);
+      }
+    })();
+  }, [queryShipping]);
 
   return (
     <div className='px-[8.4375rem]'>
@@ -83,32 +102,64 @@ export default function Checkout() {
 
               <div className='flex items-center justify-between'>
                 <p>Total:</p>
-                <p>${total}</p>
+                <p>${subtotal - discounts + shipping}</p>
               </div>
             </div>
-            <div className='flex items-center gap-4'>
-              <input
-                type='radio'
+            <div className='flex items-center justify-between gap-4'>
+              <RadioButton
                 id='bank'
+                defaultChecked
                 name='payment-type'
-                className='h-6 w-6 text-black ring-black checked:border-2 checked:bg-none checked:ring checked:ring-inset checked:ring-offset-[3px]'
+                label='Bank'
               />
-              <label htmlFor='bank'>Bank</label>
+              <div className='flex flex-wrap items-center gap-2'>
+                <NextImage
+                  width={42}
+                  height={28}
+                  src='/images/visa.png'
+                  alt='visa'
+                />
+                <NextImage
+                  width={42}
+                  height={28}
+                  src='/images/mastercard.png'
+                  alt='mastercard'
+                />
+              </div>
             </div>
-            <div className='flex items-center gap-4'>
-              <input
-                type='radio'
-                id='cash'
-                name='payment-type'
-                className='h-6 w-6 text-black ring-black checked:border-2 checked:bg-none checked:ring checked:ring-inset checked:ring-offset-[3px]'
-              />
-              <label htmlFor='cash'>Cash on delivery</label>
-            </div>
+            <RadioButton
+              id='cash'
+              name='payment-type'
+              label='Cash on delivery'
+            />
           </div>
-          <div></div>
-          <div></div>
+          <Coupon subtotal={subtotal} />
+          <Button variant='green' className='w-fit px-12 py-4'>
+            Place Order
+          </Button>
         </div>
       </div>
+    </div>
+  );
+}
+
+type RadioButtonProps = ComponentProps<'input'> & {
+  name: string;
+  id: string;
+  label: string;
+};
+
+function RadioButton({ name, id, label, ...props }: RadioButtonProps) {
+  return (
+    <div className='flex items-center gap-4'>
+      <input
+        type='radio'
+        id={id}
+        name={name}
+        className='h-6 w-6 cursor-pointer text-black ring-black checked:border-2 checked:bg-none checked:ring checked:ring-inset checked:ring-offset-[3px] focus:ring-black'
+        {...props}
+      />
+      <label htmlFor='bank'>{label}</label>
     </div>
   );
 }
