@@ -11,6 +11,7 @@ const product = {
   image: '/images/monitor.png',
   price: 650,
   quantity: 1,
+  name: 'Monitor',
 };
 
 const coupon = {
