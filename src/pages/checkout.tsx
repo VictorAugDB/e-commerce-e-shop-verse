@@ -1,5 +1,5 @@
 import { useSearchParams } from 'next/navigation';
-import { ComponentProps, useContext, useEffect, useState } from 'react';
+import { ComponentProps, useContext, useEffect } from 'react';
 
 import ApplyCoupon from '@/components/ApplyCoupon';
 import Button from '@/components/buttons/Button';
@@ -7,27 +7,22 @@ import InputBorderBottom from '@/components/InputBorderBottom';
 import NextImage from '@/components/NextImage';
 import Steps from '@/components/Steps';
 
-import { CouponContext } from '@/contexts/CouponContext';
+import { ProductsContext } from '@/contexts/ProductsContext';
 
 export default function Checkout() {
   const searchParams = useSearchParams();
-  const queryShipping = Number(searchParams.get('shipping'));
-  const [shipping, setShipping] = useState(queryShipping ?? 0);
 
   const from = searchParams.get('from');
-  const subtotal = Number(searchParams.get('subtotal')) ?? 0;
-
-  const { discounts } = useContext(CouponContext);
+  const { subtotal, discounts, products, shipping, calculateShipping } =
+    useContext(ProductsContext);
 
   useEffect(() => {
     (async () => {
-      if (queryShipping === undefined || queryShipping === null) {
-        const shipping = 0;
-
-        setShipping(shipping);
+      if (shipping === 0) {
+        await calculateShipping();
       }
     })();
-  }, [queryShipping]);
+  }, [shipping, calculateShipping]);
 
   return (
     <div className='px-[8.4375rem]'>
@@ -73,16 +68,14 @@ export default function Checkout() {
         </div>
         <div className='flex flex-col gap-8'>
           <div className='flex max-w-[26.5625rem] flex-col gap-8'>
-            <ProductDetails
-              imagePath='/images/monitor.png'
-              name='LCD Monitor'
-              price={650}
-            />
-            <ProductDetails
-              imagePath='/images/monitor.png'
-              name='LCD Monitor'
-              price={650}
-            />
+            {products.map((p) => (
+              <ProductDetails
+                key={p.id}
+                imagePath={p.image}
+                name={p.name}
+                price={p.price}
+              />
+            ))}
             <div className='flex flex-col gap-4'>
               <div className='flex items-center justify-between'>
                 <p>Subtotal:</p>
@@ -133,7 +126,7 @@ export default function Checkout() {
               label='Cash on delivery'
             />
           </div>
-          <ApplyCoupon subtotal={subtotal} />
+          <ApplyCoupon />
           <Button variant='green' className='w-fit px-12 py-4'>
             Place Order
           </Button>

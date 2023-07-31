@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 
 import { getProducts } from '@/lib/http';
 
@@ -7,80 +7,33 @@ import ApplyCoupon from '@/components/ApplyCoupon';
 import Button from '@/components/buttons/Button';
 import Steps from '@/components/Steps';
 
-import { CouponContext } from '@/contexts/CouponContext';
-
-export type Product = {
-  id: string;
-  image: string;
-  price: number;
-  quantity: number;
-};
+import { ProductsContext } from '@/contexts/ProductsContext';
 
 export default function Cart() {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [subtotal, setSubtotal] = useState(calculateSubTotal(products));
-  // TODO add set state shipping when create the shipping calc
-  const [shipping] = useState(calculateShipping());
+  const {
+    products,
+    discounts,
+    setProducts,
+    shipping,
+    handleChangeQuantity,
+    subtotal,
+  } = useContext(ProductsContext);
+
   const router = useRouter();
-  const { currentCoupon, discounts, setDiscounts } = useContext(CouponContext);
 
   useEffect(() => {
     (async () => {
       const productsData = await getProducts();
       // call shipping api and set shipping val
       setProducts(productsData);
-
-      const initialSubtotal = calculateSubTotal(productsData);
-      setSubtotal(initialSubtotal);
     })();
-  }, []);
-
-  function calculateShipping() {
-    // get user cep and call the API of the shipping service
-    return 0;
-  }
-
-  function calculateSubTotal(prods: Product[]) {
-    return prods.reduce((acc, p) => acc + p.price * p.quantity, 0);
-  }
-
-  function handleChangeQuantity(
-    event: React.ChangeEvent<HTMLInputElement>,
-    id: string
-  ) {
-    const quantity = Number(event.target.value);
-
-    if (quantity <= 0) {
-      // message the user that if he is sure that the want to remove the product
-    }
-
-    const updatedProducts =
-      quantity > 0
-        ? products.map((p) => (p.id === id ? { ...p, quantity } : p))
-        : products.filter((p) => p.id !== id);
-
-    setProducts(updatedProducts);
-
-    const newSubtotal = calculateSubTotal(updatedProducts);
-    setSubtotal(newSubtotal);
-
-    if (currentCoupon) {
-      setDiscounts(
-        Math.min(
-          currentCoupon.limit,
-          (newSubtotal * currentCoupon.percentage) / 100
-        )
-      );
-    }
-  }
+  }, [setProducts]);
 
   function redirectToCheckout() {
     router.push({
       pathname: '/checkout',
       query: {
         from: 'cart',
-        subtotal: subtotal,
-        shipping: shipping,
       },
     });
   }
@@ -112,7 +65,7 @@ export default function Cart() {
                       src={product.image}
                       className='mr-[1.375rem] inline-block h-[2.8125rem] w-[3.125rem]'
                     ></img>
-                    LCD Monitor
+                    {product.name}
                   </td>
                   <td
                     className='py-10 text-center before:content-[attr(data-heading)] md:before:content-[]'
@@ -154,7 +107,7 @@ export default function Cart() {
         </div>
       </div>
       <div className='flex justify-between pt-20'>
-        <ApplyCoupon subtotal={subtotal} />
+        <ApplyCoupon />
         <div className='w-full max-w-[29.375rem] rounded border-[1.5px] border-black px-6 py-8'>
           <h4 className='mb-6'>Cart Total</h4>
           <div className='flex flex-col gap-4'>

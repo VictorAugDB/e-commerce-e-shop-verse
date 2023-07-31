@@ -2,15 +2,11 @@ import { useContext, useRef } from 'react';
 
 import Button from '@/components/buttons/Button';
 
-import { CouponContext } from '@/contexts/CouponContext';
+import { ProductsContext } from '@/contexts/ProductsContext';
 
-type ApplyCouponProps = {
-  subtotal: number;
-};
-
-export default function ApplyCoupon({ subtotal }: ApplyCouponProps) {
+export default function ApplyCoupon() {
   const couponRef = useRef<HTMLInputElement>(null);
-  const { handleApplyCoupon } = useContext(CouponContext);
+  const { handleApplyCoupon } = useContext(ProductsContext);
 
   return (
     <div className='flex h-fit w-full items-center gap-4'>
@@ -22,7 +18,7 @@ export default function ApplyCoupon({ subtotal }: ApplyCouponProps) {
         placeholder='Coupon here'
       />
       <Button
-        onClick={() => handleApplyCoupon(couponRef, subtotal)}
+        onClick={() => handleApplyCoupon(couponRef)}
         variant='green'
         className='px-12 py-4'
       >

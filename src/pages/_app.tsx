@@ -5,8 +5,7 @@ import '@/styles/globals.css';
 
 import Layout from '@/components/layout/Layout';
 
-import { CouponProvider } from '@/contexts/CouponContext';
-
+import { ProductsProvider } from '@/contexts/ProductsContext';
 const poppins = Poppins({
   subsets: ['latin'],
   weight: ['400', '500', '600', '700'],
@@ -17,9 +16,9 @@ const poppins = Poppins({
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <Layout font={poppins}>
-      <CouponProvider>
+      <ProductsProvider>
         <Component {...pageProps} />
-      </CouponProvider>
+      </ProductsProvider>
     </Layout>
   );
 }
