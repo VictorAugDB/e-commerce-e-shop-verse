@@ -36,8 +36,8 @@ export default function InputBorderBottom({
       />
       <label
         htmlFor={name}
-        data-hasValue={hasValue}
-        className='absolute left-0 top-0 flex h-full cursor-text items-center pl-2 text-sm text-gray-600 transition-all group-focus-within:h-1/2 group-focus-within:-translate-y-full group-focus-within:pl-0 group-focus-within:text-xs data-[hasValue=true]:h-1/2 data-[hasValue=true]:-translate-y-full data-[hasValue=true]:pl-0 data-[hasValue=true]:text-xs'
+        data-has-value={hasValue}
+        className='absolute left-0 top-0 flex h-full cursor-text items-center pl-2 text-sm text-gray-600 transition-all group-focus-within:h-1/2 group-focus-within:-translate-y-full group-focus-within:pl-0 group-focus-within:text-xs data-[has-value=true]:h-1/2 data-[has-value=true]:-translate-y-full data-[has-value=true]:pl-0 data-[has-value=true]:text-xs'
       >
         {placeholder}
       </label>

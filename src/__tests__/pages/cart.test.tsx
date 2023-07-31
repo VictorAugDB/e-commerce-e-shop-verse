@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event';
 
 import * as httpUtils from '@/lib/http';
 
+import { ProductsProvider } from '@/contexts/ProductsContext';
 import Cart from '@/pages/cart';
 
 const product = {
@@ -40,7 +41,11 @@ describe('Cart functionalities', () => {
         .spyOn(httpUtils, 'getProducts')
         .mockImplementation(jest.fn(() => Promise.resolve(mockData)));
 
-      render(<Cart />);
+      render(<Cart />, {
+        wrapper: ({ children }) => (
+          <ProductsProvider>{children}</ProductsProvider>
+        ),
+      });
 
       const subtotal = mockData[0].quantity * product.price;
       const el = await screen.findAllByTestId('product-subtotal-val');
@@ -64,7 +69,11 @@ describe('Cart functionalities', () => {
         .spyOn(httpUtils, 'getProducts')
         .mockImplementation(jest.fn(() => Promise.resolve(mockData)));
 
-      render(<Cart />);
+      render(<Cart />, {
+        wrapper: ({ children }) => (
+          <ProductsProvider>{children}</ProductsProvider>
+        ),
+      });
 
       const subtotal = 68 * product.price;
 
@@ -94,7 +103,11 @@ describe('Cart functionalities', () => {
         .spyOn(httpUtils, 'getCoupons')
         .mockImplementation(jest.fn(() => Promise.resolve([coupon])));
 
-      render(<Cart />);
+      render(<Cart />, {
+        wrapper: ({ children }) => (
+          <ProductsProvider>{children}</ProductsProvider>
+        ),
+      });
 
       const input = await screen.findByPlaceholderText<HTMLInputElement>(
         /coupon here/i
@@ -130,7 +143,11 @@ describe('Cart functionalities', () => {
         .spyOn(httpUtils, 'getCoupons')
         .mockImplementation(jest.fn(() => Promise.resolve([coupon])));
 
-      render(<Cart />);
+      render(<Cart />, {
+        wrapper: ({ children }) => (
+          <ProductsProvider>{children}</ProductsProvider>
+        ),
+      });
 
       const input = await screen.findByPlaceholderText<HTMLInputElement>(
         /coupon here/i
@@ -159,7 +176,11 @@ describe('Cart functionalities', () => {
         .spyOn(httpUtils, 'getProducts')
         .mockImplementation(jest.fn(() => Promise.resolve(mockProducts)));
 
-      render(<Cart />);
+      render(<Cart />, {
+        wrapper: ({ children }) => (
+          <ProductsProvider>{children}</ProductsProvider>
+        ),
+      });
 
       const input = await screen.findAllByTestId<HTMLInputElement>(
         'quantity-input'
@@ -197,7 +218,11 @@ describe('Cart functionalities', () => {
         .spyOn(httpUtils, 'getProducts')
         .mockImplementation(jest.fn(() => Promise.resolve(mockProducts)));
 
-      render(<Cart />);
+      render(<Cart />, {
+        wrapper: ({ children }) => (
+          <ProductsProvider>{children}</ProductsProvider>
+        ),
+      });
 
       const input = await screen.findAllByTestId<HTMLInputElement>(
         'quantity-input'
@@ -230,7 +255,11 @@ describe('Cart functionalities', () => {
         .spyOn(httpUtils, 'getProducts')
         .mockImplementation(jest.fn(() => Promise.resolve(mockProducts)));
 
-      render(<Cart />);
+      render(<Cart />, {
+        wrapper: ({ children }) => (
+          <ProductsProvider>{children}</ProductsProvider>
+        ),
+      });
 
       const input = await screen.findAllByTestId<HTMLInputElement>(
         'quantity-input'
@@ -260,7 +289,11 @@ describe('Cart functionalities', () => {
         .spyOn(httpUtils, 'getProducts')
         .mockImplementation(jest.fn(() => Promise.resolve(mockProducts)));
 
-      render(<Cart />);
+      render(<Cart />, {
+        wrapper: ({ children }) => (
+          <ProductsProvider>{children}</ProductsProvider>
+        ),
+      });
 
       const input = await screen.findAllByTestId<HTMLInputElement>(
         'quantity-input'

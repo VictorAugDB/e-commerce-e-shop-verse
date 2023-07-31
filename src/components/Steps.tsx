@@ -21,8 +21,8 @@ export default function Steps({ flow, currentStep, className }: StepsProps) {
       {steps.map((step, idx) => (
         <React.Fragment key={step}>
           <p
-            data-currenStep={currentStep === idx}
-            className='text-sm text-gray-400 data-[currenStep=true]:text-black'
+            data-current-step={currentStep === idx}
+            className='text-sm text-gray-400 data-[current-step=true]:text-black'
           >
             {step}
           </p>
