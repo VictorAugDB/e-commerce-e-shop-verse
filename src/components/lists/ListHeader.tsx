@@ -17,6 +17,7 @@ export default function ListHeader({
   const [currentDate, setCurrentDate] = useState(
     new Date(endDate.getTime() - new Date().getTime())
   );
+  const [isClient, setIsClient] = useState(false);
 
   const remainingDays = currentDate.getDate();
   const remainingHours = currentDate.getHours();
@@ -24,6 +25,7 @@ export default function ListHeader({
   const remainingSeconds = currentDate.getSeconds();
 
   useEffect(() => {
+    setIsClient(true);
     if (hasTimer) {
       const id = setInterval(
         () =>
@@ -47,7 +49,7 @@ export default function ListHeader({
       </div>
       <div className='flex gap-20'>
         <h1>{title}</h1>
-        {hasTimer && (
+        {hasTimer && isClient && (
           <div className='flex items-center gap-4'>
             <div>
               <span className='block text-xs'>Days</span>
