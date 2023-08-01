@@ -40,7 +40,7 @@ export default function Cart() {
 
   return (
     <div className='px-[8.4375rem]'>
-      <Steps flow='buy' currentStep={0} className='py-20' />
+      <Steps flow='buy' currentStep={0} />
       <div className='flex flex-col items-center gap-6'>
         <table className='w-full table-fixed'>
           <thead className='hidden bg-white md:table-header-group'>

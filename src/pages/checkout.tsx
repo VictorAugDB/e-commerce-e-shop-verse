@@ -27,9 +27,9 @@ export default function Checkout() {
   return (
     <div className='px-[8.4375rem]'>
       {from === 'cart' ? (
-        <Steps flow='buy' currentStep={0} className='py-20' />
+        <Steps flow='buy' currentStep={0} />
       ) : (
-        <Steps flow='buy' currentStep={0} className='py-20' />
+        <Steps flow='buy' currentStep={0} />
       )}
       <h1>Billing Details</h1>
       <div className='mt-10 grid grid-cols-2 gap-4'>
