@@ -2,6 +2,7 @@ import { Eye, Heart } from 'react-feather';
 
 import Button from '@/components/buttons/Button';
 import NextImage from '@/components/NextImage';
+import Stars from '@/components/Stars';
 
 type ProductProps = {
   hasButton?: boolean;
@@ -9,7 +10,7 @@ type ProductProps = {
   discount?: number;
   price: number;
   numberOfStars: number;
-  numberOfEvalitions: number;
+  numberOfEvaluations: number;
   name: string;
 };
 
@@ -19,19 +20,9 @@ export default function Product({
   discount,
   price,
   numberOfStars,
-  numberOfEvalitions,
+  numberOfEvaluations,
   name,
 }: ProductProps) {
-  const stars = new Array(5)
-    .fill(0)
-    .map((star, i) =>
-      i < numberOfStars && (numberOfStars - i >= 1 || numberOfStars % 1 === 0)
-        ? 2
-        : i < numberOfStars && numberOfStars % 1 !== 0
-        ? 1
-        : 0
-    );
-
   return (
     <div className='flex min-w-[16.875rem] flex-1 flex-col gap-4'>
       <div className='relative flex h-[15.625rem] w-full flex-col items-center justify-end gap-[14px]'>
@@ -81,31 +72,10 @@ export default function Product({
             <p className='font-medium text-green-700'>${price}</p>
           )}
         </div>
-        <div className='flex items-center'>
-          {stars.map(
-            (
-              star,
-              i // Using index because this will not be changed by state
-            ) => (
-              <NextImage
-                key={i}
-                alt='star'
-                src={
-                  star === 0
-                    ? '/images/unfilled-star.png'
-                    : star === 1
-                    ? '/images/half-filled-star.png'
-                    : '/images/star.png'
-                }
-                width={20}
-                height={20}
-              ></NextImage>
-            )
-          )}
-          <p className='ml-2 font-semibold text-gray-500'>
-            ({numberOfEvalitions})
-          </p>
-        </div>
+        <Stars
+          numberOfEvaluations={numberOfEvaluations}
+          numberOfStars={numberOfStars}
+        />
       </div>
     </div>
   );

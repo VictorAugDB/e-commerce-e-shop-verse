@@ -24,7 +24,7 @@ export default function ListProducts({
           price={160}
           discount={40}
           numberOfStars={5}
-          numberOfEvalitions={88}
+          numberOfEvaluations={88}
           name='HAVIT HV-G92 Gamepad'
         />
         <Product
@@ -33,7 +33,7 @@ export default function ListProducts({
           discount={35}
           hasButton={true}
           numberOfStars={4}
-          numberOfEvalitions={89}
+          numberOfEvaluations={89}
           name='AK-900 Wired Keyboard'
         />
         <Product
@@ -41,7 +41,7 @@ export default function ListProducts({
           price={400}
           discount={30}
           numberOfStars={4.1}
-          numberOfEvalitions={88}
+          numberOfEvaluations={88}
           name='IPS LCD Gaming Monitor'
         />
         <Product
@@ -49,7 +49,7 @@ export default function ListProducts({
           price={400}
           discount={25}
           numberOfStars={4.9}
-          numberOfEvalitions={100}
+          numberOfEvaluations={100}
           name='S-Series Comfort Chair '
         />
       </div>
