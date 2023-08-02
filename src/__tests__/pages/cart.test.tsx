@@ -12,6 +12,9 @@ const product = {
   price: 650,
   quantity: 1,
   name: 'Monitor',
+  description: '',
+  evaluations: 150,
+  stars: 4,
 };
 
 const coupon = {

@@ -16,6 +16,9 @@ export type Product = {
   price: number;
   quantity: number;
   name: string;
+  description: string;
+  evaluations: number;
+  stars: number;
 };
 
 export type Coupon = {

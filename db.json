@@ -5,14 +5,20 @@
       "image": "/images/monitor.png",
       "price": 650,
       "name": "Monitor LCD Gamer",
-      "quantity": 1
+      "description": "Unleash gaming greatness with our HD Monitor! 144Hz refresh rate and FreeSync tech deliver seamless visuals and precision gameplay. Elevate your gaming experience now!",
+      "quantity": 1,
+      "evaluations": 150,
+      "stars": 4
     },
     {
       "id": "2",
       "image": "/images/monitor.png",
       "price": 650,
       "name": "Monitor LCD Gamer",
-      "quantity": 1
+      "description": "Unleash gaming greatness with our HD Monitor! 144Hz refresh rate and FreeSync tech deliver seamless visuals and precision gameplay. Elevate your gaming experience now!",
+      "quantity": 1,
+      "evaluations": 150,
+      "stars": 4
     }
   ],
   "coupons": [
