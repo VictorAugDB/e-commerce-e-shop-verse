@@ -152,7 +152,7 @@ function RadioButton({ name, id, label, ...props }: RadioButtonProps) {
         className='h-6 w-6 cursor-pointer text-black ring-black checked:border-2 checked:bg-none checked:ring checked:ring-inset checked:ring-offset-[3px] focus:ring-black'
         {...props}
       />
-      <label htmlFor='bank'>{label}</label>
+      <label htmlFor={name}>{label}</label>
     </div>
   );
 }
