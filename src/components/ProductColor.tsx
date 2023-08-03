@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { Fragment, useState } from 'react'
 import { twMerge } from 'tailwind-merge'
 
 type ProductsProps = {
@@ -19,14 +19,15 @@ export function ProductColor({ colors }: ProductsProps) {
   return (
     <>
       {colors.map((c) => (
-        <>
+        <Fragment key={c}>
           {isValidColor(c) && (
-            <div
-              key={c}
-              onClick={() => handleSelect(c)}
-              className="relative h-5 w-5"
-            >
-              <div className="flex h-5 w-5 items-center justify-center rounded-full border-2 border-black bg-white">
+            <div onClick={() => handleSelect(c)} className="relative h-5 w-5">
+              <button
+                className="flex h-5 w-5 items-center justify-center rounded-full border-2 border-black focus:ring-1 focus:ring-black"
+                style={{
+                  backgroundColor: checkedColor === c ? '#FFFFFF' : c,
+                }}
+              >
                 <span
                   className={twMerge(
                     'h-3 w-3 rounded-full',
@@ -36,10 +37,10 @@ export function ProductColor({ colors }: ProductsProps) {
                     backgroundColor: c,
                   }}
                 ></span>
-              </div>
+              </button>
             </div>
           )}
-        </>
+        </Fragment>
       ))}
     </>
   )

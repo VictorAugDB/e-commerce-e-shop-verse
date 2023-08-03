@@ -5,10 +5,13 @@ import {
   InferGetStaticPropsType,
 } from 'next'
 import { useRef, useState } from 'react'
+import { Heart } from 'react-feather'
 import { CSSTransition, SwitchTransition } from 'react-transition-group'
+import { twMerge } from 'tailwind-merge'
 
 import { getProductById, getProducts } from '@/lib/http'
 
+import Button from '@/components/buttons/Button'
 import NextImage from '@/components/NextImage'
 import { ProductColor } from '@/components/ProductColor'
 import Stars from '@/components/Stars'
@@ -23,6 +26,8 @@ type ProductProps = {
 export default function Product({
   product,
 }: InferGetStaticPropsType<GetStaticProps<ProductProps>>) {
+  const [selectedSize, setSelectedSize] = useState<null | string>(null)
+
   const [images, setImages] = useState([
     product.image,
     '/images/keyboard.png',
@@ -38,6 +43,12 @@ export default function Product({
     imgs[imgs.length - 1] = img
 
     setImages([...imgs])
+  }
+
+  const sizes: ['xs', 's', 'm', 'l', 'xl'] = ['xs', 's', 'm', 'l', 'xl']
+
+  function handleSelectSize(size: string) {
+    setSelectedSize(size)
   }
 
   return (
@@ -102,10 +113,43 @@ export default function Product({
           <div className="my-6 h-px w-full"></div>
           <div className="flex flex-col gap-4">
             <div className="flex items-center gap-4">
-              <p className="text-lg">Colours</p>
+              <p className="text-lg">Colours:</p>
               <div className="flex items-center gap-2">
                 <ProductColor colors={['#000', '#999']} />
               </div>
+            </div>
+            <div className="flex items-center gap-6">
+              <p className="text-lg">Sizes:</p>
+              <div className="flex items-center gap-4">
+                {sizes.map((s) => (
+                  <button
+                    key={s}
+                    onClick={() => handleSelectSize(s)}
+                    disabled={product.sizes[s] <= 0}
+                    className={twMerge(
+                      'h-8 w-8 rounded border border-gray-600 disabled:cursor-not-allowed disabled:bg-gray-300/50',
+                      selectedSize === s
+                        ? 'bg-green-700 text-white'
+                        : 'bg-white text-black',
+                    )}
+                  >
+                    <p className="text-sm font-medium">{s.toUpperCase()}</p>
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="flex items-center">
+                <div>-</div>
+                <p className="px-9 text-center">2</p>
+                <div>+</div>
+              </div>
+              <Button variant="green" className="px-12">
+                Buy Now
+              </Button>
+              <button>
+                <Heart />
+              </button>
             </div>
           </div>
         </div>

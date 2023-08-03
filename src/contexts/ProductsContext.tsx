@@ -10,12 +10,21 @@ import {
 
 import { getCoupons } from '@/lib/http'
 
+export type ProductSize = {
+  xs: number
+  s: number
+  m: number
+  l: number
+  xl: number
+}
+
 export type Product = {
   id: string
   image: string
   price: number
   quantity: number
   name: string
+  sizes: ProductSize
   description: string
   evaluations: number
   stars: number

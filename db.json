@@ -7,6 +7,13 @@
       "name": "Monitor LCD Gamer",
       "description": "Unleash gaming greatness with our HD Monitor! 144Hz refresh rate and FreeSync tech deliver seamless visuals and precision gameplay. Elevate your gaming experience now!",
       "quantity": 1,
+      "sizes": {
+        "xs": 10,
+        "s": 5,
+        "m": 15,
+        "l": 20,
+        "xl": 0
+      },
       "evaluations": 150,
       "stars": 4
     },
@@ -17,6 +24,13 @@
       "name": "Monitor LCD Gamer",
       "description": "Unleash gaming greatness with our HD Monitor! 144Hz refresh rate and FreeSync tech deliver seamless visuals and precision gameplay. Elevate your gaming experience now!",
       "quantity": 1,
+      "sizes": {
+        "xs": 10,
+        "s": 5,
+        "m": 15,
+        "l": 20,
+        "xl": 11
+      },
       "evaluations": 150,
       "stars": 4
     }

@@ -3,14 +3,19 @@ import userEvent from '@testing-library/user-event'
 
 import * as httpUtils from '@/lib/http'
 
-import { ProductsProvider } from '@/contexts/ProductsContext'
+import {
+  Product,
+  ProductSize,
+  ProductsProvider,
+} from '@/contexts/ProductsContext'
 import Cart from '@/pages/cart'
 
-const product = {
+const product: Product = {
   id: '1',
   image: '/images/monitor.png',
   price: 650,
   quantity: 1,
+  sizes: {} as ProductSize,
   name: 'Monitor',
   description: '',
   evaluations: 150,
