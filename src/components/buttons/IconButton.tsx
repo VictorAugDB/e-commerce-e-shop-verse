@@ -1,8 +1,8 @@
-import * as React from 'react';
-import { IconType } from 'react-icons';
-import { ImSpinner2 } from 'react-icons/im';
+import * as React from 'react'
+import { IconType } from 'react-icons'
+import { ImSpinner2 } from 'react-icons/im'
 
-import clsxm from '@/lib/clsxm';
+import clsxm from '@/lib/clsxm'
 
 const IconButtonVariant = [
   'primary',
@@ -10,15 +10,15 @@ const IconButtonVariant = [
   'ghost',
   'light',
   'dark',
-] as const;
+] as const
 
 type IconButtonProps = {
-  isLoading?: boolean;
-  isDarkBg?: boolean;
-  variant?: (typeof IconButtonVariant)[number];
-  icon?: IconType;
-  iconClassName?: string;
-} & React.ComponentPropsWithRef<'button'>;
+  isLoading?: boolean
+  isDarkBg?: boolean
+  variant?: (typeof IconButtonVariant)[number]
+  icon?: IconType
+  iconClassName?: string
+} & React.ComponentPropsWithRef<'button'>
 
 const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
   (
@@ -32,14 +32,14 @@ const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
       iconClassName,
       ...rest
     },
-    ref
+    ref,
   ) => {
-    const disabled = isLoading || buttonDisabled;
+    const disabled = isLoading || buttonDisabled
 
     return (
       <button
         ref={ref}
-        type='button'
+        type="button"
         disabled={disabled}
         className={clsxm(
           'inline-flex items-center justify-center rounded font-medium',
@@ -86,7 +86,7 @@ const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
           'disabled:cursor-not-allowed',
           isLoading &&
             'relative text-transparent transition-none hover:text-transparent disabled:cursor-wait',
-          className
+          className,
         )}
         {...rest}
       >
@@ -98,16 +98,16 @@ const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
                 'text-white': ['primary', 'dark'].includes(variant),
                 'text-black': ['light'].includes(variant),
                 'text-primary-500': ['outline', 'ghost'].includes(variant),
-              }
+              },
             )}
           >
-            <ImSpinner2 className='animate-spin' />
+            <ImSpinner2 className="animate-spin" />
           </div>
         )}
         {Icon && <Icon className={clsxm(iconClassName)} />}
       </button>
-    );
-  }
-);
+    )
+  },
+)
 
-export default IconButton;
+export default IconButton

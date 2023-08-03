@@ -1,12 +1,12 @@
-import * as React from 'react';
+import * as React from 'react'
 
-import clsxm from '@/lib/clsxm';
+import clsxm from '@/lib/clsxm'
 
-const TextButtonVariant = ['primary', 'basic'] as const;
+const TextButtonVariant = ['primary', 'basic'] as const
 
 type TextButtonProps = {
-  variant?: (typeof TextButtonVariant)[number];
-} & React.ComponentPropsWithRef<'button'>;
+  variant?: (typeof TextButtonVariant)[number]
+} & React.ComponentPropsWithRef<'button'>
 
 const TextButton = React.forwardRef<HTMLButtonElement, TextButtonProps>(
   (
@@ -17,12 +17,12 @@ const TextButton = React.forwardRef<HTMLButtonElement, TextButtonProps>(
       disabled: buttonDisabled,
       ...rest
     },
-    ref
+    ref,
   ) => {
     return (
       <button
         ref={ref}
-        type='button'
+        type="button"
         disabled={buttonDisabled}
         className={clsxm(
           'button inline-flex items-center justify-center font-semibold',
@@ -39,14 +39,14 @@ const TextButton = React.forwardRef<HTMLButtonElement, TextButtonProps>(
           ],
           //#endregion  //*======== Variant ===========
           'disabled:cursor-not-allowed disabled:brightness-105 disabled:hover:underline',
-          className
+          className,
         )}
         {...rest}
       >
         {children}
       </button>
-    );
-  }
-);
+    )
+  },
+)
 
-export default TextButton;
+export default TextButton

@@ -6,14 +6,24 @@ module.exports = {
   },
   plugins: ['@typescript-eslint', 'simple-import-sort', 'unused-imports'],
   extends: [
-    'eslint:recommended',
-    'next',
     'next/core-web-vitals',
     'plugin:@typescript-eslint/recommended',
-    'prettier',
+    'plugin:prettier/recommended',
     'plugin:tailwindcss/recommended',
   ],
   rules: {
+    'prettier/prettier': [
+      'error',
+      {
+        printWidth: 80,
+        tabWidth: 2,
+        singleQuote: true,
+        trailingComma: 'all',
+        arrowParens: 'always',
+        semi: false,
+        endOfLine: 'auto',
+      },
+    ],
     'no-unused-vars': 'off',
     'no-console': 'warn',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
@@ -85,4 +95,4 @@ module.exports = {
     React: true,
     JSX: true,
   },
-};
+}

@@ -1,11 +1,11 @@
-import * as React from 'react';
-import { IconType } from 'react-icons';
+import * as React from 'react'
+import { IconType } from 'react-icons'
 
-import clsxm from '@/lib/clsxm';
+import clsxm from '@/lib/clsxm'
 
 import UnstyledLink, {
   UnstyledLinkProps,
-} from '@/components/links/UnstyledLink';
+} from '@/components/links/UnstyledLink'
 
 const IconLinkVariant = [
   'primary',
@@ -13,14 +13,14 @@ const IconLinkVariant = [
   'ghost',
   'light',
   'dark',
-] as const;
+] as const
 
 type IconLinkProps = {
-  isDarkBg?: boolean;
-  variant?: (typeof IconLinkVariant)[number];
-  icon?: IconType;
-  iconClassName?: string;
-} & Omit<UnstyledLinkProps, 'children'>;
+  isDarkBg?: boolean
+  variant?: (typeof IconLinkVariant)[number]
+  icon?: IconType
+  iconClassName?: string
+} & Omit<UnstyledLinkProps, 'children'>
 
 const IconLink = React.forwardRef<HTMLAnchorElement, IconLinkProps>(
   (
@@ -32,12 +32,12 @@ const IconLink = React.forwardRef<HTMLAnchorElement, IconLinkProps>(
       iconClassName,
       ...rest
     },
-    ref
+    ref,
   ) => {
     return (
       <UnstyledLink
         ref={ref}
-        type='button'
+        type="button"
         className={clsxm(
           'inline-flex items-center justify-center rounded font-medium',
           'focus-visible:ring-primary-500 focus:outline-none focus-visible:ring',
@@ -81,14 +81,14 @@ const IconLink = React.forwardRef<HTMLAnchorElement, IconLinkProps>(
           ],
           //#endregion  //*======== Variants ===========
           'disabled:cursor-not-allowed',
-          className
+          className,
         )}
         {...rest}
       >
         {Icon && <Icon className={clsxm(iconClassName)} />}
       </UnstyledLink>
-    );
-  }
-);
+    )
+  },
+)
 
-export default IconLink;
+export default IconLink
