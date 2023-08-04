@@ -5,7 +5,8 @@ import {
   InferGetStaticPropsType,
 } from 'next'
 import { useRef, useState } from 'react'
-import { Heart } from 'react-feather'
+import { Heart, RefreshCcw } from 'react-feather'
+import { TbTruckDelivery } from 'react-icons/tb'
 import { CSSTransition, SwitchTransition } from 'react-transition-group'
 import { twMerge } from 'tailwind-merge'
 
@@ -110,7 +111,7 @@ export default function Product({
             />
             <p className="text-sm">{product.description}</p>
           </div>
-          <div className="my-6 h-px w-full"></div>
+          <div className="my-6 h-px w-full bg-gray-600"></div>
           <div className="flex flex-col gap-4">
             <div className="flex items-center gap-4">
               <p className="text-lg">Colours:</p>
@@ -138,18 +139,50 @@ export default function Product({
                 ))}
               </div>
             </div>
-            <div className="flex items-center gap-4">
-              <div className="flex items-center">
-                <div>-</div>
-                <p className="px-9 text-center">2</p>
-                <div>+</div>
-              </div>
-              <Button variant="green" className="px-12">
-                Buy Now
+          </div>
+          <div className="mt-6 flex max-h-[2.75rem] items-center gap-4">
+            <div className="flex h-full items-center overflow-hidden rounded bg-white">
+              <Button
+                variant="ghost"
+                className="h-full rounded-r-none border border-gray-600 text-2xl hover:bg-gray-200"
+              >
+                -
               </Button>
-              <button>
-                <Heart />
-              </button>
+              <div className="h-full border-x-0 border-y border-gray-600 px-9 py-[.375rem] text-center leading-6">
+                {product.quantity}
+              </div>
+              <Button
+                variant="green"
+                className="h-full rounded-l-none border border-l-0  border-green-600 text-2xl"
+              >
+                +
+              </Button>
+            </div>
+            <Button variant="green" className="h-full px-12">
+              Buy Now
+            </Button>
+            <div className="flex items-center justify-center rounded border border-gray-600 p-[.375rem]">
+              <Heart width={20} height={20} strokeWidth={1.5} />
+            </div>
+          </div>
+          <div className="mt-11">
+            <div className="flex w-full gap-4 rounded rounded-b-none border border-b-0 border-gray-600 px-4 py-6">
+              <TbTruckDelivery className="h-10 w-10" strokeWidth={1.5} />
+              <div className="space-y-2">
+                <p className="font-medium">Free delivery</p>
+                <p className="text-xs font-medium">
+                  Enter your postal code for Delivery Availability
+                </p>
+              </div>
+            </div>
+            <div className="flex w-full gap-4 rounded rounded-t-none border border-gray-600 px-4 py-6">
+              <RefreshCcw width={40} height={40} strokeWidth={1.5} />
+              <div className="space-y-2">
+                <p className="font-medium">Return Delivery</p>
+                <p className="text-xs font-medium">
+                  Free 30 Days Delivery Returns. Details
+                </p>
+              </div>
             </div>
           </div>
         </div>
