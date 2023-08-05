@@ -8,6 +8,9 @@ import { HiOutlineDesktopComputer } from 'react-icons/hi'
 import { LuGamepad } from 'react-icons/lu'
 import { LuShieldCheck } from 'react-icons/lu'
 import { TbHeadphones, TbTruckDelivery } from 'react-icons/tb'
+import { twMerge } from 'tailwind-merge'
+
+import { getProducts } from '@/lib/http'
 
 import BackgroundProduct from '@/components/BackgroundProduct'
 import Button from '@/components/buttons/Button'
@@ -20,24 +23,26 @@ import RoundedBackgroundIcon from '@/components/RoundedBackgroundIcon'
 import Seo from '@/components/Seo'
 import ShopNowButton from '@/components/ShopNowButton'
 
+import { Product } from '@/contexts/ProductsContext'
+
 export type CategoriesWithIcons = {
   name: string
   icon: IconType
 }
 
-/**
- * SVGR Support
- * Caveat: No React Props Type.
- *
- * You can override the next-env if the type is important to you
- * @see https://stackoverflow.com/questions/68103844/how-to-override-next-js-svg-module-declaration
- */
+export type HomePageProps = {
+  flashSales: Product[]
+  bestSellings: Product[]
+  products: Product[]
+  newArrival: Product[]
+}
 
-// !STARTERCONF -> Select !STARTERCONF and CMD + SHIFT + F
-// Before you begin editing, follow all comments with `STARTERCONF`,
-// to customize the default configuration.
-
-export default function HomePage() {
+export default function HomePage({
+  bestSellings,
+  flashSales,
+  products,
+  newArrival,
+}: HomePageProps) {
   const categories = [
     "Woman's fashion",
     "Men's Fashion",
@@ -153,6 +158,7 @@ export default function HomePage() {
         </section>
       </div>
       <ListProducts
+        products={flashSales}
         topic="Today's"
         title="Flash Sales"
         hasTimer={true}
@@ -162,6 +168,7 @@ export default function HomePage() {
       <Categories categories={categoriesWithIcons} />
       <Divider />
       <ListProducts
+        products={bestSellings}
         topic="This Month"
         title="Best Selling Products"
         hasButton={true}
@@ -206,6 +213,7 @@ export default function HomePage() {
         </div>
       </div>
       <ListProducts
+        products={products}
         topic="Our Products"
         title="Explore Our Products"
         hasButton={true}
@@ -213,32 +221,19 @@ export default function HomePage() {
       <div className="flex h-[48rem] w-full flex-col">
         <ListHeader topic="Featured" title="New Arrival" />
         <div className="mt-[3.75rem] grid h-full w-full grid-cols-[50%,repeat(2,minmax(0,1fr))] grid-rows-2 gap-8">
-          <BackgroundProduct
-            className="col-span-1 row-span-2"
-            name="PlayStation 5"
-            description="Black and White version of the PS5 coming out on sale."
-            href="/produts/ps-5id"
-            imagePath="/images/ps5.png"
-          />
-          <BackgroundProduct
-            className="col-span-2"
-            name="PlayStation 5"
-            description="Black and White version of the PS5 coming out on sale."
-            href="/produts/ps-5id"
-            imagePath="/images/ps5.png"
-          />
-          <BackgroundProduct
-            name="PlayStation 5"
-            description="Black and White version of the PS5 coming out on sale."
-            href="/produts/ps-5id"
-            imagePath="/images/ps5.png"
-          />
-          <BackgroundProduct
-            name="PlayStation 5"
-            description="Black and White version of the PS5 coming out on sale."
-            href="/produts/ps-5id"
-            imagePath="/images/ps5.png"
-          />
+          {newArrival.map((na, idx) => (
+            <BackgroundProduct
+              key={na.id}
+              className={twMerge(
+                idx === 0 && 'row-span-2',
+                idx === 1 && 'col-span-2',
+              )}
+              name={na.name}
+              description={na.description}
+              href={`/products/${na.id}`}
+              imagePath={na.images[0]}
+            />
+          ))}
         </div>
       </div>
       <div className="flex items-center gap-[5.5rem]">
@@ -273,4 +268,23 @@ export default function HomePage() {
       </button>
     </div>
   )
+}
+
+export async function getStaticProps() {
+  const flashSales = await getProducts({ discount: 1, limit: 4 })
+  const bestSellings = await getProducts({
+    bestSelling: true,
+    limit: 4,
+    revalidate: 3,
+  })
+  const products = await getProducts({ limit: 4, revalidate: 24 })
+  let newArrival = await getProducts({ revalidate: 3 })
+  newArrival = newArrival
+    .sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    )
+    .slice(0, 4)
+
+  return { props: { flashSales, bestSellings, products, newArrival } }
 }

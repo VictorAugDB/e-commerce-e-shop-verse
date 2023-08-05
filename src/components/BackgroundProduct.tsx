@@ -35,7 +35,6 @@ export default function BackgroundProduct({
         fill
         style={{
           objectFit: 'contain',
-          width: '100%',
         }}
       ></NextImage>
     </div>

@@ -1,7 +1,43 @@
 import { Coupon, Product } from '@/contexts/ProductsContext'
 
-export const getProducts = async (): Promise<Product[]> => {
-  const res = await fetch('http://localhost:3002/products')
+type GetProducts = {
+  limit?: number
+  category?: string
+  discount?: number
+  bestSelling?: boolean
+  revalidate?: number
+}
+
+export const getProducts = async ({
+  limit,
+  category,
+  discount,
+  bestSelling,
+  revalidate,
+}: GetProducts = {}): Promise<Product[]> => {
+  let query = ''
+
+  if (limit) {
+    query += `?_limit=${limit}`
+  }
+
+  if (category) {
+    query += `${query ? '&' : '?'}category=${category}`
+  }
+
+  if (discount !== undefined) {
+    query += `${query ? '&' : '?'}discount_gte=${discount}`
+  }
+
+  if (bestSelling) {
+    query += `${query ? '&' : '?'}_sort=numberOfSales&_order=desc`
+  }
+
+  const res = await fetch('http://localhost:3002/products' + query, {
+    next: {
+      revalidate: revalidate ? 60 * 60 * revalidate : 0,
+    }, // X hours
+  })
   return await res.json()
 }
 

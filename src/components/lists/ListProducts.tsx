@@ -2,9 +2,12 @@ import Button from '@/components/buttons/Button'
 import ListHeader from '@/components/lists/ListHeader'
 import Product from '@/components/Product'
 
+import { Product as ProductType } from '@/contexts/ProductsContext'
+
 type ListProductsProps = {
   topic: string
-  title: string
+  products: ProductType[]
+  title?: string
   hasTimer?: boolean
   hasButton?: boolean
 }
@@ -14,44 +17,24 @@ export default function ListProducts({
   topic,
   hasTimer = false,
   hasButton = false,
+  products,
 }: ListProductsProps) {
   return (
     <div className="flex w-full flex-col gap-10">
       <ListHeader topic={topic} title={title} hasTimer={hasTimer}></ListHeader>
       <div className="grid grid-cols-4 items-center gap-[1.875rem]">
-        <Product
-          imagePath="/images/control.png"
-          price={160}
-          discount={40}
-          numberOfStars={5}
-          numberOfEvaluations={88}
-          name="HAVIT HV-G92 Gamepad"
-        />
-        <Product
-          imagePath="/images/keyboard.png"
-          price={1160}
-          discount={35}
-          hasButton={true}
-          numberOfStars={4}
-          numberOfEvaluations={89}
-          name="AK-900 Wired Keyboard"
-        />
-        <Product
-          imagePath="/images/monitor.png"
-          price={400}
-          discount={30}
-          numberOfStars={4.1}
-          numberOfEvaluations={88}
-          name="IPS LCD Gaming Monitor"
-        />
-        <Product
-          imagePath="/images/chair.png"
-          price={400}
-          discount={25}
-          numberOfStars={4.9}
-          numberOfEvaluations={100}
-          name="S-Series Comfort Chair "
-        />
+        {products.map((p) => (
+          <Product
+            key={p.id}
+            id={p.id}
+            imagePath={p.images[0]}
+            price={p.price}
+            discount={p.discount}
+            numberOfStars={p.stars}
+            numberOfEvaluations={p.evaluations}
+            name={p.name}
+          />
+        ))}
       </div>
       {hasButton && (
         <Button className="mx-auto w-fit px-12 py-4" variant="green">

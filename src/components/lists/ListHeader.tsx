@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 
 type ListHeaderProps = {
   topic: string
-  title: string
+  title?: string
   hasTimer?: boolean
 }
 
