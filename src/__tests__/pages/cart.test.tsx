@@ -12,7 +12,10 @@ import Cart from '@/pages/cart'
 
 const product: Product = {
   id: '1',
-  image: '/images/monitor.png',
+  category: '',
+  createdAt: '',
+  discount: 0,
+  images: [],
   price: 650,
   quantity: 1,
   sizes: {} as ProductSize,

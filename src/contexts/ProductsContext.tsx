@@ -20,14 +20,17 @@ export type ProductSize = {
 
 export type Product = {
   id: string
-  image: string
+  images: string[]
   price: number
   quantity: number
   name: string
   sizes: ProductSize
   description: string
   evaluations: number
+  category: string
+  discount: number
   stars: number
+  createdAt: string
 }
 
 export type Coupon = {
