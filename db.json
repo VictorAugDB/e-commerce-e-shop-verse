@@ -2,7 +2,7 @@
   "products": [
     {
       "id": "1",
-      "image": "/images/monitor.png",
+      "images": ["/images/monitor.png", "/images/monitor.png", "/images/monitor.png"],
       "price": 650,
       "name": "Monitor LCD Gamer",
       "description": "Unleash gaming greatness with our HD Monitor! 144Hz refresh rate and FreeSync tech deliver seamless visuals and precision gameplay. Elevate your gaming experience now!",
@@ -15,24 +15,158 @@
         "xl": 0
       },
       "evaluations": 150,
-      "stars": 4
+      "category": "Gaming",
+      "numberOfSales": 10,
+      "discount": 0,
+      "stars": 4,
+      "createdAt": "2023-08-05T17:23:15.512Z"
     },
     {
       "id": "2",
-      "image": "/images/monitor.png",
-      "price": 650,
-      "name": "Monitor LCD Gamer",
-      "description": "Unleash gaming greatness with our HD Monitor! 144Hz refresh rate and FreeSync tech deliver seamless visuals and precision gameplay. Elevate your gaming experience now!",
-      "quantity": 1,
+      "images": ["/images/bag.png", "/images/bag.png", "/images/bag.png"],
+      "price": 50,
+      "name": "Stylish Bag",
+      "description": "A fashionable and functional bag for everyday use.",
+      "quantity": 100,
+      "evaluations": 50,
+      "category": "Fashion",
+      "numberOfSales": 20,
+      "discount": 10,
+      "stars": 4.5,
+      "sizes": {
+        "xs": 5,
+        "s": 15,
+        "m": 30,
+        "l": 40,
+        "xl": 10
+      },
+      "createdAt": "2023-08-05T17:23:15.512Z"
+    },
+    {
+      "id": "3",
+      "images": ["/images/book-shelf.png", "/images/book-shelf.png", "/images/book-shelf.png"],
+      "price": 120,
+      "name": "Wooden Book Shelf",
+      "description": "An elegant wooden bookshelf to organize your books.",
+      "quantity": 30,
+      "evaluations": 70,
+      "category": "Home & Living",
+      "numberOfSales": 10,
+      "discount": 5,
+      "stars": 4.0,
+      "sizes": {
+        "xs": 2,
+        "s": 5,
+        "m": 10,
+        "l": 10,
+        "xl": 3
+      },
+      "createdAt": "2023-08-06T10:45:25.743Z"
+    },
+    {
+      "id": "4",
+      "images": ["/images/coat.png", "/images/coat.png", "/images/coat.png"],
+      "price": 80,
+      "name": "Warm Winter Coat",
+      "description": "Stay cozy and stylish with this warm winter coat.",
+      "quantity": 60,
+      "evaluations": 40,
+      "category": "Fashion",
+      "numberOfSales": 15,
+      "discount": 15,
+      "stars": 4.2,
       "sizes": {
         "xs": 10,
-        "s": 5,
+        "s": 20,
         "m": 15,
-        "l": 20,
-        "xl": 11
+        "l": 10,
+        "xl": 5
       },
-      "evaluations": 150,
-      "stars": 4
+      "createdAt": "2023-08-07T08:30:05.982Z"
+    },
+    {
+      "id": "5",
+      "images": ["/images/cooler.png", "/images/cooler.png", "/images/cooler.png"],
+      "price": 35,
+      "name": "Portable Cooler",
+      "description": "Keep your beverages chilled with this portable cooler.",
+      "quantity": 40,
+      "evaluations": 20,
+      "category": "Outdoor & Camping",
+      "numberOfSales": 5,
+      "discount": 0,
+      "stars": 4.8,
+      "sizes": {
+        "xs": 8,
+        "s": 10,
+        "m": 15,
+        "l": 5,
+        "xl": 2
+      },
+      "createdAt": "2023-08-08T16:10:18.621Z"
+    },
+    {
+      "id": "5",
+      "images": ["/images/keyboard.png", "/images/keyboard.png", "/images/keyboard.png"],
+      "price": 90,
+      "name": "Mechanical Gaming Keyboard",
+      "description": "Experience precise and responsive typing with this mechanical gaming keyboard.",
+      "quantity": 25,
+      "evaluations": 100,
+      "category": "Electronics",
+      "numberOfSales": 50,
+      "discount": 20,
+      "stars": 4.7,
+      "sizes": {
+        "xs": 0,
+        "s": 5,
+        "m": 10,
+        "l": 8,
+        "xl": 2
+      },
+      "createdAt": "2023-08-09T12:05:59.153Z"
+    },
+    {
+      "id": "6",
+      "images": ["/images/chair.png", "/images/chair.png", "/images/chair.png"],
+      "price": 150,
+      "name": "Ergonomic Office Chair",
+      "description": "Work in comfort with this ergonomic office chair.",
+      "quantity": 12,
+      "evaluations": 60,
+      "category": "Office Furniture",
+      "numberOfSales": 8,
+      "discount": 0,
+      "stars": 4.6,
+      "sizes": {
+        "xs": 0,
+        "s": 2,
+        "m": 5,
+        "l": 4,
+        "xl": 1
+      },
+      "createdAt": "2023-08-10T09:20:45.398Z"
+    },
+    {
+      "id": "7",
+      "images": ["/images/control.png", "/images/control.png", "/images/control.png"],
+      "price": 40,
+      "name": "Gaming Controller",
+      "description": "Enhance your gaming experience with this advanced gaming controller.",
+      "quantity": 30,
+      "evaluations": 25,
+      "category": "Gaming",
+      "numberOfSales": 12,
+      "discount": 5,
+      "stars": 4.3,
+      "sizes": {
+        "xs": 8,
+        "s": 5,
+        "m": 10,
+        "l": 6,
+        "xl": 1
+      },
+      "createdAt": "2023-08-11T14:55:37.890Z"
     }
   ],
   "coupons": [
