@@ -71,7 +71,7 @@ export default function Checkout() {
             {products.map((p) => (
               <ProductDetails
                 key={p.id}
-                imagePath={p.image}
+                imagePath={p.images[0]}
                 name={p.name}
                 price={p.price}
               />

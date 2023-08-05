@@ -62,7 +62,7 @@ export default function Cart() {
                   >
                     <img
                       alt="product-image"
-                      src={product.image}
+                      src={product.images[0]}
                       className="mr-[1.375rem] inline-block h-[2.8125rem] w-[3.125rem]"
                     ></img>
                     {product.name}
