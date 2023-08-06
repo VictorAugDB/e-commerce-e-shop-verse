@@ -1,12 +1,18 @@
-import { useContext, useRef } from 'react'
+import { useContext, useRef, useState } from 'react'
 
 import Button from '@/components/buttons/Button'
 
 import { ProductsContext } from '@/contexts/ProductsContext'
 
 export default function ApplyCoupon() {
+  const [isEmpty, setIsEmpty] = useState(true)
+
   const couponRef = useRef<HTMLInputElement>(null)
   const { handleApplyCoupon } = useContext(ProductsContext)
+
+  function handleCheckIsEmpty() {
+    setIsEmpty(couponRef.current && !couponRef.current.value ? true : false)
+  }
 
   return (
     <div className="flex h-fit w-full items-center gap-4">
@@ -14,6 +20,7 @@ export default function ApplyCoupon() {
         name="discount"
         ref={couponRef}
         type="text"
+        onChange={handleCheckIsEmpty}
         className="w-full max-w-[18.75rem] rounded border border-gray-800 bg-transparent py-4 pl-6 focus:border-gray-600 focus:ring-green-600"
         placeholder="Coupon here"
       />
@@ -21,6 +28,7 @@ export default function ApplyCoupon() {
         onClick={() => handleApplyCoupon(couponRef)}
         variant="green"
         className="px-12 py-4"
+        disabled={isEmpty}
       >
         Apply Coupon
       </Button>
