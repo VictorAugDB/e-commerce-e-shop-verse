@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { ArrowRight, ArrowUp } from 'react-feather'
+import { ArrowUp } from 'react-feather'
 import { IconType } from 'react-icons'
 import { AiOutlineCamera } from 'react-icons/ai'
 import { BsPhone, BsSmartwatch } from 'react-icons/bs'
@@ -19,9 +19,9 @@ import Categories from '@/components/lists/Categories'
 import ListHeader from '@/components/lists/ListHeader'
 import ListProducts from '@/components/lists/ListProducts'
 import NextImage from '@/components/NextImage'
+import { Promotions } from '@/components/Promotions'
 import RoundedBackgroundIcon from '@/components/RoundedBackgroundIcon'
 import Seo from '@/components/Seo'
-import ShopNowButton from '@/components/ShopNowButton'
 
 import { Product } from '@/contexts/ProductsContext'
 
@@ -35,6 +35,14 @@ export type HomePageProps = {
   bestSellings: Product[]
   products: Product[]
   newArrival: Product[]
+}
+
+export type Promotion = {
+  imageLogoPath: string
+  name: string
+  description: string
+  imagePath: string
+  id: string
 }
 
 export default function HomePage({
@@ -82,13 +90,29 @@ export default function HomePage({
     },
   ]
 
-  const promotionInfo = {
-    imageLogoPath: '/images/promotion-logo.png',
-    name: 'iPhone 14 Series',
-    description: 'Up to 10% off Voucher',
-    imagePath: '/images/promotion-image.png',
-    id: '123',
-  }
+  const promotions: Promotion[] = [
+    {
+      imageLogoPath: '/images/promotion-logo.png',
+      name: 'iPhone 14 Series',
+      description: 'Up to 10% off Voucher',
+      imagePath: '/images/promotion-image.png',
+      id: '123',
+    },
+    {
+      imageLogoPath: '/images/promotion-logo.png',
+      name: 'iPhone 14 Series',
+      description: 'Up to 11% off Voucher',
+      imagePath: '/images/promotion-image.png',
+      id: '1234',
+    },
+    {
+      imageLogoPath: '/images/promotion-logo.png',
+      name: 'iPhone 14 Series',
+      description: 'Up to 12% off Voucher',
+      imagePath: '/images/promotion-image.png',
+      id: '12345',
+    },
+  ]
 
   function handleScrollTop() {
     window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -112,55 +136,13 @@ export default function HomePage({
           ))}
         </nav>
 
-        <section
-          className="
-            mt-10 flex h-full
-            w-full flex-col items-center
-            gap-[1.5625rem] rounded-sm
-            bg-black px-16 pb-[11px]
-          "
-        >
-          <div className="flex h-full w-full justify-between">
-            <div className="flex flex-col gap-y-5">
-              <div className="mt-14 flex items-center gap-6">
-                <NextImage
-                  src={promotionInfo.imageLogoPath}
-                  width={40}
-                  height={49}
-                  alt="promotion-logo"
-                ></NextImage>
-                <p className="text-white">{promotionInfo.name}</p>
-              </div>
-              <span className="text-5xl leading-[3.75rem] text-white">
-                {promotionInfo.description}
-              </span>
-              <div>
-                <ShopNowButton href={`/products/${promotionInfo.id}`}>
-                  <ArrowRight color="#FFFFFF" />
-                </ShopNowButton>
-              </div>
-            </div>
-            <div className="relative flex h-full w-full justify-end">
-              <img
-                className="h-auto w-auto"
-                src={promotionInfo.imagePath}
-                alt="product-image"
-              ></img>
-            </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <span className="h-3 w-3 rounded-full bg-gray-600"></span>
-            <span className="h-3 w-3 rounded-full bg-gray-600"></span>
-            <span className="h-3 w-3 rounded-full bg-gray-600"></span>
-            <span className="h-3 w-3 rounded-full bg-gray-600"></span>
-            <span className="h-3 w-3 rounded-full bg-gray-600"></span>
-          </div>
-        </section>
+        <Promotions promotions={promotions}></Promotions>
       </div>
       <ListProducts
         products={flashSales}
         topic="Today's"
         title="Flash Sales"
+        filter="flash-sales"
         hasTimer={true}
         hasButton={true}
       />
@@ -169,6 +151,7 @@ export default function HomePage({
       <Divider />
       <ListProducts
         products={bestSellings}
+        filter="best-sellings"
         topic="This Month"
         title="Best Selling Products"
         hasButton={true}
@@ -195,7 +178,12 @@ export default function HomePage({
               <p className="text-xs">Seconds</p>
             </div>
           </div>
-          <Button className="w-fit px-12 py-4">Buy Now!</Button>
+          <Button
+            variant="ghost"
+            className="w-fit border border-white px-12 py-4 text-white hover:shadow-white"
+          >
+            Buy Now!
+          </Button>
         </div>
         <div className="relative flex items-center justify-center rounded-full">
           <div className="absolute h-1 w-1 rounded-full shadow-[0_35px_200px_150px] shadow-gray-400"></div>

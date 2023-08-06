@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 import Button from '@/components/buttons/Button'
 import ListHeader from '@/components/lists/ListHeader'
 import Product from '@/components/Product'
@@ -10,6 +12,7 @@ type ListProductsProps = {
   title?: string
   hasTimer?: boolean
   hasButton?: boolean
+  filter?: string
 }
 
 export default function ListProducts({
@@ -18,6 +21,7 @@ export default function ListProducts({
   hasTimer = false,
   hasButton = false,
   products,
+  filter,
 }: ListProductsProps) {
   return (
     <div className="flex w-full flex-col gap-10">
@@ -37,9 +41,14 @@ export default function ListProducts({
         ))}
       </div>
       {hasButton && (
-        <Button className="mx-auto w-fit px-12 py-4" variant="green">
-          View All Products
-        </Button>
+        <Link
+          href={{ pathname: '/products', query: filter && { filter } }}
+          className="mx-auto"
+        >
+          <Button className="w-fit px-12 py-4" variant="green">
+            View All Products
+          </Button>
+        </Link>
       )}
     </div>
   )
