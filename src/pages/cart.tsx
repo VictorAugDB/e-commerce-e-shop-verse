@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { useContext, useEffect } from 'react'
 
@@ -57,15 +58,17 @@ export default function Cart() {
                 <tr className="h-10"></tr>
                 <tr data-testid="product-row" className="rounded bg-white">
                   <td
-                    className="rounded py-10 pl-10 text-center align-middle before:content-[attr(data-heading)] md:before:content-[]"
+                    className="rounded py-10 pl-10 align-middle before:content-[attr(data-heading)] md:before:content-[]"
                     data-heading="Product: "
                   >
-                    <img
-                      alt="product-image"
-                      src={product.images[0]}
-                      className="mr-[1.375rem] inline-block h-[2.8125rem] w-[3.125rem]"
-                    ></img>
-                    {product.name}
+                    <div className="flex items-center gap-[1.375rem]">
+                      <img
+                        alt="product-image"
+                        src={product.images[0]}
+                        className="inline-block h-[2.8125rem] w-[3.125rem]"
+                      ></img>
+                      <p className="text-center">{product.name}</p>
+                    </div>
                   </td>
                   <td
                     className="py-10 text-center before:content-[attr(data-heading)] md:before:content-[]"
@@ -97,13 +100,15 @@ export default function Cart() {
             ))}
           </tbody>
         </table>
-        <div className="flex w-full items-center justify-between">
-          <Button variant="ghost" className="border border-gray-800 px-12 py-4">
-            Return To Shop
-          </Button>
-          <Button variant="ghost" className="border border-gray-800 px-12 py-4">
-            Update Cart
-          </Button>
+        <div className="flex w-full">
+          <Link href="/products">
+            <Button
+              variant="ghost"
+              className="border border-gray-800 px-12 py-4"
+            >
+              Return To Shop
+            </Button>
+          </Link>
         </div>
       </div>
       <div className="flex justify-between pt-20">

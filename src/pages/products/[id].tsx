@@ -1,4 +1,5 @@
 import { randomUUID } from 'crypto'
+import { motion } from 'framer-motion'
 import {
   GetStaticProps,
   GetStaticPropsContext,
@@ -15,7 +16,7 @@ import { getProductById, getProducts } from '@/lib/http'
 import Button from '@/components/buttons/Button'
 import ImagesSwitch from '@/components/ImagesSwitch'
 import ListProducts from '@/components/lists/ListProducts'
-import { ProductColor } from '@/components/ProductColor'
+import { ProductColors } from '@/components/ProductColors'
 import Stars from '@/components/Stars'
 import Steps from '@/components/Steps'
 
@@ -77,26 +78,40 @@ export default function Product({
             <div className="flex items-center gap-4">
               <p className="text-lg">Colours:</p>
               <div className="flex items-center gap-2">
-                <ProductColor colors={['#000', '#999']} />
+                <ProductColors colors={['#000', '#999']} />
               </div>
             </div>
             <div className="flex items-center gap-6">
               <p className="text-lg">Sizes:</p>
               <div className="flex items-center gap-4">
                 {sizes.map((s) => (
-                  <button
+                  <motion.button
                     key={s}
                     onClick={() => handleSelectSize(s)}
                     disabled={product.sizes[s] <= 0}
                     className={twMerge(
-                      'h-8 w-8 rounded border border-gray-600 disabled:cursor-not-allowed disabled:bg-gray-300/50',
+                      'h-8 w-8 rounded border bg-white disabled:cursor-not-allowed disabled:bg-gray-300/50',
                       selectedSize === s
-                        ? 'bg-green-700 text-white'
-                        : 'bg-white text-black',
+                        ? 'border-green-700'
+                        : 'border-gray-600',
                     )}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    initial={{ opacity: 0, scale: 0.5 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.2 }}
                   >
-                    <p className="text-sm font-medium">{s.toUpperCase()}</p>
-                  </button>
+                    {selectedSize === s ? (
+                      <motion.div
+                        layoutId="selectedSize"
+                        className="flex h-full w-full items-center justify-center rounded-sm bg-green-700 text-white"
+                      >
+                        <p className="text-sm font-medium">{s.toUpperCase()}</p>
+                      </motion.div>
+                    ) : (
+                      <p className="text-sm font-medium">{s.toUpperCase()}</p>
+                    )}
+                  </motion.button>
                 ))}
               </div>
             </div>

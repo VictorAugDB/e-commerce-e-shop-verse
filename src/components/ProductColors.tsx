@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion'
 import { Fragment, useState } from 'react'
 import { twMerge } from 'tailwind-merge'
 
@@ -5,7 +6,7 @@ type ProductsProps = {
   colors: string[]
 }
 
-export function ProductColor({ colors }: ProductsProps) {
+export function ProductColors({ colors }: ProductsProps) {
   const [checkedColor, setCheckedColor] = useState(colors[0])
 
   function isValidColor(color: string) {
@@ -22,11 +23,13 @@ export function ProductColor({ colors }: ProductsProps) {
         <Fragment key={c}>
           {isValidColor(c) && (
             <div onClick={() => handleSelect(c)} className="relative h-5 w-5">
-              <button
+              <motion.button
                 className="flex h-5 w-5 items-center justify-center rounded-full border-2 border-black focus:ring-1 focus:ring-black"
                 style={{
                   backgroundColor: checkedColor === c ? '#FFFFFF' : c,
                 }}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
               >
                 <span
                   className={twMerge(
@@ -37,7 +40,7 @@ export function ProductColor({ colors }: ProductsProps) {
                     backgroundColor: c,
                   }}
                 ></span>
-              </button>
+              </motion.button>
             </div>
           )}
         </Fragment>

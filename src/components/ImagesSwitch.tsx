@@ -1,5 +1,6 @@
 'use client'
 
+import { motion } from 'framer-motion'
 import { useRef, useState } from 'react'
 import { CSSTransition, SwitchTransition } from 'react-transition-group'
 
@@ -28,10 +29,15 @@ export default function ImagesSwitch({ productImages }: ImagesSwitchProps) {
     <div className="grid max-h-[37.5rem] w-full max-w-[43.875rem] grid-cols-[10.625rem_31.25rem] gap-8">
       <div className="flex flex-col gap-4">
         {images.slice(0, images.length - 1).map((i, idx) => (
-          <div
+          <motion.div
             onClick={() => handleChangeImage(idx)}
             key={i.id}
-            className="relative flex h-full w-[10.625rem] max-w-full touch-none items-center justify-center rounded bg-gray-200 p-4"
+            className="relative flex h-full w-[10.625rem] max-w-full cursor-pointer touch-none items-center justify-center rounded bg-gray-200 p-4"
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.2 }}
           >
             <NextImage
               alt="product-image"
@@ -39,7 +45,7 @@ export default function ImagesSwitch({ productImages }: ImagesSwitchProps) {
               width={134}
               height={114}
             ></NextImage>
-          </div>
+          </motion.div>
         ))}
       </div>
       <div className="relative flex h-[37.5rem] w-[31.25rem] items-center justify-center rounded bg-gray-200 p-4">

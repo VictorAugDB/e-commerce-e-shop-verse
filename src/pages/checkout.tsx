@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion'
 import { useSearchParams } from 'next/navigation'
 import { ComponentProps, useContext, useEffect } from 'react'
 
@@ -136,7 +137,7 @@ export default function Checkout() {
   )
 }
 
-type RadioButtonProps = ComponentProps<'input'> & {
+type RadioButtonProps = ComponentProps<typeof motion.input> & {
   name: string
   id: string
   label: string
@@ -145,12 +146,14 @@ type RadioButtonProps = ComponentProps<'input'> & {
 function RadioButton({ name, id, label, ...props }: RadioButtonProps) {
   return (
     <div className="flex items-center gap-4">
-      <input
+      <motion.input
         type="radio"
         id={id}
         name={name}
         className="h-6 w-6 cursor-pointer text-black ring-black checked:border-2 checked:bg-none checked:ring checked:ring-inset checked:ring-offset-[3px] focus:ring-black"
         {...props}
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
       />
       <label htmlFor={name}>{label}</label>
     </div>
