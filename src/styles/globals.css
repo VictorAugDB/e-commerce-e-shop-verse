@@ -17,6 +17,24 @@
   transition: opacity 200ms;
 }
 
+.NavAnimation-enter {
+  opacity: 0;
+  transform: scale(0.9) translate(-100%);
+}
+.NavAnimation-enter-active {
+  opacity: 1;
+  transform: translateX(0);
+  transition: opacity 350ms, transform 350ms;
+}
+.NavAnimation-exit {
+  opacity: 1;
+}
+.NavAnimation-exit-active {
+  opacity: 0;
+  transform: scale(0.9) translate(-100%);
+  transition: opacity 350ms, transform 350ms;
+}
+
 :root {
   /* #region  /**=========== Primary Color =========== */
   /* !STARTERCONF Customize these variable, copy and paste from /styles/colors.css for list of colors */
