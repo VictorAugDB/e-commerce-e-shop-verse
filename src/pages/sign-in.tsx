@@ -6,8 +6,8 @@ import NextImage from '@/components/NextImage'
 
 export default function SignIn() {
   return (
-    <div className="grid grid-cols-2 gap-32 pt-[3.75rem]">
-      <div className="h-[48.8125rem] bg-green-50">
+    <div className="grid grid-cols-1 gap-32 px-2 pt-[3.75rem] xl:grid-cols-2 xl:px-0">
+      <div className="hidden h-[48.8125rem] bg-green-50 xl:block">
         <div className="relative h-[44.125rem]">
           <NextImage
             alt="product-image"
@@ -16,9 +16,9 @@ export default function SignIn() {
           ></NextImage>
         </div>
       </div>
-      <div className="flex w-max flex-col justify-center gap-12">
-        <div className="flex flex-col gap-6 pr-[2.75rem]">
-          <h1>Log in to E-Shopverse</h1>
+      <div className="flex w-full max-w-max flex-col justify-center gap-12 justify-self-center xl:justify-self-auto">
+        <div className="flex flex-col gap-6">
+          <h1 className="text-center">Log in to E-Shopverse</h1>
           <p>Enter your details below</p>
         </div>
         <div className="flex flex-col gap-10">
@@ -36,7 +36,7 @@ export default function SignIn() {
           />
         </div>
         <div className="flex flex-col gap-8">
-          <div className="flex items-center justify-between gap-4">
+          <div className="flex flex-row-reverse flex-wrap items-center justify-center gap-4 sm:justify-between xl:flex-row">
             <Button variant="green" className="flex justify-center px-12 py-4">
               Log In
             </Button>
