@@ -25,7 +25,7 @@ export default function BackgroundProduct({
         className,
       )}
     >
-      <div className="absolute bottom-6 z-10 flex w-full max-w-[15rem] flex-col gap-4 text-white sm:max-w-[20.5rem] lg:max-w-[10.5rem] xl:max-w-[13.5rem] 2xl:max-w-[17.5rem]">
+      <div className="absolute bottom-6 z-10 flex w-2/3 flex-col gap-4 text-white ">
         <h3 className="truncate">{name}</h3>
         <p className="text-sm line-clamp-5">{description}</p>
         <ShopNowButton href={href} />
