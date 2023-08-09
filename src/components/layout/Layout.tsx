@@ -2,6 +2,7 @@ import { NextFontWithVariable } from 'next/dist/compiled/@next/font'
 import * as React from 'react'
 import { twMerge } from 'tailwind-merge'
 
+import Footer from '@/components/layout/Footer'
 import Header from '@/components/layout/Header'
 
 export default function Layout({
@@ -21,7 +22,7 @@ export default function Layout({
     >
       <Header />
       <div>{children}</div>
-      {/* <Footer /> */}
+      <Footer />
     </main>
   )
 }
