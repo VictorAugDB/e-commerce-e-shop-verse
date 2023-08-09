@@ -18,7 +18,11 @@ const links = [
 ]
 
 export default function Header() {
-  const [isNavVisible, setIsNavVisible] = useState(true)
+  const pathname = useRouter().pathname
+  const [currentTab, setCurrentTab] = useState(
+    pathname !== '/' ? pathname.slice(1) : 'home',
+  )
+  const [isNavVisible, setIsNavVisible] = useState(false)
   const [isSmallScreen, setIsSmallScreen] = useState(false)
   const menuRef = useRef<null | HTMLDivElement>(null)
 
@@ -63,13 +67,9 @@ export default function Header() {
     }
   }
 
-  const pathname = useRouter().pathname
-  const [currentTab, setCurrentTab] = useState(
-    pathname !== '/' ? pathname.slice(1) : 'home',
-  )
-
   function handleChangeTab(tab: string) {
     setCurrentTab(tab.toLowerCase())
+    setIsNavVisible(false)
   }
 
   function toogleNav() {
@@ -91,7 +91,7 @@ export default function Header() {
       >
         <Tabs.Root
           ref={menuRef}
-          className="fixed left-0 top-0 z-20 flex h-screen flex-col gap-6 bg-white px-4 py-3 lg:static lg:h-auto lg:flex-row lg:items-center lg:bg-transparent "
+          className="fixed left-0 top-0 z-20 flex h-screen flex-col gap-6 bg-white px-2 py-4 lg:static lg:h-auto lg:flex-row lg:items-center lg:bg-transparent"
         >
           <X onClick={() => setIsNavVisible(false)} className="lg:hidden" />
 
