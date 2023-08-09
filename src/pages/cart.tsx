@@ -40,7 +40,7 @@ export default function Cart() {
   }
 
   return (
-    <div className="px-[8.4375rem]">
+    <div className="px-2 sm:px-8 2xl:px-[8.4375rem]">
       <Steps flow="buy" currentStep={0} />
       <div className="flex flex-col items-center gap-6">
         <table className="w-full table-fixed">

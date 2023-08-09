@@ -5,8 +5,7 @@ import { AiOutlineCamera } from 'react-icons/ai'
 import { BsPhone, BsSmartwatch } from 'react-icons/bs'
 import { FiHeadphones } from 'react-icons/fi'
 import { HiOutlineDesktopComputer } from 'react-icons/hi'
-import { LuGamepad } from 'react-icons/lu'
-import { LuShieldCheck } from 'react-icons/lu'
+import { LuGamepad, LuShieldCheck } from 'react-icons/lu'
 import { TbHeadphones, TbTruckDelivery } from 'react-icons/tb'
 import { twMerge } from 'tailwind-merge'
 
@@ -119,17 +118,18 @@ export default function HomePage({
   }
 
   return (
-    <div className="flex flex-col items-center gap-20 px-[8.4375rem]">
+    <div className="flex flex-col items-center gap-20 px-2 sm:px-8 2xl:px-[8.4375rem]">
       {/* <Seo templateTitle='Home' /> */}
       <Seo />
 
       <div className="flex w-full gap-[2.8125rem]">
         <nav
           className="
-          flex w-full max-w-[13.5625rem] 
+          hidden w-full max-w-[13.5625rem] 
           flex-col gap-4 
           border-r border-gray-300
-          pr-4 pt-10"
+          pr-4 pt-10
+          2xl:flex"
         >
           {categories.map((c) => (
             <p key={c}>{c}</p>
@@ -156,26 +156,26 @@ export default function HomePage({
         title="Best Selling Products"
         hasButton={true}
       />
-      <div className="grid h-[31.25rem] grid-cols-2 gap-7 bg-black px-14 py-[4.3125rem]">
+      <div className="grid grid-cols-1 grid-rows-2 gap-7 bg-black p-8 md:h-[31.25rem] md:grid-cols-2 md:grid-rows-1 md:py-[4.3125rem] lg:px-14">
         <div className="flex flex-col">
           <p className="mb-7 font-semibold text-brown-300">Categories</p>
           <h1 className="h0 mb-8 text-white">Enhance Your Music Experience</h1>
-          <div className="mb-8 flex items-center gap-10">
-            <div className="flex h-[3.875rem] w-[3.875rem] flex-col items-center justify-center rounded-full bg-white text-center">
-              <p className="font-semibold">23</p>
-              <p className="text-xs">Hours</p>
-            </div>
+          <div className="mb-8 flex items-center gap-2 lg:gap-10">
             <div className="flex h-[3.875rem] w-[3.875rem] flex-col items-center justify-center rounded-full bg-white text-center">
               <p className="font-semibold">05</p>
-              <p className="text-xs">Days</p>
+              <p className="px-1 text-xs">Days</p>
+            </div>
+            <div className="flex h-[3.875rem] w-[3.875rem] flex-col items-center justify-center rounded-full bg-white text-center">
+              <p className="font-semibold">23</p>
+              <p className="px-1 text-xs">Hours</p>
             </div>
             <div className="flex h-[3.875rem] w-[3.875rem] flex-col items-center justify-center rounded-full bg-white text-center">
               <p className="font-semibold">59</p>
-              <p className="text-xs">Minutes</p>
+              <p className="px-1 text-xs">Minutes</p>
             </div>
             <div className="flex h-[3.875rem] w-[3.875rem] flex-col items-center justify-center rounded-full bg-white text-center">
               <p className="font-semibold">35</p>
-              <p className="text-xs">Seconds</p>
+              <p className="px-1 text-xs">Seconds</p>
             </div>
           </div>
           <Button
@@ -206,17 +206,17 @@ export default function HomePage({
         title="Explore Our Products"
         hasButton={true}
       />
-      <div className="flex h-[48rem] w-full flex-col">
+      <div className="flex h-[96rem] w-full flex-col lg:h-[48rem]">
         <ListHeader topic="Featured" title="New Arrival" />
-        <div className="mt-[3.75rem] grid h-full w-full grid-cols-[50%,repeat(2,minmax(0,1fr))] grid-rows-2 gap-8">
+        <div className="mt-[3.75rem] grid h-full w-full grid-cols-1 grid-rows-4 gap-8 lg:grid-cols-[50%,repeat(2,minmax(0,1fr))] lg:grid-rows-2">
           {newArrival.map((na, idx) => (
             <BackgroundProduct
               key={na.id}
               className={twMerge(
-                idx === 0 && 'row-span-2',
-                idx === 1 && 'col-span-2',
+                idx === 0 && 'lg:row-span-2',
+                idx === 1 && 'lg:col-span-2',
               )}
-              name={na.name}
+              name="ahsdiuahsidhaisudhaiushdaisdiashdiahusdihasdiuhasdiuahsdiuh"
               description={na.description}
               href={`/products/${na.id}`}
               imagePath={na.images[0]}
@@ -224,7 +224,7 @@ export default function HomePage({
           ))}
         </div>
       </div>
-      <div className="flex items-center gap-[5.5rem]">
+      <div className="flex flex-wrap items-center justify-center gap-[5.5rem]">
         <div className="flex flex-col items-center gap-6">
           <RoundedBackgroundIcon icon={TbTruckDelivery} />
           <div className="flex flex-col items-center gap-2">

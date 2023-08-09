@@ -13,7 +13,7 @@ export default function Categories({ categories }: CategoriesProps) {
   return (
     <div className="w-full">
       <ListHeader title="Browse By Category" topic="Categories" />
-      <div className="mt-[3.75rem] grid grid-cols-6 gap-[1.875rem]">
+      <div className="mt-[3.75rem] grid grid-cols-2 gap-2 md:grid-cols-4 lg:grid-cols-6 lg:gap-[1.875rem]">
         {categories.map((category) => (
           <Link
             key={category.name}

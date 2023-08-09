@@ -47,42 +47,42 @@ export default function ListHeader({
         <span className="h-10 w-5 rounded bg-green-700"></span>
         <p className="font-medium text-green-700">{topic}</p>
       </div>
-      <div className="flex gap-20">
+      <div className="flex flex-wrap gap-6 sm:gap-20">
         <h1>{title}</h1>
         {hasTimer && isClient && (
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 text-xl sm:text-2xl md:text-3xl">
             <div>
               <span className="block text-xs">Days</span>
               <div className="flex gap-x-4">
-                <span className="text-3xl">
+                <span>
                   {remainingDays >= 10 ? remainingDays : `0${remainingDays}`}
                 </span>
-                <span className="text-3xl">:</span>
+                <span>:</span>
               </div>
             </div>
             <div>
               <span className="block text-xs">Hours</span>
               <div className="flex gap-x-4">
-                <span className="text-3xl">
+                <span>
                   {remainingHours >= 10 ? remainingHours : `0${remainingHours}`}
                 </span>
-                <span className="text-3xl">:</span>
+                <span>:</span>
               </div>
             </div>
             <div>
               <span className="block text-xs">Minutes</span>
               <div className="flex gap-x-4">
-                <span className="text-3xl">
+                <span>
                   {remainingMinutes >= 10
                     ? remainingMinutes
                     : `0${remainingMinutes}`}
                 </span>
-                <span className="text-3xl">:</span>
+                <span>:</span>
               </div>
             </div>
             <div>
               <span className="block text-xs">Seconds</span>
-              <span className="block text-3xl">
+              <span className="block">
                 {remainingSeconds >= 10
                   ? remainingSeconds
                   : `0${remainingSeconds}`}

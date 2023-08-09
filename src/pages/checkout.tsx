@@ -26,7 +26,7 @@ export default function Checkout() {
   }, [shipping, calculateShipping])
 
   return (
-    <div className="px-[8.4375rem]">
+    <div className="px-2 sm:px-8 2xl:px-[8.4375rem]">
       {from === 'cart' ? (
         <Steps flow="buy" currentStep={0} />
       ) : (

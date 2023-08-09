@@ -27,8 +27,12 @@ export default function Product({
   name,
 }: ProductProps) {
   return (
-    <Link href={`/products/${id}`} scroll={false}>
-      <div className="flex min-w-[16.875rem] flex-1 cursor-pointer flex-col gap-4 transition-all hover:scale-105 hover:shadow-lg">
+    <Link
+      href={`/products/${id}`}
+      scroll={false}
+      className="w-full max-w-[16.875rem] justify-self-center"
+    >
+      <div className="flex flex-1 cursor-pointer flex-col gap-4 transition-all hover:scale-105 hover:shadow-lg">
         <div className="relative flex h-[15.625rem] w-full flex-col items-center justify-end gap-[14px]">
           {discount > 0 && (
             <div className="absolute left-3 top-3 w-fit rounded bg-green-700 px-3 py-1 text-xs text-white">

@@ -38,11 +38,11 @@ export function Promotions({ promotions }: PromotionProps) {
             mt-10 flex h-full
             w-full flex-col items-center
             gap-[1.5625rem] rounded-sm
-            bg-black px-16 pb-[11px]
+            bg-black px-2 pb-[11px] sm:px-16
           "
     >
-      <div className="flex h-full w-full justify-between">
-        <div className="flex flex-col gap-y-5">
+      <div className="flex h-full w-full flex-wrap justify-center gap-8 lg:justify-between">
+        <div className="flex flex-col items-center gap-y-5">
           <div className="mt-14 flex items-center gap-6">
             <NextImage
               src={currentPromotion.imageLogoPath}
@@ -52,7 +52,7 @@ export function Promotions({ promotions }: PromotionProps) {
             ></NextImage>
             <p className="text-white">{currentPromotion.name}</p>
           </div>
-          <span className="text-5xl leading-[3.75rem] text-white">
+          <span className="text-center text-3xl leading-[3.75rem] text-white 2xl:text-5xl">
             {currentPromotion.description}
           </span>
           <div>
@@ -61,7 +61,7 @@ export function Promotions({ promotions }: PromotionProps) {
             </ShopNowButton>
           </div>
         </div>
-        <div className="relative flex h-full w-full justify-end">
+        <div className="relative flex h-full justify-end">
           <img
             className="h-auto w-auto"
             src={currentPromotion.imagePath}

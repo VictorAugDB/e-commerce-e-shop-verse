@@ -26,7 +26,7 @@ export default function ListProducts({
   return (
     <div className="flex w-full flex-col gap-10">
       <ListHeader topic={topic} title={title} hasTimer={hasTimer}></ListHeader>
-      <div className="grid grid-cols-4 items-center gap-[1.875rem]">
+      <div className="grid w-full auto-cols-auto grid-flow-row auto-rows-auto grid-cols-1 content-center items-center gap-[1.875rem] sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {products.map((p) => (
           <Product
             key={p.id}

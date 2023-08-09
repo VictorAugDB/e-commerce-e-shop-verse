@@ -1,3 +1,5 @@
+import { twMerge } from 'tailwind-merge'
+
 import NextImage from '@/components/NextImage'
 import ShopNowButton from '@/components/ShopNowButton'
 
@@ -18,14 +20,14 @@ export default function BackgroundProduct({
 }: BackgroundProductProps) {
   return (
     <div
-      className={
-        className +
-        ' relative flex flex-1 flex-col justify-end gap-4 bg-black p-6 rounded'
-      }
+      className={twMerge(
+        'relative flex flex-1 flex-col justify-end gap-4 bg-black p-6 rounded',
+        className,
+      )}
     >
-      <div className="absolute bottom-6 z-10 flex flex-col gap-4 text-white">
-        <h3>{name}</h3>
-        <p className="text-sm">{description}</p>
+      <div className="absolute bottom-6 z-10 flex w-full max-w-[15rem] flex-col gap-4 text-white sm:max-w-[20.5rem] lg:max-w-[10.5rem] xl:max-w-[13.5rem] 2xl:max-w-[17.5rem]">
+        <h3 className="truncate">{name}</h3>
+        <p className="text-sm line-clamp-5">{description}</p>
         <ShopNowButton href={href} />
       </div>
       <NextImage
