@@ -15,7 +15,7 @@ export default function ApplyCoupon() {
   }
 
   return (
-    <div className="flex h-fit w-full items-center gap-4">
+    <div className="flex h-fit w-full max-w-[32.9375rem] items-center gap-4">
       <input
         name="discount"
         ref={couponRef}

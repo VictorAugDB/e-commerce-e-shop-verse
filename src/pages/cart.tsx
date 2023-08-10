@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import React, { useContext, useEffect } from 'react'
+import React, { ChangeEvent, useContext, useEffect } from 'react'
 
 import { getProducts } from '@/lib/http'
 
@@ -8,7 +8,7 @@ import ApplyCoupon from '@/components/ApplyCoupon'
 import Button from '@/components/buttons/Button'
 import Steps from '@/components/Steps'
 
-import { ProductsContext } from '@/contexts/ProductsContext'
+import { Product, ProductsContext } from '@/contexts/ProductsContext'
 
 export default function Cart() {
   const {
@@ -43,8 +43,8 @@ export default function Cart() {
     <div className="px-2 sm:px-8 2xl:px-[8.4375rem]">
       <Steps flow="buy" currentStep={0} />
       <div className="flex flex-col items-center gap-6">
-        <table className="w-full table-fixed">
-          <thead className="hidden bg-white md:table-header-group">
+        <table className="hidden w-full table-fixed md:table">
+          <thead className="bg-white">
             <tr className="rounded">
               <th className="rounded py-6 pl-10 text-center">Product</th>
               <th className="py-6 text-center">Price</th>
@@ -58,7 +58,7 @@ export default function Cart() {
                 <tr className="h-10"></tr>
                 <tr data-testid="product-row" className="rounded bg-white">
                   <td
-                    className="rounded py-10 pl-10 align-middle before:content-[attr(data-heading)] md:before:content-[]"
+                    className="rounded py-10 pl-10 align-middle"
                     data-heading="Product: "
                   >
                     <div className="flex items-center gap-[1.375rem]">
@@ -67,19 +67,13 @@ export default function Cart() {
                         src={product.images[0]}
                         className="inline-block h-[2.8125rem] w-[3.125rem]"
                       ></img>
-                      <p className="text-center">{product.name}</p>
+                      <p className="w-fit text-center">{product.name}</p>
                     </div>
                   </td>
-                  <td
-                    className="py-10 text-center before:content-[attr(data-heading)] md:before:content-[]"
-                    data-heading="Price: "
-                  >
+                  <td className="py-10 text-center " data-heading="Price: ">
                     ${product.price}
                   </td>
-                  <td
-                    className="py-10 text-center before:content-[attr(data-heading)] md:before:content-[]"
-                    data-heading="Quantity: "
-                  >
+                  <td className="py-10 text-center" data-heading="Quantity: ">
                     <input
                       type="number"
                       value={product.quantity}
@@ -89,7 +83,7 @@ export default function Cart() {
                     />
                   </td>
                   <td
-                    className="rounded py-10 pr-10 text-center before:content-[attr(data-heading)] md:before:content-[]"
+                    className="rounded py-10 pr-10 text-center"
                     data-heading="Subtotal: "
                     data-testid="product-subtotal-val"
                   >
@@ -100,6 +94,10 @@ export default function Cart() {
             ))}
           </tbody>
         </table>
+        <MobileCartProducts
+          products={products}
+          handleChangeQuantity={handleChangeQuantity}
+        />
         <div className="flex w-full">
           <Link href="/products">
             <Button
@@ -111,7 +109,7 @@ export default function Cart() {
           </Link>
         </div>
       </div>
-      <div className="flex justify-between pt-20">
+      <div className="flex flex-wrap justify-center gap-8 pt-20 xl:justify-between">
         <ApplyCoupon />
         <div className="w-full max-w-[29.375rem] rounded border-[1.5px] border-black px-6 py-8">
           <h4 className="mb-6">Cart Total</h4>
@@ -146,6 +144,63 @@ export default function Cart() {
           </div>
         </div>
       </div>
+    </div>
+  )
+}
+
+type MobileCartProductsProps = {
+  products: Product[]
+  handleChangeQuantity: (
+    event: ChangeEvent<HTMLInputElement>,
+    id: string,
+  ) => void
+}
+
+function MobileCartProducts({
+  products,
+  handleChangeQuantity,
+}: MobileCartProductsProps) {
+  return (
+    <div className="md:hidden">
+      {products.map((product) => (
+        <React.Fragment key={product.id}>
+          <span className="block h-5"></span>
+          <div data-testid="product-row" className="rounded bg-white">
+            <div
+              className="rounded py-10 pl-10 align-middle"
+              data-heading="Product: "
+            >
+              <div className="flex items-center gap-[1.375rem]">
+                <img
+                  alt="product-image"
+                  src={product.images[0]}
+                  className="inline-block h-[2.8125rem] w-[3.125rem]"
+                ></img>
+                <p className="w-fit text-center">{product.name}</p>
+              </div>
+            </div>
+            <div className="py-10 text-center " data-heading="Price: ">
+              ${product.price}
+            </div>
+            <div className="py-10 text-center" data-heading="Quantity: ">
+              <input
+                type="number"
+                value={product.quantity}
+                onChange={(e) => handleChangeQuantity(e, product.id)}
+                className="w-[4.5rem] rounded border border-gray-600 py-[.375rem]"
+                data-testid="quantity-input"
+              />
+            </div>
+            <div
+              className="rounded py-10 pr-10 text-center"
+              data-heading="Subtotal: "
+              data-testid="product-subtotal-val"
+            >
+              ${product.price * product.quantity}
+            </div>
+          </div>
+        </React.Fragment>
+      ))}
     </div>
   )
 }
