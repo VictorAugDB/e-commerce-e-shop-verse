@@ -8,5 +8,6 @@ Run the following commands
 
 ```bash
    npm i
+   npm run fake-server
    npm run dev
 ```
