@@ -106,7 +106,7 @@
       "createdAt": "2023-08-08T16:10:18.621Z"
     },
     {
-      "id": "5",
+      "id": "6",
       "images": ["/images/keyboard.png", "/images/keyboard.png", "/images/keyboard.png"],
       "price": 90,
       "name": "Mechanical Gaming Keyboard",
@@ -127,7 +127,7 @@
       "createdAt": "2023-08-09T12:05:59.153Z"
     },
     {
-      "id": "6",
+      "id": "7",
       "images": ["/images/chair.png", "/images/chair.png", "/images/chair.png"],
       "price": 150,
       "name": "Ergonomic Office Chair",
@@ -148,7 +148,7 @@
       "createdAt": "2023-08-10T09:20:45.398Z"
     },
     {
-      "id": "7",
+      "id": "8",
       "images": ["/images/control.png", "/images/control.png", "/images/control.png"],
       "price": 40,
       "name": "Gaming Controller",

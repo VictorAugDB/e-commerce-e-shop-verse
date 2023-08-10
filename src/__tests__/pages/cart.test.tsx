@@ -1,5 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import '@/__tests__/__mocks__/matchMedia'
 
 import * as httpUtils from '@/lib/http'
 
