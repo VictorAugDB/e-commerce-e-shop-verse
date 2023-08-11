@@ -32,9 +32,9 @@ export default function Checkout() {
       ) : (
         <Steps flow="buy" currentStep={0} />
       )}
-      <h1>Billing Details</h1>
-      <div className="mt-10 grid grid-cols-2 gap-4">
-        <div className="flex max-w-[28.1875rem] flex-col gap-6">
+      <h1 className="text-center md:text-start">Billing Details</h1>
+      <div className="mt-10 grid w-full grid-cols-1 gap-4 md:grid-cols-2">
+        <div className="flex w-full flex-col gap-6 md:max-w-[28.1875rem]">
           <InputBorderBottom
             name="first-name"
             id="first-name"
@@ -67,7 +67,7 @@ export default function Checkout() {
           />
           <InputBorderBottom name="e-mail" id="e-mail" placeholder="E-mail" />
         </div>
-        <div className="flex flex-col gap-8">
+        <div className="flex flex-col items-center gap-8">
           <div className="flex max-w-[26.5625rem] flex-col gap-8">
             {products.map((p) => (
               <ProductDetails
@@ -128,7 +128,7 @@ export default function Checkout() {
             />
           </div>
           <ApplyCoupon />
-          <Button variant="green" className="w-fit px-12 py-4">
+          <Button variant="green" className="mx-auto w-fit px-12 py-4 xl:mx-0">
             Place Order
           </Button>
         </div>
