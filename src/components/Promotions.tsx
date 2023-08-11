@@ -41,7 +41,7 @@ export function Promotions({ promotions }: PromotionProps) {
             bg-black px-2 pb-[11px] sm:px-16
           "
     >
-      <div className="flex h-full w-full flex-wrap justify-center gap-8 lg:justify-between">
+      <div className="flex h-full w-full flex-col justify-center gap-8 md:flex-row lg:justify-between">
         <div className="flex flex-col items-center gap-y-5">
           <div className="mt-14 flex items-center gap-6">
             <NextImage
@@ -61,7 +61,7 @@ export function Promotions({ promotions }: PromotionProps) {
             </ShopNowButton>
           </div>
         </div>
-        <div className="relative flex h-full justify-end">
+        <div className="relative flex h-full justify-center md:justify-end">
           <img
             className="h-auto w-auto"
             src={currentPromotion.imagePath}

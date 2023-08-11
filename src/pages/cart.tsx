@@ -40,7 +40,7 @@ export default function Cart() {
   useEffect(() => {
     const mediaQuery = window.matchMedia('(max-width: 768px)')
     const handler = () => {
-      setIsMobileSize(!isMobileSize)
+      setIsMobileSize(mediaQuery.matches)
     }
 
     mediaQuery.addEventListener('change', handler)
@@ -48,7 +48,7 @@ export default function Cart() {
     return () => {
       mediaQuery.removeEventListener('change', () => handler)
     }
-  }, [isMobileSize])
+  }, [])
 
   function redirectToCheckout() {
     router.push({
@@ -122,7 +122,7 @@ export default function Cart() {
           />
         )}
 
-        <div className="flex w-full">
+        <div className="flex w-full justify-center md:justify-start">
           <Link href="/products">
             <Button
               variant="ghost"
@@ -185,28 +185,22 @@ function MobileCartProducts({
   handleChangeQuantity,
 }: MobileCartProductsProps) {
   return (
-    <div>
+    <div className="w-full">
       {products.map((product) => (
         <Fragment key={product.id}>
           <span className="block h-5"></span>
-          <div data-testid="product-row" className="rounded bg-white">
-            <div
-              className="rounded py-10 pl-10 align-middle"
-              data-heading="Product: "
-            >
-              <div className="flex items-center gap-[1.375rem]">
-                <img
-                  alt="product-image"
-                  src={product.images[0]}
-                  className="inline-block h-[2.8125rem] w-[3.125rem]"
-                ></img>
-                <p className="w-fit text-center">{product.name}</p>
-              </div>
-            </div>
-            <div className="py-10 text-center " data-heading="Price: ">
-              ${product.price}
-            </div>
-            <div className="py-10 text-center" data-heading="Quantity: ">
+          <div
+            data-testid="product-row"
+            className="grid grid-cols-[30%_1fr] gap-4 rounded bg-white p-4"
+          >
+            <img
+              alt="product-image"
+              src={product.images[0]}
+              className="inline-block self-center"
+            ></img>
+            <div className="flex w-full flex-col items-center gap-2">
+              <p className="">{product.name}</p>
+              <span className="block">Price: ${product.price}</span>
               <input
                 type="number"
                 value={product.quantity}
@@ -214,14 +208,13 @@ function MobileCartProducts({
                 className="w-[4.5rem] rounded border border-gray-600 py-[.375rem]"
                 data-testid="quantity-input"
               />
+
+              <div data-testid="product-subtotal-val">
+                Subtotal: ${product.price * product.quantity}
+              </div>
             </div>
-            <div
-              className="rounded py-10 pr-10 text-center"
-              data-heading="Subtotal: "
-              data-testid="product-subtotal-val"
-            >
-              ${product.price * product.quantity}
-            </div>
+
+            <div className="flex items-center justify-center gap-8"></div>
           </div>
         </Fragment>
       ))}

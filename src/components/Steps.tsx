@@ -34,7 +34,7 @@ export default function Steps(props: StepsProps) {
   const steps = getSteps()
 
   return (
-    <div className="flex items-center gap-3 py-20">
+    <div className="flex flex-wrap items-center gap-3 py-20">
       {steps.map((step, idx) => (
         <React.Fragment key={step}>
           <p
