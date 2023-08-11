@@ -48,7 +48,7 @@ export default function Product({
   }
 
   return (
-    <div className="px-[8.4375rem]">
+    <div className="px-8 xl:px-[5.4375rem] 2xl:px-[8.4375rem]">
       <Steps
         flow="product"
         currentStep={2}
@@ -57,16 +57,17 @@ export default function Product({
       />
       <div
         className={twMerge(
-          'flex w-full gap-[68px]',
+          'flex flex-col xl:flex-row w-full gap-[68px] items-center justify-center',
           relatedProducts.length && 'mb-[8.75rem]',
         )}
       >
-        <div className="grid max-h-[37.5rem] w-full max-w-[43.875rem] grid-cols-[10.625rem_31.25rem] gap-8">
+        <div className="space-y-2">
+          <p className="xl:hidden">{product.name}</p>
           <ImagesSwitch productImages={productImages} />
         </div>
         <div className="flex flex-col">
           <div className="flex flex-col gap-4">
-            <h3>{product.name}</h3>
+            <h3 className="hidden xl:block">{product.name}</h3>
             <Stars
               numberOfEvaluations={product.evaluations}
               numberOfStars={product.stars}
@@ -116,25 +117,25 @@ export default function Product({
               </div>
             </div>
           </div>
-          <div className="mt-6 flex max-h-[2.75rem] items-center gap-4">
-            <div className="flex h-full items-center overflow-hidden rounded bg-white">
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-4">
+            <div className="flex items-center overflow-hidden rounded bg-white">
               <Button
                 variant="ghost"
-                className="h-full rounded-r-none border border-gray-600 text-2xl hover:bg-gray-200"
+                className="h-full rounded-r-none border border-gray-600 py-[.625rem] text-2xl hover:bg-gray-200"
               >
                 -
               </Button>
-              <div className="h-full border-x-0 border-y border-gray-600 px-9 py-[.375rem] text-center leading-6">
+              <div className="h-full border-x-0 border-y border-gray-600 px-9 py-[.625rem] text-center leading-6 ">
                 {product.quantity}
               </div>
               <Button
                 variant="green"
-                className="h-full rounded-l-none border border-l-0  border-green-600 text-2xl"
+                className="h-full rounded-l-none border border-l-0 border-green-600 py-[.625rem] text-2xl"
               >
                 +
               </Button>
             </div>
-            <Button variant="green" className="h-full px-12">
+            <Button variant="green" className="px-12 py-[.625rem]">
               Buy Now
             </Button>
             <div className="flex items-center justify-center rounded border border-gray-600 p-[.375rem]">

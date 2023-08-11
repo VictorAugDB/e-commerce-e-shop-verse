@@ -26,13 +26,13 @@ export default function ImagesSwitch({ productImages }: ImagesSwitchProps) {
   }
 
   return (
-    <div className="grid max-h-[37.5rem] w-full max-w-[43.875rem] grid-cols-[10.625rem_31.25rem] gap-8">
-      <div className="flex flex-col gap-4">
+    <div className="grid w-screen grid-cols-1 gap-8 md:max-h-[37.5rem] md:max-w-[43.875rem] md:grid-cols-[minmax(0,10.625rem)_minmax(0,31.25rem)]">
+      <div className="order-2 flex flex-wrap justify-center gap-4 md:order-1 md:flex-col md:flex-nowrap">
         {images.slice(0, images.length - 1).map((i, idx) => (
           <motion.div
             onClick={() => handleChangeImage(idx)}
             key={i.id}
-            className="relative flex h-full w-[10.625rem] max-w-full cursor-pointer touch-none items-center justify-center rounded bg-gray-200 p-4"
+            className="relative flex w-[10.625rem] max-w-full cursor-pointer touch-none items-center justify-center rounded bg-gray-200 p-4 md:h-full"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             initial={{ opacity: 0, scale: 0.5 }}
@@ -48,7 +48,7 @@ export default function ImagesSwitch({ productImages }: ImagesSwitchProps) {
           </motion.div>
         ))}
       </div>
-      <div className="relative flex h-[37.5rem] w-[31.25rem] items-center justify-center rounded bg-gray-200 p-4">
+      <div className="relative order-1 flex h-[22.5rem] w-full items-center justify-center rounded bg-gray-200 p-4 md:order-2 md:h-[37.5rem] md:max-w-[31.25rem]">
         <SwitchTransition>
           <CSSTransition
             key={images[images.length - 1].id}
@@ -64,8 +64,11 @@ export default function ImagesSwitch({ productImages }: ImagesSwitchProps) {
               <NextImage
                 alt="product-image"
                 src={images[images.length - 1].image}
-                width={446}
-                height={315}
+                fill
+                sizes="100vw"
+                style={{
+                  objectFit: 'contain',
+                }}
               ></NextImage>
             </div>
           </CSSTransition>
