@@ -144,7 +144,8 @@ export default function HomePage({
         title="Flash Sales"
         filter="flash-sales"
         hasTimer={true}
-        hasButton={true}
+        hasViewAllButton
+        hasCartButton
       />
       <Divider />
       <Categories categories={categoriesWithIcons} />
@@ -154,7 +155,8 @@ export default function HomePage({
         filter="best-sellings"
         topic="This Month"
         title="Best Selling Products"
-        hasButton={true}
+        hasViewAllButton
+        hasCartButton
       />
       <div className="grid grid-cols-1 grid-rows-2 gap-7 bg-black p-8 md:h-[31.25rem] md:grid-cols-2 md:grid-rows-1 md:py-[4.3125rem] lg:px-14">
         <div className="flex flex-col">
@@ -204,7 +206,8 @@ export default function HomePage({
         products={products}
         topic="Our Products"
         title="Explore Our Products"
-        hasButton={true}
+        hasViewAllButton
+        hasCartButton
       />
       <div className="flex h-[96rem] w-full flex-col lg:h-[48rem]">
         <ListHeader topic="Featured" title="New Arrival" />
