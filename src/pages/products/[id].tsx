@@ -121,21 +121,21 @@ export default function Product({
             <div className="flex items-center overflow-hidden rounded bg-white">
               <Button
                 variant="ghost"
-                className="h-full rounded-r-none border border-gray-600 py-[.625rem] text-2xl hover:bg-gray-200"
+                className="h-[2.85rem] rounded-r-none border border-gray-600 text-2xl hover:bg-gray-200"
               >
                 -
               </Button>
-              <div className="h-full border-x-0 border-y border-gray-600 px-9 py-[.625rem] text-center leading-6 ">
+              <div className="flex h-[2.85rem] items-center border-x-0 border-y border-gray-600 px-9 text-center leading-6 ">
                 {product.quantity}
               </div>
               <Button
                 variant="green"
-                className="h-full rounded-l-none border border-l-0 border-green-600 py-[.625rem] text-2xl"
+                className="h-[2.85rem] rounded-l-none border border-l-0 border-green-600 text-2xl"
               >
                 +
               </Button>
             </div>
-            <Button variant="green" className="px-12 py-[.625rem]">
+            <Button variant="green" className="h-[2.85rem] px-12">
               Buy Now
             </Button>
             <div className="flex items-center justify-center rounded border border-gray-600 p-[.375rem]">
