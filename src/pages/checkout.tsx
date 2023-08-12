@@ -67,7 +67,7 @@ export default function Checkout() {
           />
           <InputBorderBottom name="e-mail" id="e-mail" placeholder="E-mail" />
         </div>
-        <div className="flex flex-col items-center gap-8">
+        <div className="flex flex-col items-center gap-8 md:items-start">
           <div className="flex max-w-[26.5625rem] flex-col gap-8">
             {products.map((p) => (
               <ProductDetails
@@ -169,7 +169,7 @@ type ProductDetailsProps = {
 function ProductDetails({ imagePath, name, price }: ProductDetailsProps) {
   return (
     <div className="flex items-center justify-between text-center">
-      <div className="flex items-center gap-6 text-center">
+      <div className="flex items-center gap-6 truncate text-center">
         <img
           alt="product-image"
           src={imagePath}
