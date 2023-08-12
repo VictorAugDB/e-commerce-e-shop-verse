@@ -4,11 +4,14 @@ import * as Tabs from '@radix-ui/react-tabs'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useEffect, useRef, useState } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 import { Heart, Menu, Search, ShoppingCart, X } from 'react-feather'
 import { CSSTransition } from 'react-transition-group'
+import { twMerge } from 'tailwind-merge'
 
 import UnstyledLink from '@/components/links/UnstyledLink'
+
+import { ProductsContext } from '@/contexts/ProductsContext'
 
 const links = [
   { href: '/', label: 'Home' },
@@ -25,6 +28,7 @@ export default function Header() {
   const [isNavVisible, setIsNavVisible] = useState(false)
   const [isSmallScreen, setIsSmallScreen] = useState(false)
   const menuRef = useRef<null | HTMLDivElement>(null)
+  const { cartQuantity } = useContext(ProductsContext)
 
   useEffect(() => {
     const mediaQuery = window.matchMedia('(max-width: 1024px)')
@@ -156,9 +160,21 @@ export default function Header() {
           <div onClick={() => handleChangeTab('cart')} className="relative">
             <Link href="/cart">
               <ShoppingCart
-                className="h-5 w-5 transition hover:stroke-gray-600 sm:h-6 sm:w-6"
+                data-quantity={cartQuantity > 0}
+                className="
+                  h-5 w-5 transition hover:stroke-gray-600
+                  sm:h-6 sm:w-6
+                "
                 strokeWidth={currentTab === 'cart' ? 2.5 : 2}
               />
+              <div
+                className={twMerge(
+                  'absolute -top-3 flex h-4 w-fit min-w-[1rem] items-center justify-center rounded-full bg-red-500 p-1 text-xs text-white',
+                  cartQuantity < 100 ? '-right-3' : '-right-6',
+                )}
+              >
+                {cartQuantity < 100 ? cartQuantity : `${99}+`}
+              </div>
             </Link>
             {currentTab === 'cart' && (
               <motion.div

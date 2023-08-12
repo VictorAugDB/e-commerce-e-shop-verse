@@ -1,14 +1,18 @@
 import {
+  ChangeEvent,
   createContext,
   Dispatch,
   ReactNode,
   RefObject,
   SetStateAction,
+  useEffect,
   useMemo,
   useState,
 } from 'react'
 
-import { getCoupons } from '@/lib/http'
+import { getCoupons, getProductById } from '@/lib/http'
+
+import { LocalStorage, LSCart } from '@/models/localStorage'
 
 export type ProductSize = {
   xs: number
@@ -23,6 +27,7 @@ export type Product = {
   images: string[]
   price: number
   quantity: number
+  cartQuantity?: number
   name: string
   sizes: ProductSize
   description: string
@@ -47,7 +52,7 @@ interface ProductsContextType {
   ) => Promise<void | undefined>
   products: Product[]
   handleChangeQuantity: (
-    event: React.ChangeEvent<HTMLInputElement>,
+    event: ChangeEvent<HTMLInputElement>,
     id: string,
   ) => void
   shipping: number
@@ -55,6 +60,8 @@ interface ProductsContextType {
   subtotal: number
   discounts: number
   setProducts: Dispatch<SetStateAction<Product[]>>
+  handleAddToCart: (id: string) => void
+  cartQuantity: number
 }
 
 type ProductsContextProps = {
@@ -68,9 +75,10 @@ export function ProductsProvider({ children }: ProductsContextProps) {
   const [products, setProducts] = useState<Product[]>([])
   // TODO add set state shipping when create the shipping calc
   const [shipping, setShipping] = useState(0)
+  const [cartQuantity, setCartQuantity] = useState(0)
 
   const subtotal = useMemo(() => {
-    return products.reduce((acc, p) => acc + p.price * p.quantity, 0)
+    return products.reduce((acc, p) => acc + p.price * (p.cartQuantity || 1), 0)
   }, [products])
 
   const discounts = useMemo(() => {
@@ -89,8 +97,16 @@ export function ProductsProvider({ children }: ProductsContextProps) {
     setShipping(0)
   }
 
+  useEffect(() => {
+    const cartProducts: LSCart[] = JSON.parse(
+      localStorage.getItem(LocalStorage.CART) ?? '[]',
+    )
+
+    setCartQuantity(cartProducts.length)
+  }, [])
+
   function handleChangeQuantity(
-    event: React.ChangeEvent<HTMLInputElement>,
+    event: ChangeEvent<HTMLInputElement>,
     id: string,
   ) {
     const quantity = Number(event.target.value)
@@ -99,12 +115,65 @@ export function ProductsProvider({ children }: ProductsContextProps) {
       // message the user that if he is sure that the want to remove the product
     }
 
-    const updatedProducts =
-      quantity > 0
-        ? products.map((p) => (p.id === id ? { ...p, quantity } : p))
-        : products.filter((p) => p.id !== id)
+    const product = products.find((p) => p.id === id)
 
-    setProducts(updatedProducts)
+    if (!product) {
+      return
+    }
+
+    if (quantity > product.quantity) {
+      // message the user that we haven't have more products
+      return
+    } else {
+      const updatedProducts =
+        quantity > 0
+          ? products.map((p) =>
+              p.id === id ? { ...p, cartQuantity: quantity } : p,
+            )
+          : products.filter((p) => p.id !== id)
+
+      const cartProducts: LSCart[] = JSON.parse(
+        localStorage.getItem(LocalStorage.CART) ?? '[]',
+      )
+
+      if (quantity > 0) {
+        const productIdx = cartProducts.findIndex((cp) => cp.id === id)
+
+        cartProducts[productIdx].quantity = quantity
+        localStorage.setItem(LocalStorage.CART, JSON.stringify(cartProducts))
+      } else {
+        localStorage.setItem(
+          LocalStorage.CART,
+          JSON.stringify(cartProducts.filter((cp) => cp.id !== id)),
+        )
+        setCartQuantity(cartQuantity - 1)
+      }
+
+      setProducts(updatedProducts)
+    }
+  }
+
+  async function handleAddToCart(id: string) {
+    const cartProducts: LSCart[] = JSON.parse(
+      localStorage.getItem(LocalStorage.CART) ?? '[]',
+    )
+    const productIdx = cartProducts.findIndex((cp) => cp.id === id)
+    if (productIdx === -1) {
+      cartProducts.push({
+        id,
+        quantity: 1,
+      })
+      setCartQuantity(cartQuantity + 1)
+    } else {
+      const product = await getProductById(id)
+      if (product.quantity > cartProducts[productIdx].quantity) {
+        cartProducts[productIdx].quantity++
+      } else {
+        // message user that we don't have more products
+      }
+    }
+
+    localStorage.setItem(LocalStorage.CART, JSON.stringify(cartProducts))
   }
 
   async function handleApplyCoupon(couponRef: RefObject<HTMLInputElement>) {
@@ -150,6 +219,8 @@ export function ProductsProvider({ children }: ProductsContextProps) {
         setProducts,
         subtotal,
         discounts,
+        handleAddToCart,
+        cartQuantity,
       }}
     >
       {children}

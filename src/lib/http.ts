@@ -48,6 +48,16 @@ export const getProductById = async (id: string): Promise<Product> => {
   return res.json()
 }
 
+export const getProductsByIds = async (ids: string[]): Promise<Product[]> => {
+  if (!ids.length) {
+    return []
+  }
+
+  const queryParams = ids.map((id) => `id=${id}`).join('&')
+  const res = await fetch(`http://localhost:3002/products?${queryParams}`)
+  return res.json()
+}
+
 export const getCoupons = async (): Promise<Coupon[]> => {
   const res = await fetch('http://localhost:3002/coupons')
   return await res.json()

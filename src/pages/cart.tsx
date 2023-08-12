@@ -8,13 +8,14 @@ import React, {
   useState,
 } from 'react'
 
-import { getProducts } from '@/lib/http'
+import { getProductsByIds } from '@/lib/http'
 
 import ApplyCoupon from '@/components/ApplyCoupon'
 import Button from '@/components/buttons/Button'
 import Steps from '@/components/Steps'
 
 import { Product, ProductsContext } from '@/contexts/ProductsContext'
+import { LocalStorage, LSCart } from '@/models/localStorage'
 
 export default function Cart() {
   const {
@@ -30,11 +31,25 @@ export default function Cart() {
   const router = useRouter()
 
   useEffect(() => {
-    ;(async () => {
-      const productsData = await getProducts()
-      // call shipping api and set shipping val
-      setProducts(productsData)
-    })()
+    if (typeof window !== 'undefined') {
+      ;(async () => {
+        const cartProducts: LSCart[] = JSON.parse(
+          localStorage.getItem(LocalStorage.CART) ?? '[]',
+        )
+        const map = new Map(cartProducts.map((cp) => [cp.id, cp.quantity]))
+
+        if (!cartProducts) {
+          return { props: { products: [] } }
+        }
+        const products = await getProductsByIds(cartProducts.map((cp) => cp.id))
+        setProducts(
+          products.map((p) => ({
+            ...p,
+            cartQuantity: map.get(p.id),
+          })),
+        )
+      })()
+    }
   }, [setProducts])
 
   useEffect(() => {
@@ -78,10 +93,7 @@ export default function Cart() {
                 <Fragment key={product.id}>
                   <tr className="h-10"></tr>
                   <tr data-testid="product-row" className="rounded bg-white">
-                    <td
-                      className="rounded py-10 pl-10 align-middle"
-                      data-heading="Product: "
-                    >
+                    <td className="rounded py-10 pl-10 align-middle">
                       <div className="flex items-center gap-[1.375rem]">
                         <img
                           alt="product-image"
@@ -91,13 +103,11 @@ export default function Cart() {
                         <p className="w-fit text-center">{product.name}</p>
                       </div>
                     </td>
-                    <td className="py-10 text-center " data-heading="Price: ">
-                      ${product.price}
-                    </td>
-                    <td className="py-10 text-center" data-heading="Quantity: ">
+                    <td className="py-10 text-center ">${product.price}</td>
+                    <td className="py-10 text-center">
                       <input
                         type="number"
-                        value={product.quantity}
+                        value={product.cartQuantity}
                         onChange={(e) => handleChangeQuantity(e, product.id)}
                         className="w-[4.5rem] rounded border border-gray-600 py-[.375rem]"
                         data-testid="quantity-input"
@@ -105,10 +115,9 @@ export default function Cart() {
                     </td>
                     <td
                       className="rounded py-10 pr-10 text-center"
-                      data-heading="Subtotal: "
                       data-testid="product-subtotal-val"
                     >
-                      ${product.price * product.quantity}
+                      ${product.price * (product.cartQuantity ?? 1)}
                     </td>
                   </tr>
                 </Fragment>
@@ -203,14 +212,14 @@ function MobileCartProducts({
               <span className="block">Price: ${product.price}</span>
               <input
                 type="number"
-                value={product.quantity}
+                value={product.cartQuantity}
                 onChange={(e) => handleChangeQuantity(e, product.id)}
                 className="w-[4.5rem] rounded border border-gray-600 py-[.375rem]"
                 data-testid="quantity-input"
               />
 
               <div data-testid="product-subtotal-val">
-                Subtotal: ${product.price * product.quantity}
+                Subtotal: ${product.price * (product.cartQuantity ?? 1)}
               </div>
             </div>
 

@@ -15,11 +15,11 @@ const poppins = Poppins({
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <Layout font={poppins}>
-      <ProductsProvider>
+    <ProductsProvider>
+      <Layout font={poppins}>
         <Component {...pageProps} />
-      </ProductsProvider>
-    </Layout>
+      </Layout>
+    </ProductsProvider>
   )
 }
 

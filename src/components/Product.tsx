@@ -1,9 +1,12 @@
 import Link from 'next/link'
+import { useContext } from 'react'
 import { Eye, Heart } from 'react-feather'
 
 import Button from '@/components/buttons/Button'
 import NextImage from '@/components/NextImage'
 import Stars from '@/components/Stars'
+
+import { ProductsContext } from '@/contexts/ProductsContext'
 
 type ProductProps = {
   hasButton?: boolean
@@ -26,13 +29,15 @@ export default function Product({
   numberOfEvaluations,
   name,
 }: ProductProps) {
+  const { handleAddToCart } = useContext(ProductsContext)
+
   return (
     <Link
       href={`/products/${id}`}
       scroll={false}
       className="w-full max-w-[16.875rem] justify-self-center"
     >
-      <div className="flex flex-1 cursor-pointer flex-col gap-4 transition-all hover:scale-105 hover:shadow-lg">
+      <div className="group flex flex-1 cursor-pointer flex-col gap-4 transition-all hover:scale-105 hover:shadow-lg">
         <div className="relative flex h-[15.625rem] w-full flex-col items-center justify-end gap-[14px]">
           {discount > 0 && (
             <div className="absolute left-3 top-3 w-fit rounded bg-green-700 px-3 py-1 text-xs text-white">
@@ -64,13 +69,15 @@ export default function Product({
               onClick={(e) => {
                 e.preventDefault()
                 e.stopPropagation()
+
+                handleAddToCart(id)
               }}
             >
               Add To Cart
             </Button>
           )}
         </div>
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2 transition-all group-hover:px-1">
           <p className="font-medium">{name}</p>
           <div className="flex items-center gap-3">
             {discount ? (
