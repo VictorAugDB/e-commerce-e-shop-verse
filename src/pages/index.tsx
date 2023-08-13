@@ -219,7 +219,7 @@ export default function HomePage({
                 idx === 0 && 'lg:row-span-2',
                 idx === 1 && 'lg:col-span-2',
               )}
-              name="ahsdiuahsidhaisudhaiushdaisdiashdiahusdihasdiuhasdiuahsdiuh"
+              name={na.name}
               description={na.description}
               href={`/products/${na.id}`}
               imagePath={na.images[0]}
