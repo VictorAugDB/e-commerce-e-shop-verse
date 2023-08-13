@@ -17,15 +17,14 @@ export default function InputBorderBottom({
   function handleCheckHasValue(e: React.ChangeEvent<HTMLInputElement>) {
     const value = e.target.value
 
-    if (value) {
-      setHasValue(true)
-    } else {
-      setHasValue(false)
-    }
+    setHasValue(!!value)
   }
 
   return (
-    <div className="group relative border-b border-gray-600 transition focus-within:border-green-700">
+    <div
+      data-has-value={hasValue}
+      className="group relative border-b border-gray-600 transition focus-within:border-green-700 data-[has-value=true]:border-green-700"
+    >
       <input
         name={name}
         id={id}
