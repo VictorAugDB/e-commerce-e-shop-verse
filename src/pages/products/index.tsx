@@ -3,12 +3,13 @@ import {
   GetStaticPropsResult,
   InferGetStaticPropsType,
 } from 'next'
-import { useRef, useState } from 'react'
-import { Search } from 'react-feather'
+import { useRouter } from 'next/router'
+import { useEffect, useRef, useState } from 'react'
 
 import { getProducts } from '@/lib/http'
 
 import ListProducts from '@/components/lists/ListProducts'
+import SearchInput from '@/components/SearchInput'
 
 import { Product } from '@/contexts/ProductsContext'
 
@@ -19,8 +20,19 @@ type ProductsProps = {
 export default function Products({
   products,
 }: InferGetStaticPropsType<GetStaticProps<ProductsProps>>) {
+  const { search } = useRouter().query
   const [productsState, setProductsState] = useState(products)
   const inputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    if (search && typeof search === 'string') {
+      setProductsState(
+        products.filter((p) =>
+          p.name.toLocaleLowerCase().toLowerCase().includes(search),
+        ),
+      )
+    }
+  }, [search, products])
 
   function handleSearch() {
     if (!inputRef) {
@@ -43,20 +55,11 @@ export default function Products({
 
   return (
     <div className="space-y-4  pt-20 sm:px-8 2xl:px-[8.4375rem]">
-      <div className="ml-auto flex w-fit items-center rounded border border-gray-400 bg-white px-2 transition-all focus-within:border focus-within:border-green-700 hover:border-green-700">
-        <input
-          placeholder="Search"
-          className="border-none bg-transparent focus:ring-0"
-          type="text"
-          ref={inputRef}
-        />
-        <Search
-          width={20}
-          height={20}
-          onClick={handleSearch}
-          className="cursor-pointer transition hover:stroke-gray-400"
-        />
-      </div>
+      <SearchInput
+        handleSearch={handleSearch}
+        ref={inputRef}
+        placeholder="Search"
+      />
       <ListProducts products={productsState} hasCartButton></ListProducts>
     </div>
   )
