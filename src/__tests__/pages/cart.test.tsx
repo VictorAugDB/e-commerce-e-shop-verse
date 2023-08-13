@@ -11,14 +11,19 @@ import {
 } from '@/contexts/ProductsContext'
 import Cart from '@/pages/cart'
 
-const product: Product = {
+type TestProdcut = Product & {
+  cartQuantity: number
+}
+
+const product: TestProdcut = {
   id: '1',
   category: '',
   createdAt: '',
   discount: 0,
   images: [],
   price: 650,
-  quantity: 1,
+  quantity: 100,
+  cartQuantity: 1,
   sizes: {} as ProductSize,
   name: 'Monitor',
   description: '',
@@ -40,19 +45,26 @@ describe('Cart functionalities', () => {
   describe('subtotal', () => {
     it('Should render product subtotal correctly', async () => {
       const mockData = [
-        {
-          ...product,
-          quantity: 67,
-        },
+        product,
         {
           ...product,
           id: '2',
         },
       ]
+      const localStorageMock = [
+        {
+          id: '1',
+          quantity: 67,
+        },
+        { id: '2', quantity: 1 },
+      ]
 
       jest
-        .spyOn(httpUtils, 'getProducts')
+        .spyOn(httpUtils, 'getProductsByIds')
         .mockImplementation(jest.fn(() => Promise.resolve(mockData)))
+      jest
+        .spyOn(Storage.prototype, 'getItem')
+        .mockImplementation(jest.fn(() => JSON.stringify(localStorageMock)))
 
       render(<Cart />, {
         wrapper: ({ children }) => (
@@ -60,7 +72,7 @@ describe('Cart functionalities', () => {
         ),
       })
 
-      const subtotal = mockData[0].quantity * product.price
+      const subtotal = localStorageMock[0].quantity * product.price
       const el = await screen.findAllByTestId('product-subtotal-val')
 
       expect(el[0].textContent).toBe(`$${subtotal}`)
@@ -68,18 +80,26 @@ describe('Cart functionalities', () => {
 
     it('Should render cart subtotal and total correctly', async () => {
       const mockData = [
-        {
-          ...product,
-          quantity: 67,
-        },
+        product,
         {
           ...product,
           id: '2',
         },
       ]
 
+      const localStorageMock = [
+        {
+          id: '1',
+          quantity: 67,
+        },
+        { id: '2', quantity: 1 },
+      ]
+
       jest
-        .spyOn(httpUtils, 'getProducts')
+        .spyOn(Storage.prototype, 'getItem')
+        .mockImplementation(jest.fn(() => JSON.stringify(localStorageMock)))
+      jest
+        .spyOn(httpUtils, 'getProductsByIds')
         .mockImplementation(jest.fn(() => Promise.resolve(mockData)))
 
       render(<Cart />, {
@@ -109,8 +129,20 @@ describe('Cart functionalities', () => {
         },
       ]
 
+      const localStorageMock = [
+        {
+          id: '1',
+          quantity: 1,
+        },
+        { id: '2', quantity: 1 },
+      ]
+
       jest
-        .spyOn(httpUtils, 'getProducts')
+        .spyOn(Storage.prototype, 'getItem')
+        .mockImplementation(jest.fn(() => JSON.stringify(localStorageMock)))
+
+      jest
+        .spyOn(httpUtils, 'getProductsByIds')
         .mockImplementation(jest.fn(() => Promise.resolve(mockProducts)))
       jest
         .spyOn(httpUtils, 'getCoupons')
@@ -145,12 +177,23 @@ describe('Cart functionalities', () => {
       const mockProducts = [
         {
           ...product,
+          cartQuantity: 100,
+        },
+      ]
+
+      const localStorageMock = [
+        {
+          id: '1',
           quantity: 100,
         },
       ]
 
       jest
-        .spyOn(httpUtils, 'getProducts')
+        .spyOn(Storage.prototype, 'getItem')
+        .mockImplementation(jest.fn(() => JSON.stringify(localStorageMock)))
+
+      jest
+        .spyOn(httpUtils, 'getProductsByIds')
         .mockImplementation(jest.fn(() => Promise.resolve(mockProducts)))
       jest
         .spyOn(httpUtils, 'getCoupons')
@@ -185,8 +228,23 @@ describe('Cart functionalities', () => {
         },
       ]
 
+      const localStorageMock = [
+        {
+          id: '1',
+          quantity: 1,
+        },
+        {
+          id: '2',
+          quantity: 1,
+        },
+      ]
+
       jest
-        .spyOn(httpUtils, 'getProducts')
+        .spyOn(Storage.prototype, 'getItem')
+        .mockImplementation(jest.fn(() => JSON.stringify(localStorageMock)))
+
+      jest
+        .spyOn(httpUtils, 'getProductsByIds')
         .mockImplementation(jest.fn(() => Promise.resolve(mockProducts)))
 
       render(<Cart />, {
@@ -199,7 +257,10 @@ describe('Cart functionalities', () => {
         'quantity-input',
       )
       input[0].value = ''
-      await userEvent.type(input[0], (mockProducts[0].quantity + 1).toString())
+      await userEvent.type(
+        input[0],
+        (mockProducts[0].cartQuantity + 1).toString(),
+      )
 
       const cartSubtotalEl = screen.getByTestId('cart-subtotal-val')
       const productSubtotalEl = screen.getAllByTestId('product-subtotal-val')
@@ -219,7 +280,7 @@ describe('Cart functionalities', () => {
       const mockProducts = [
         {
           ...product,
-          quantity: 2,
+          cartQuantity: 2,
         },
         {
           ...product,
@@ -228,7 +289,7 @@ describe('Cart functionalities', () => {
       ]
 
       jest
-        .spyOn(httpUtils, 'getProducts')
+        .spyOn(httpUtils, 'getProductsByIds')
         .mockImplementation(jest.fn(() => Promise.resolve(mockProducts)))
 
       render(<Cart />, {
@@ -241,7 +302,10 @@ describe('Cart functionalities', () => {
         'quantity-input',
       )
       input[0].value = ''
-      await userEvent.type(input[0], (mockProducts[0].quantity - 1).toString())
+      await userEvent.type(
+        input[0],
+        (mockProducts[0].cartQuantity - 1).toString(),
+      )
 
       const cartSubtotalEl = screen.getByTestId('cart-subtotal-val')
       const productSubtotalEl = screen.getAllByTestId('product-subtotal-val')
@@ -265,7 +329,7 @@ describe('Cart functionalities', () => {
       ]
 
       jest
-        .spyOn(httpUtils, 'getProducts')
+        .spyOn(httpUtils, 'getProductsByIds')
         .mockImplementation(jest.fn(() => Promise.resolve(mockProducts)))
 
       render(<Cart />, {
@@ -278,7 +342,10 @@ describe('Cart functionalities', () => {
         'quantity-input',
       )
       input[0].value = ''
-      await userEvent.type(input[0], (mockProducts[0].quantity - 1).toString())
+      await userEvent.type(
+        input[0],
+        (mockProducts[0].cartQuantity - 1).toString(),
+      )
 
       const productRows = screen.getAllByTestId('product-row')
       const cartSubtotalEl = screen.getByTestId('cart-subtotal-val')
@@ -299,7 +366,7 @@ describe('Cart functionalities', () => {
       ]
 
       jest
-        .spyOn(httpUtils, 'getProducts')
+        .spyOn(httpUtils, 'getProductsByIds')
         .mockImplementation(jest.fn(() => Promise.resolve(mockProducts)))
 
       render(<Cart />, {
@@ -312,7 +379,10 @@ describe('Cart functionalities', () => {
         'quantity-input',
       )
       input[0].value = ''
-      await userEvent.type(input[0], (mockProducts[0].quantity - 2).toString())
+      await userEvent.type(
+        input[0],
+        (mockProducts[0].cartQuantity - 2).toString(),
+      )
 
       const productRows = screen.getAllByTestId('product-row')
       const cartSubtotalEl = screen.getByTestId('cart-subtotal-val')
