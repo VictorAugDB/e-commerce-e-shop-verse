@@ -157,16 +157,18 @@ export default function Header() {
         />
         <div className="flex items-center gap-2 sm:gap-6">
           <div onClick={() => handleChangeTab('wishlist')} className="relative">
-            <Heart
-              className="h-5 w-5 transition hover:stroke-gray-600 sm:h-6 sm:w-6"
-              strokeWidth={currentTab === 'wishlist' ? 2.5 : 2}
-            />
-            {currentTab === 'wishlist' && (
-              <motion.div
-                layoutId="activeTab"
-                className="absolute -bottom-0.5 h-px w-full bg-gray-600"
-              ></motion.div>
-            )}
+            <Link href="/wishlist">
+              <Heart
+                className="h-5 w-5 fill-transparent transition-all hover:fill-red-500 sm:h-6 sm:w-6"
+                strokeWidth={currentTab === 'wishlist' ? 2.5 : 2}
+              />
+              {currentTab === 'wishlist' && (
+                <motion.div
+                  layoutId="activeTab"
+                  className="absolute -bottom-0.5 h-px w-full bg-gray-600"
+                ></motion.div>
+              )}
+            </Link>
           </div>
           <div onClick={() => handleChangeTab('cart')} className="relative">
             <Link href="/cart">

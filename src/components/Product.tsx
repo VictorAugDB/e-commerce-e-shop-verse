@@ -1,12 +1,18 @@
 import Link from 'next/link'
-import { useContext } from 'react'
-import { Eye, Heart } from 'react-feather'
+import {
+  MouseEvent as ReactMouseEvent,
+  useContext,
+  useEffect,
+  useState,
+} from 'react'
+import { Heart, Trash } from 'react-feather'
 
 import Button from '@/components/buttons/Button'
 import NextImage from '@/components/NextImage'
 import Stars from '@/components/Stars'
 
 import { ProductsContext } from '@/contexts/ProductsContext'
+import { LocalStorage, LSWishlist } from '@/models/localStorage'
 
 type ProductProps = {
   hasButton?: boolean
@@ -15,8 +21,14 @@ type ProductProps = {
   price: number
   numberOfStars: number
   numberOfEvaluations: number
+  wished: boolean
   name: string
   id: string
+  isWishList: boolean
+  handleRemoveFromWishList?: (
+    e: ReactMouseEvent<HTMLDivElement, MouseEvent>,
+    id: string,
+  ) => void
 }
 
 export default function Product({
@@ -27,9 +39,48 @@ export default function Product({
   id,
   numberOfStars,
   numberOfEvaluations,
+  wished,
   name,
+  isWishList,
+  handleRemoveFromWishList,
 }: ProductProps) {
   const { handleAddToCart } = useContext(ProductsContext)
+  const [wishClicked, setWishClicked] = useState(false)
+
+  useEffect(() => {
+    setWishClicked(wished)
+  }, [wished])
+
+  function handleToggleWishList(
+    e: ReactMouseEvent<HTMLDivElement, MouseEvent>,
+    id: string,
+  ) {
+    e.preventDefault()
+    e.stopPropagation()
+
+    if (wishClicked) {
+      setWishClicked(false)
+
+      const ids: LSWishlist[] = JSON.parse(
+        localStorage.getItem(LocalStorage.WISHLIST) ?? '[]',
+      )
+
+      localStorage.setItem(
+        LocalStorage.WISHLIST,
+        JSON.stringify(ids.filter((i) => i !== id)),
+      )
+    } else {
+      setWishClicked(true)
+
+      const ids: LSWishlist[] = JSON.parse(
+        localStorage.getItem(LocalStorage.WISHLIST) ?? '[]',
+      )
+
+      ids.push(id)
+
+      localStorage.setItem(LocalStorage.WISHLIST, JSON.stringify(ids))
+    }
+  }
 
   return (
     <Link
@@ -44,12 +95,34 @@ export default function Product({
               -{discount}%
             </div>
           )}
-          <div className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-white">
-            <Heart className="h-[1.125rem] w-[1.125rem]" />
-          </div>
-          <div className="absolute right-3 top-11 mt-2 flex h-8 w-8 items-center justify-center rounded-full bg-white">
+          {!isWishList ? (
+            <div
+              onClick={(e) => {
+                handleToggleWishList(e, id)
+              }}
+              className="group/wishlist absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-white"
+            >
+              <Heart
+                data-wished={wishClicked}
+                className="h-[1.125rem] w-[1.125rem] fill-transparent transition group-hover/wishlist:fill-red-500 data-[wished=true]:fill-red-500"
+              />
+            </div>
+          ) : (
+            <div
+              onClick={(e) => {
+                if (typeof handleRemoveFromWishList !== 'undefined') {
+                  handleRemoveFromWishList(e, id)
+                }
+              }}
+              className="group/wishlist absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-white"
+            >
+              <Trash className="h-[1.125rem] w-[1.125rem] fill-transparent transition group-hover/wishlist:stroke-red-400" />
+            </div>
+          )}
+
+          {/* <div className="absolute right-3 top-11 mt-2 flex h-8 w-8 items-center justify-center rounded-full bg-white">
             <Eye className="h-[1.125rem] w-[1.125rem]" />
-          </div>
+          </div> */}
           <div className="relative h-[70%] w-[60%] p-8">
             <NextImage
               alt="product-image"
