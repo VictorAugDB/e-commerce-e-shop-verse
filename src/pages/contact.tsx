@@ -6,12 +6,12 @@ import Steps from '@/components/Steps'
 
 export default function Contact() {
   return (
-    <div className="flex flex-col items-center px-[8.4375rem]">
+    <div className="flex flex-col items-center px-2 xl:px-8 2xl:px-[8.4375rem]">
       <div className="w-full">
         <Steps flow="contact" currentStep={1}></Steps>
       </div>
-      <div className="flex gap-[1.875rem]">
-        <div className="max-w-[21.25rem] flex-1 space-y-8 rounded bg-white p-10">
+      <div className="flex flex-col-reverse items-center gap-[1.875rem] lg:flex-row">
+        <div className="max-w-[21.25rem] flex-1 space-y-8 rounded bg-white px-4 py-10 md:p-10">
           <div className="space-y-6">
             <div className="flex items-center gap-4">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-700 text-white">
@@ -37,8 +37,8 @@ export default function Contact() {
             <p className="text-sm">Emails: support@exclusive.com</p>
           </div>
         </div>
-        <div className="flex flex-col gap-6 rounded bg-white p-10">
-          <div className="flex items-center justify-center gap-4">
+        <div className="flex flex-col gap-6 rounded bg-white px-4 py-10 md:p-10">
+          <div className="flex flex-wrap items-center justify-center gap-4 md:flex-nowrap">
             <Input id="name" name="name" placeholder="Your Name" />
             <Input id="email" name="email" placeholder="YourEmail" />
             <Input id="phone" name="phone" placeholder="Your Phone" />
