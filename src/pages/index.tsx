@@ -5,21 +5,20 @@ import { AiOutlineCamera } from 'react-icons/ai'
 import { BsPhone, BsSmartwatch } from 'react-icons/bs'
 import { FiHeadphones } from 'react-icons/fi'
 import { HiOutlineDesktopComputer } from 'react-icons/hi'
-import { LuGamepad, LuShieldCheck } from 'react-icons/lu'
-import { TbHeadphones, TbTruckDelivery } from 'react-icons/tb'
+import { LuGamepad } from 'react-icons/lu'
 import { twMerge } from 'tailwind-merge'
 
 import { getProducts } from '@/lib/http'
 
 import BackgroundProduct from '@/components/BackgroundProduct'
 import Button from '@/components/buttons/Button'
+import Differentials from '@/components/Differentials'
 import Divider from '@/components/Divider'
 import Categories from '@/components/lists/Categories'
 import ListHeader from '@/components/lists/ListHeader'
 import ListProducts from '@/components/lists/ListProducts'
 import NextImage from '@/components/NextImage'
 import { Promotions } from '@/components/Promotions'
-import RoundedBackgroundIcon from '@/components/RoundedBackgroundIcon'
 import Seo from '@/components/Seo'
 
 import { Product } from '@/contexts/ProductsContext'
@@ -227,29 +226,7 @@ export default function HomePage({
           ))}
         </div>
       </div>
-      <div className="flex flex-wrap items-center justify-center gap-[5.5rem]">
-        <div className="flex flex-col items-center gap-6">
-          <RoundedBackgroundIcon icon={TbTruckDelivery} />
-          <div className="flex flex-col items-center gap-2">
-            <p className="text-lg font-semibold">FREE AND FAST DELIVERY</p>
-            <p className="text-sm">Free delivery for all orders over $140</p>
-          </div>
-        </div>
-        <div className="flex flex-col items-center gap-6">
-          <RoundedBackgroundIcon icon={TbHeadphones} />
-          <div className="flex flex-col items-center gap-2">
-            <p className="text-lg font-semibold">24/7 CUSTOMER SERVICE</p>
-            <p className="text-sm">Friendly 24/7 customer supporth</p>
-          </div>
-        </div>
-        <div className="flex flex-col items-center gap-6">
-          <RoundedBackgroundIcon icon={LuShieldCheck} />
-          <div className="flex flex-col items-center gap-2">
-            <p className="text-lg font-semibold">MONEY BACK GUARANTEE</p>
-            <p className="text-sm">We reurn money within 30 days</p>
-          </div>
-        </div>
-      </div>
+      <Differentials />
 
       <button
         onClick={handleScrollTop}
