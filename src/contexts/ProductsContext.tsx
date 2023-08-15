@@ -1,5 +1,4 @@
 import {
-  ChangeEvent,
   createContext,
   Dispatch,
   ReactNode,
@@ -51,10 +50,7 @@ interface ProductsContextType {
     couponRef: RefObject<HTMLInputElement>,
   ) => Promise<void | undefined>
   products: Product[]
-  handleChangeQuantity: (
-    event: ChangeEvent<HTMLInputElement>,
-    id: string,
-  ) => void
+
   shipping: number
   calculateShipping: () => void
   subtotal: number
@@ -62,6 +58,7 @@ interface ProductsContextType {
   setProducts: Dispatch<SetStateAction<Product[]>>
   handleAddToCart: (id: string) => void
   cartQuantity: number
+  setCartQuantity: Dispatch<SetStateAction<number>>
 }
 
 type ProductsContextProps = {
@@ -104,54 +101,6 @@ export function ProductsProvider({ children }: ProductsContextProps) {
 
     setCartQuantity(cartProducts.length)
   }, [])
-
-  function handleChangeQuantity(
-    event: ChangeEvent<HTMLInputElement>,
-    id: string,
-  ) {
-    const quantity = Number(event.target.value)
-
-    if (quantity <= 0) {
-      // message the user that if he is sure that the want to remove the product
-    }
-
-    const product = products.find((p) => p.id === id)
-
-    if (!product) {
-      return
-    }
-
-    if (quantity > product.quantity) {
-      // message the user that we haven't have more products
-      return
-    } else {
-      const updatedProducts =
-        quantity > 0
-          ? products.map((p) =>
-              p.id === id ? { ...p, cartQuantity: quantity } : p,
-            )
-          : products.filter((p) => p.id !== id)
-
-      const cartProducts: LSCart[] = JSON.parse(
-        localStorage.getItem(LocalStorage.CART) ?? '[]',
-      )
-
-      if (quantity > 0) {
-        const productIdx = cartProducts.findIndex((cp) => cp.id === id)
-
-        cartProducts[productIdx].quantity = quantity
-        localStorage.setItem(LocalStorage.CART, JSON.stringify(cartProducts))
-      } else {
-        localStorage.setItem(
-          LocalStorage.CART,
-          JSON.stringify(cartProducts.filter((cp) => cp.id !== id)),
-        )
-        setCartQuantity(cartQuantity - 1)
-      }
-
-      setProducts(updatedProducts)
-    }
-  }
 
   async function handleAddToCart(id: string) {
     const cartProducts: LSCart[] = JSON.parse(
@@ -212,7 +161,6 @@ export function ProductsProvider({ children }: ProductsContextProps) {
     <ProductsContext.Provider
       value={{
         handleApplyCoupon,
-        handleChangeQuantity,
         calculateShipping,
         products,
         shipping,
@@ -221,6 +169,7 @@ export function ProductsProvider({ children }: ProductsContextProps) {
         discounts,
         handleAddToCart,
         cartQuantity,
+        setCartQuantity,
       }}
     >
       {children}
