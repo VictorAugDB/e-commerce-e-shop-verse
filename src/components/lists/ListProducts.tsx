@@ -43,7 +43,7 @@ export default function ListProducts({
   >([])
 
   useEffect(() => {
-    if (isWishList) {
+    if (!isWishList) {
       if (typeof window !== 'undefined') {
         const wishlistIds = new Set()
 
@@ -51,17 +51,15 @@ export default function ListProducts({
           localStorage.getItem(LocalStorage.WISHLIST) ?? '[]',
         )
 
-        if (wishlistProducts.length) {
-          wishlistProducts.forEach((wp) => wishlistIds.add(wp))
+        wishlistProducts.forEach((wp) => wishlistIds.add(wp))
 
-          setListProducts(
-            products.map((lp) =>
-              wishlistIds.has(lp.id)
-                ? { ...lp, wished: true }
-                : { ...lp, wished: false },
-            ),
-          )
-        }
+        setListProducts(
+          products.map((lp) =>
+            wishlistIds.has(lp.id)
+              ? { ...lp, wished: true }
+              : { ...lp, wished: false },
+          ),
+        )
       }
     } else {
       setListProducts(products)
