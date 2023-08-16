@@ -1,6 +1,7 @@
 import { randomUUID } from 'crypto'
 import { motion } from 'framer-motion'
 import {
+  GetStaticPathsContext,
   GetStaticProps,
   GetStaticPropsContext,
   GetStaticPropsResult,
@@ -11,7 +12,7 @@ import { Heart, RefreshCcw } from 'react-feather'
 import { TbTruckDelivery } from 'react-icons/tb'
 import { twMerge } from 'tailwind-merge'
 
-import { getProductById, getProducts } from '@/lib/http'
+import { getProductDataByid, getProductsData } from '@/lib/data'
 
 import Button from '@/components/buttons/Button'
 import ImagesSwitch from '@/components/ImagesSwitch'
@@ -171,15 +172,16 @@ export default function Product({
   )
 }
 
-export async function getStaticPaths() {
-  const products = await getProducts()
+export async function getStaticPaths(context: GetStaticPathsContext) {
+  const products = await getProductsData()
   const paths = products.map((p) => ({
     params: { id: p.id },
   }))
 
+  // fallback false for now due to it's pre rendering all the products
   return {
     paths,
-    fallback: true,
+    fallback: false,
   }
 }
 
@@ -197,18 +199,33 @@ export async function getStaticProps({
     }
   }
 
-  const product = await getProductById(params.id)
+  const product = await getProductDataByid(params.id)
+
+  if (!product) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: true,
+      },
+    }
+  }
 
   const images = product.images.map((pi) => ({
     id: randomUUID(),
     image: pi,
   }))
-  const relatedProducts = await getProducts({
-    limit: 4,
+  const relatedProducts: Product[] = await getProductsData({
     category: product.category,
   })
 
   return {
-    props: { product, relatedProducts, images, key: params.id },
+    props: {
+      product,
+      relatedProducts: relatedProducts
+        .filter((rp) => rp.id !== params.id)
+        .slice(0, 4),
+      images,
+      key: params.id,
+    },
   }
 }

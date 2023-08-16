@@ -6,7 +6,7 @@ import {
 import { useRouter } from 'next/router'
 import { useEffect, useRef, useState } from 'react'
 
-import { getProducts } from '@/lib/http'
+import { getProductsData } from '@/lib/data'
 
 import ListProducts from '@/components/lists/ListProducts'
 import SearchInput from '@/components/SearchInput'
@@ -68,7 +68,7 @@ export default function Products({
 export const getStaticProps: GetStaticProps<ProductsProps> = async (): Promise<
   GetStaticPropsResult<ProductsProps>
 > => {
-  const products = await getProducts()
+  const products = await getProductsData()
 
   return {
     props: { products },

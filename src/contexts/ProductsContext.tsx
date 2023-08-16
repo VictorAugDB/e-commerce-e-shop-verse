@@ -31,6 +31,7 @@ export type Product = {
   sizes: ProductSize
   description: string
   evaluations: number
+  numberOfSales: number
   category: string
   discount: number
   stars: number
@@ -56,7 +57,7 @@ interface ProductsContextType {
   subtotal: number
   discounts: number
   setProducts: Dispatch<SetStateAction<Product[]>>
-  handleAddToCart: (id: string) => void
+  handleAddToCart: (id: string) => Promise<void>
   cartQuantity: number
   setCartQuantity: Dispatch<SetStateAction<number>>
 }
@@ -102,7 +103,7 @@ export function ProductsProvider({ children }: ProductsContextProps) {
     setCartQuantity(cartProducts.length)
   }, [])
 
-  async function handleAddToCart(id: string) {
+  async function handleAddToCart(id: string): Promise<void> {
     const cartProducts: LSCart[] = JSON.parse(
       localStorage.getItem(LocalStorage.CART) ?? '[]',
     )
@@ -112,7 +113,7 @@ export function ProductsProvider({ children }: ProductsContextProps) {
         id,
         quantity: 1,
       })
-      setCartQuantity(cartQuantity + 1)
+      setCartQuantity((state) => state + 1)
     } else {
       const product = await getProductById(id)
       if (product.quantity > cartProducts[productIdx].quantity) {

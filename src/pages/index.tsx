@@ -8,7 +8,7 @@ import { HiOutlineDesktopComputer } from 'react-icons/hi'
 import { LuGamepad } from 'react-icons/lu'
 import { twMerge } from 'tailwind-merge'
 
-import { getProducts } from '@/lib/http'
+import { getProductsData } from '@/lib/data'
 
 import BackgroundProduct from '@/components/BackgroundProduct'
 import Button from '@/components/buttons/Button'
@@ -239,14 +239,33 @@ export default function HomePage({
 }
 
 export async function getStaticProps() {
-  const flashSales = await getProducts({ discount: 1, limit: 4 })
-  const bestSellings = await getProducts({
-    bestSelling: true,
-    limit: 4,
-    revalidate: 3,
-  })
-  const products = await getProducts({ limit: 4, revalidate: 24 })
-  let newArrival = await getProducts({ revalidate: 3 })
+  const products = await getProductsData()
+  // TODO create this methods to fetch data from and external database in the data file
+  // const flashSales = await getProducts({ discount: 1, limit: 4 })
+  // const bestSellings = await getProducts({
+  //   bestSelling: true,
+  //   limit: 4,
+  //   revalidate: 3,
+  // })
+  // const products = await getProducts({ limit: 4, revalidate: 24 })
+  // let newArrival = await getProducts({ revalidate: 3 })
+
+  // TODO Remove this when the methods are created
+  const flashSales = products.filter((p) => p.discount >= 1).slice(0, 4)
+  const bestSellings = products
+    .sort((a, b) => b.numberOfSales - a.numberOfSales)
+    .slice(0, 4)
+
+  // TODO Ref 1
+  // let newArrival = await getProducts({ revalidate: 3 })
+  // newArrival = newArrival
+  //   .sort(
+  //     (a, b) =>
+  //       new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+  //   )
+  //   .slice(0, 4)
+
+  let newArrival = products
   newArrival = newArrival
     .sort(
       (a, b) =>
@@ -254,5 +273,12 @@ export async function getStaticProps() {
     )
     .slice(0, 4)
 
-  return { props: { flashSales, bestSellings, products, newArrival } }
+  return {
+    props: {
+      flashSales,
+      bestSellings,
+      products: products.slice(0, 4),
+      newArrival,
+    },
+  }
 }
