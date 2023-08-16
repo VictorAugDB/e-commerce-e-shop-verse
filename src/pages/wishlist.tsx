@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import {
   MouseEvent as ReactMouseEvent,
   useContext,
@@ -33,8 +34,10 @@ export default function Wishlist() {
     }
   }, [])
 
-  function handleMoveAllToCart() {
-    products.forEach((p) => handleAddToCart(p.id))
+  async function handleMoveAllToCart() {
+    for (const product of products) {
+      await handleAddToCart(product.id)
+    }
   }
 
   function handleRemoveFromWishList(
@@ -46,30 +49,52 @@ export default function Wishlist() {
 
     const filteredProduts = products.filter((p) => p.id !== id)
     setProducts(filteredProduts)
-    localStorage.setItem(
-      LocalStorage.WISHLIST,
-      JSON.stringify(filteredProduts.map((fp) => fp.id)),
-    )
+    if (filteredProduts.length) {
+      localStorage.setItem(
+        LocalStorage.WISHLIST,
+        JSON.stringify(filteredProduts.map((fp) => fp.id)),
+      )
+    } else {
+      localStorage.removeItem(LocalStorage.WISHLIST)
+    }
   }
 
   return (
     <div className="px-[8.4375rem] pt-20">
-      <div className="flex items-center justify-between gap-2">
-        <h4 className="font-normal">Wishlist ({products.length})</h4>
-        <Button
-          onClick={handleMoveAllToCart}
-          variant="ghost"
-          className="border border-gray-600 px-12 py-4"
-        >
-          Move all to cart
-        </Button>
-      </div>
-      {products.length > 0 && (
-        <ListProducts
-          products={products}
-          isWishList
-          handleRemoveFromWishList={handleRemoveFromWishList}
-        />
+      {products.length > 0 ? (
+        <>
+          <div className="flex items-center justify-between gap-2">
+            <h4 className="font-normal">Wishlist ({products.length})</h4>
+            <Button
+              onClick={handleMoveAllToCart}
+              variant="ghost"
+              className="border border-gray-600 px-12 py-4"
+            >
+              Move all to cart
+            </Button>
+          </div>
+          {products.length > 0 && (
+            <ListProducts
+              products={products}
+              isWishList
+              handleRemoveFromWishList={handleRemoveFromWishList}
+            />
+          )}
+        </>
+      ) : (
+        <div className="w-full space-y-4">
+          <h4 className="text-center">
+            There's nothing here, wish some products!
+          </h4>
+          <Link className="mx-auto block w-fit" href="/products">
+            <Button
+              variant="ghost"
+              className="border border-gray-800 px-12 py-4"
+            >
+              Return To Shop
+            </Button>
+          </Link>
+        </div>
       )}
     </div>
   )
