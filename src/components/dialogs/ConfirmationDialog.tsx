@@ -25,10 +25,12 @@ export function ConfirmationDialog({
           {description}
         </RadixAlertDialog.Description>
         <div className="flex flex-wrap justify-center gap-4">
-          <RadixAlertDialog.Cancel>
+          <RadixAlertDialog.Cancel asChild>
             <Button variant="light">Cancel</Button>
           </RadixAlertDialog.Cancel>
-          <RadixAlertDialog.Action>{actionButton}</RadixAlertDialog.Action>
+          <RadixAlertDialog.Action asChild>
+            {actionButton}
+          </RadixAlertDialog.Action>
         </div>
       </div>
     </AlertDialog>
