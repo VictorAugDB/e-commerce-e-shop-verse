@@ -1,3 +1,5 @@
+'use client'
+
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, {
@@ -36,6 +38,7 @@ export default function Cart() {
   const router = useRouter()
 
   useEffect(() => {
+    setProducts([])
     if (typeof window !== 'undefined') {
       ;(async () => {
         const cartProducts: LSCart[] = JSON.parse(
@@ -51,7 +54,7 @@ export default function Cart() {
           cartProducts.map((cp) => cp.id),
         )
 
-        setProducts(
+        setProducts(() =>
           apiProducts.map((p) => ({
             ...p,
             cartQuantity: map.get(p.id),
