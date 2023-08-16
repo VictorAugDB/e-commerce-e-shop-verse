@@ -54,7 +54,7 @@ export default function Cart() {
           cartProducts.map((cp) => cp.id),
         )
 
-        setProducts(() =>
+        setProducts(
           apiProducts.map((p) => ({
             ...p,
             cartQuantity: map.get(p.id),
