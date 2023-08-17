@@ -28,7 +28,7 @@ export type Product = {
   quantity: number
   cartQuantity?: number
   name: string
-  sizes: ProductSize
+  sizes?: ProductSize
   description: string
   evaluations: number
   numberOfSales: number
@@ -60,6 +60,7 @@ interface ProductsContextType {
   handleAddToCart: (id: string) => Promise<void>
   cartQuantity: number
   setCartQuantity: Dispatch<SetStateAction<number>>
+  currentCoupon: Coupon | null
 }
 
 type ProductsContextProps = {
@@ -126,7 +127,10 @@ export function ProductsProvider({ children }: ProductsContextProps) {
     localStorage.setItem(LocalStorage.CART, JSON.stringify(cartProducts))
   }
 
-  async function handleApplyCoupon(couponRef: RefObject<HTMLInputElement>) {
+  async function handleApplyCoupon(
+    couponRef: RefObject<HTMLInputElement>,
+    customSubtotal?: number,
+  ) {
     if (!couponRef.current) {
       return
     }
@@ -148,8 +152,11 @@ export function ProductsProvider({ children }: ProductsContextProps) {
         return
       }
 
-      if (subtotal < couponInfo.minVal) {
-        // add message saying that the subtotal is not enough to apply the coupon
+      if (customSubtotal) {
+        if (customSubtotal < couponInfo.minVal) {
+          return
+        }
+      } else if (subtotal < couponInfo.minVal) {
         return
       }
 
@@ -171,6 +178,7 @@ export function ProductsProvider({ children }: ProductsContextProps) {
         handleAddToCart,
         cartQuantity,
         setCartQuantity,
+        currentCoupon,
       }}
     >
       {children}

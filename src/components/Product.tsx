@@ -51,6 +51,7 @@ export default function Product({
     setWishClicked(wished)
   }, [wished])
 
+  // TODO Add to a context
   function handleToggleWishList(
     e: ReactMouseEvent<HTMLDivElement, MouseEvent>,
     id: string,
@@ -104,7 +105,7 @@ export default function Product({
             >
               <Heart
                 data-wished={wishClicked}
-                className="h-[1.125rem] w-[1.125rem] fill-transparent transition group-hover/wishlist:fill-red-500 data-[wished=true]:fill-red-500"
+                className="h-[1.125rem] w-[1.125rem] fill-transparent transition group-hover/wishlist:fill-red-400 data-[wished=true]:fill-red-400"
               />
             </div>
           ) : (

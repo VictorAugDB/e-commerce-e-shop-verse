@@ -46,7 +46,8 @@ export const getProductById = async (id: string): Promise<Product> => {
   const res = await fetch(`http://localhost:3000/api/products/${id}`, {
     next: { revalidate: 60 * 60 * 12 },
   }) // 12 hours
-  return res.json()
+
+  return res.status === 204 ? null : res.json()
 }
 
 export const getProductsByIds = async (ids: string[]): Promise<Product[]> => {

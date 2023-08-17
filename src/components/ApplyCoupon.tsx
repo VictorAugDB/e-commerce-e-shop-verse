@@ -4,7 +4,11 @@ import Button from '@/components/buttons/Button'
 
 import { ProductsContext } from '@/contexts/ProductsContext'
 
-export default function ApplyCoupon() {
+type ApplyCouponProps = {
+  customSubtotal?: number
+}
+
+export default function ApplyCoupon({ customSubtotal }: ApplyCouponProps) {
   const [isEmpty, setIsEmpty] = useState(true)
 
   const couponRef = useRef<HTMLInputElement>(null)
@@ -25,7 +29,7 @@ export default function ApplyCoupon() {
         placeholder="Coupon here"
       />
       <Button
-        onClick={() => handleApplyCoupon(couponRef)}
+        onClick={() => handleApplyCoupon(couponRef, customSubtotal)}
         variant="green"
         className="px-12 py-4"
         disabled={isEmpty}

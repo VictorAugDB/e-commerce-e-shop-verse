@@ -43,7 +43,7 @@ export default function Steps(props: StepsProps) {
         <React.Fragment key={step}>
           <p
             data-current-step={props.currentStep === idx}
-            className="text-sm text-gray-400 data-[current-step=true]:text-black"
+            className="text-sm capitalize text-gray-400 data-[current-step=true]:text-black"
           >
             {step}
           </p>

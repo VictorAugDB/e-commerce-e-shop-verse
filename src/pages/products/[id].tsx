@@ -6,7 +6,8 @@ import {
   GetStaticPropsResult,
   InferGetStaticPropsType,
 } from 'next'
-import { useState } from 'react'
+import { useRouter } from 'next/router'
+import { MouseEvent as ReactMouseEvent, useEffect, useState } from 'react'
 import { Heart, RefreshCcw } from 'react-feather'
 import { TbTruckDelivery } from 'react-icons/tb'
 import { twMerge } from 'tailwind-merge'
@@ -21,6 +22,7 @@ import Stars from '@/components/Stars'
 import Steps from '@/components/Steps'
 
 import { Product } from '@/contexts/ProductsContext'
+import { LocalStorage, LSWishlist } from '@/models/localStorage'
 
 export type ImageType = {
   id: string
@@ -40,11 +42,86 @@ export default function Product({
   images: productImages,
 }: InferGetStaticPropsType<GetStaticProps<ProductProps>>) {
   const [selectedSize, setSelectedSize] = useState<null | string>(null)
+  const [quantity, setQuantity] = useState(1)
+  const [wishClicked, setWishClicked] = useState(false)
+  const router = useRouter()
 
   const sizes: ['xs', 's', 'm', 'l', 'xl'] = ['xs', 's', 'm', 'l', 'xl']
 
+  useEffect(() => {
+    const wishlistProducts: LSWishlist[] = JSON.parse(
+      localStorage.getItem(LocalStorage.WISHLIST) ?? '[]',
+    )
+
+    if (wishlistProducts.find((wp) => wp === product.id)) {
+      setWishClicked(true)
+    }
+  }, [product])
+
   function handleSelectSize(size: string) {
     setSelectedSize(size)
+  }
+
+  function handleIncreaseQuantity(productQuantity: number) {
+    setQuantity(quantity + 1)
+  }
+
+  function handleDecreaseQuantity() {
+    setQuantity(quantity - 1)
+  }
+
+  function handleChangeQuantity(newQuantity: number, productQuantity: number) {
+    if (newQuantity > productQuantity) {
+      setQuantity(productQuantity)
+    } else if (newQuantity <= 0) {
+      setQuantity(1)
+    } else {
+      setQuantity(newQuantity)
+    }
+  }
+
+  // TODO Add to a context
+  function handleToggleWishList(
+    e: ReactMouseEvent<HTMLDivElement, MouseEvent>,
+    id: string,
+  ) {
+    e.preventDefault()
+    e.stopPropagation()
+
+    if (wishClicked) {
+      setWishClicked(false)
+
+      const ids: LSWishlist[] = JSON.parse(
+        localStorage.getItem(LocalStorage.WISHLIST) ?? '[]',
+      )
+
+      localStorage.setItem(
+        LocalStorage.WISHLIST,
+        JSON.stringify(ids.filter((i) => i !== id)),
+      )
+    } else {
+      setWishClicked(true)
+
+      const ids: LSWishlist[] = JSON.parse(
+        localStorage.getItem(LocalStorage.WISHLIST) ?? '[]',
+      )
+
+      ids.push(id)
+
+      localStorage.setItem(LocalStorage.WISHLIST, JSON.stringify(ids))
+    }
+  }
+
+  function handleNavigateToCheckout(hasSizes: boolean) {
+    if (hasSizes && selectedSize === null) {
+      alert('Please select the size.')
+      return
+    }
+
+    router.push({
+      pathname: '/checkout',
+      query: { from: 'product', id: product.id, size: selectedSize, quantity },
+    })
   }
 
   return (
@@ -52,7 +129,7 @@ export default function Product({
       <Steps
         flow="product"
         currentStep={2}
-        category="Gaming"
+        category={product.category}
         productName={product.name}
       />
       <div
@@ -82,64 +159,97 @@ export default function Product({
                 <ProductColors colors={['#000', '#999']} />
               </div>
             </div>
-            <div className="flex items-center gap-6">
-              <p className="text-lg">Sizes:</p>
-              <div className="flex items-center gap-4">
-                {sizes.map((s) => (
-                  <motion.button
-                    key={s}
-                    onClick={() => handleSelectSize(s)}
-                    disabled={product.sizes[s] <= 0}
-                    className={twMerge(
-                      'h-8 w-8 rounded border bg-white disabled:cursor-not-allowed disabled:bg-gray-300/50',
-                      selectedSize === s
-                        ? 'border-green-700'
-                        : 'border-gray-600',
-                    )}
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    initial={{ opacity: 0, scale: 0.5 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    {selectedSize === s ? (
-                      <motion.div
-                        layoutId="selectedSize"
-                        className="flex h-full w-full items-center justify-center rounded-sm bg-green-700 text-white"
-                      >
+            {product.sizes && (
+              <div className="flex items-center gap-6">
+                <p className="text-lg">Sizes:</p>
+                <div className="flex items-center gap-4">
+                  {sizes.map((s) => (
+                    <motion.button
+                      key={s}
+                      onClick={() => handleSelectSize(s)}
+                      disabled={product.sizes && product.sizes[s] <= 0}
+                      className={twMerge(
+                        'h-8 w-8 rounded border bg-white disabled:cursor-not-allowed disabled:bg-gray-300/50',
+                        selectedSize === s
+                          ? 'border-green-700'
+                          : 'border-gray-600',
+                      )}
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      initial={{ opacity: 0, scale: 0.5 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      {selectedSize === s ? (
+                        <motion.div
+                          layoutId="selectedSize"
+                          className="flex h-full w-full items-center justify-center rounded-sm bg-green-700 text-white"
+                        >
+                          <p className="text-sm font-medium">
+                            {s.toUpperCase()}
+                          </p>
+                        </motion.div>
+                      ) : (
                         <p className="text-sm font-medium">{s.toUpperCase()}</p>
-                      </motion.div>
-                    ) : (
-                      <p className="text-sm font-medium">{s.toUpperCase()}</p>
-                    )}
-                  </motion.button>
-                ))}
+                      )}
+                    </motion.button>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
           </div>
           <div className="mt-6 flex flex-wrap items-center justify-center gap-4">
             <div className="flex items-center overflow-hidden rounded bg-white">
               <Button
                 variant="ghost"
-                className="h-[2.85rem] rounded-r-none border border-gray-600 text-2xl hover:bg-gray-200"
+                className="h-[2.85rem] rounded-r-none border border-gray-600 text-2xl hover:bg-gray-200 "
+                disabled={quantity === 1}
+                onClick={handleDecreaseQuantity}
               >
                 -
               </Button>
-              <div className="flex h-[2.85rem] items-center border-x-0 border-y border-gray-600 px-9 text-center leading-6 ">
-                {product.quantity}
+              <div className="flex h-[2.85rem] items-center border-x-0 border-y border-gray-600 px-1 text-center leading-6">
+                <input
+                  value={quantity}
+                  onChange={(e) =>
+                    handleChangeQuantity(
+                      Number(e.target.value),
+                      product.quantity,
+                    )
+                  }
+                  type="number"
+                  className="number-input-without-arrows w-16 border-0 text-center"
+                />
               </div>
               <Button
                 variant="green"
+                disabled={quantity === product.quantity}
                 className="h-[2.85rem] rounded-l-none border border-l-0 border-green-600 text-2xl"
+                onClick={() => handleIncreaseQuantity(product.quantity)}
               >
                 +
               </Button>
             </div>
-            <Button variant="green" className="h-[2.85rem] px-12">
+
+            <Button
+              onClick={() => handleNavigateToCheckout(!!product.sizes)}
+              variant="green"
+              className="h-[2.85rem] px-12"
+            >
               Buy Now
             </Button>
-            <div className="flex items-center justify-center rounded border border-gray-600 p-[.375rem]">
-              <Heart width={20} height={20} strokeWidth={1.5} />
+
+            <div
+              onClick={(e) => handleToggleWishList(e, product.id)}
+              className="flex cursor-pointer items-center justify-center rounded border border-gray-600 p-[.375rem]"
+            >
+              <Heart
+                width={20}
+                height={20}
+                strokeWidth={1.5}
+                data-wished={wishClicked}
+                className="data-[wished=true]:fill-red-400"
+              />
             </div>
           </div>
           <div className="mt-11">

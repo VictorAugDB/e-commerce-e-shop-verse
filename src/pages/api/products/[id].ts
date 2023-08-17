@@ -15,6 +15,6 @@ export default async function getProduct(
   if (product) {
     res.status(200).json(product)
   } else {
-    res.status(404).send(undefined)
+    res.status(204).send(undefined)
   }
 }

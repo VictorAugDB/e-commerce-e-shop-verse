@@ -7,13 +7,6 @@
       "name": "Monitor LCD Gamer",
       "description": "Unleash gaming greatness with our HD Monitor! 144Hz refresh rate and FreeSync tech deliver seamless visuals and precision gameplay. Elevate your gaming experience now!",
       "quantity": 1,
-      "sizes": {
-        "xs": 10,
-        "s": 5,
-        "m": 15,
-        "l": 20,
-        "xl": 0
-      },
       "evaluations": 150,
       "category": "Gaming",
       "numberOfSales": 10,
@@ -33,13 +26,6 @@
       "numberOfSales": 20,
       "discount": 10,
       "stars": 4.5,
-      "sizes": {
-        "xs": 5,
-        "s": 15,
-        "m": 30,
-        "l": 40,
-        "xl": 10
-      },
       "createdAt": "2023-08-05T17:23:15.512Z"
     },
     {
@@ -54,13 +40,6 @@
       "numberOfSales": 10,
       "discount": 5,
       "stars": 4.0,
-      "sizes": {
-        "xs": 2,
-        "s": 5,
-        "m": 10,
-        "l": 10,
-        "xl": 3
-      },
       "createdAt": "2023-08-06T10:45:25.743Z"
     },
     {
@@ -96,13 +75,6 @@
       "numberOfSales": 5,
       "discount": 0,
       "stars": 4.8,
-      "sizes": {
-        "xs": 8,
-        "s": 10,
-        "m": 15,
-        "l": 5,
-        "xl": 2
-      },
       "createdAt": "2023-08-08T16:10:18.621Z"
     },
     {
@@ -117,13 +89,6 @@
       "numberOfSales": 50,
       "discount": 20,
       "stars": 4.7,
-      "sizes": {
-        "xs": 0,
-        "s": 5,
-        "m": 10,
-        "l": 8,
-        "xl": 2
-      },
       "createdAt": "2023-08-09T12:05:59.153Z"
     },
     {
@@ -138,13 +103,6 @@
       "numberOfSales": 8,
       "discount": 0,
       "stars": 4.6,
-      "sizes": {
-        "xs": 0,
-        "s": 2,
-        "m": 5,
-        "l": 4,
-        "xl": 1
-      },
       "createdAt": "2023-08-10T09:20:45.398Z"
     },
     {
@@ -159,13 +117,6 @@
       "numberOfSales": 12,
       "discount": 5,
       "stars": 4.3,
-      "sizes": {
-        "xs": 8,
-        "s": 5,
-        "m": 10,
-        "l": 6,
-        "xl": 1
-      },
       "createdAt": "2023-08-11T14:55:37.890Z"
     }
   ],
