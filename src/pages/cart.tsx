@@ -2,14 +2,7 @@
 
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import React, {
-  Fragment,
-  MutableRefObject,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from 'react'
+import React, { Fragment, useContext, useEffect, useRef, useState } from 'react'
 import { ChevronDown, ChevronUp, Trash } from 'react-feather'
 
 import { getProductsByIds } from '@/lib/http'
@@ -33,7 +26,6 @@ export default function Cart() {
     setCartQuantity,
   } = useContext(ProductsContext)
   const [isMobileSize, setIsMobileSize] = useState(false)
-  const cartQuantityRefs = useRef<Map<string, HTMLInputElement>>(new Map())
 
   const router = useRouter()
 
@@ -82,75 +74,6 @@ export default function Cart() {
     }
 
     setCartQuantity((state) => state - 1)
-  }
-
-  function handleIncreaseQuantity(id: string) {
-    const ref = cartQuantityRefs.current.get(id)
-    if (ref) {
-      ref.value = (Number(ref.value) + 1).toString()
-    }
-
-    handleChangeQuantity(id)
-  }
-
-  function handleDecreaseQuantity(id: string) {
-    const ref = cartQuantityRefs.current.get(id)
-    if (ref) {
-      ref.value = (Number(ref.value) - 1).toString()
-    }
-
-    handleChangeQuantity(id)
-  }
-
-  function handleChangeQuantity(id: string) {
-    const ref = cartQuantityRefs.current.get(id)
-    let quantity = Number(ref?.value)
-
-    if (!quantity) {
-      if (ref) {
-        ref.value = '1'
-        quantity = Number(ref.value)
-      }
-    }
-
-    const product = products.find((p) => p.id === id)
-
-    if (!product) {
-      return
-    }
-
-    if (product.quantity < quantity) {
-      if (ref) {
-        ref.value = product.quantity.toString()
-        quantity = Number(ref.value)
-      }
-    }
-
-    const updatedProducts =
-      quantity > 0
-        ? products.map((p) =>
-            p.id === id ? { ...p, cartQuantity: quantity } : p,
-          )
-        : products.filter((p) => p.id !== id)
-
-    const cartProducts: LSCart[] = JSON.parse(
-      localStorage.getItem(LocalStorage.CART) ?? '[]',
-    )
-
-    if (quantity > 0) {
-      const productIdx = cartProducts.findIndex((cp) => cp.id === id)
-
-      cartProducts[productIdx].quantity = quantity
-      localStorage.setItem(LocalStorage.CART, JSON.stringify(cartProducts))
-    } else {
-      localStorage.setItem(
-        LocalStorage.CART,
-        JSON.stringify(cartProducts.filter((cp) => cp.id !== id)),
-      )
-      setCartQuantity((state) => state + 1)
-    }
-
-    setProducts(updatedProducts)
   }
 
   useEffect(() => {
@@ -212,60 +135,11 @@ export default function Cart() {
                         </td>
                         <td className="py-10 text-center ">${product.price}</td>
                         <td className="py-10">
-                          <div className="mx-auto flex w-fit items-center rounded border border-gray-600 py-px pl-2 pr-px focus-within:border-[--tw-ring-offset-color] focus-within:ring-2">
-                            <input
-                              type="text"
-                              ref={(el) =>
-                                el &&
-                                cartQuantityRefs.current.set(product.id, el)
-                              }
-                              defaultValue={product.cartQuantity}
-                              onBlur={() => handleChangeQuantity(product.id)}
-                              onKeyDown={(e) => {
-                                if (e.key === 'Enter') {
-                                  const ref = cartQuantityRefs.current.get(
-                                    product.id,
-                                  )
-                                  if (ref) {
-                                    ref.blur()
-                                  }
-                                }
-                              }}
-                              className="w-[2.5rem] rounded border-0 p-0 focus:ring-0"
-                              data-testid="quantity-input"
-                            />
-                            <div>
-                              <button
-                                onClick={() =>
-                                  handleIncreaseQuantity(product.id)
-                                }
-                                disabled={
-                                  product.quantity ===
-                                  Number(
-                                    cartQuantityRefs.current.get(product.id)
-                                      ?.value,
-                                  )
-                                }
-                                className="block cursor-pointer rounded transition hover:bg-gray-400 disabled:cursor-not-allowed disabled:hover:bg-transparent"
-                              >
-                                <ChevronUp className="h-4 md:h-5" />
-                              </button>
-                              <button
-                                onClick={() =>
-                                  handleDecreaseQuantity(product.id)
-                                }
-                                disabled={
-                                  Number(
-                                    cartQuantityRefs.current.get(product.id)
-                                      ?.value,
-                                  ) === 1
-                                }
-                                className="not:disabled:hover:bg-gray-400 block cursor-pointer rounded transition hover:bg-gray-400 disabled:cursor-not-allowed disabled:hover:bg-transparent"
-                              >
-                                <ChevronDown className="h-4 md:h-5" />
-                              </button>
-                            </div>
-                          </div>
+                          <QuantityInput
+                            defaultValue={product.cartQuantity ?? 1}
+                            productId={product.id}
+                            productsQuantity={product.quantity}
+                          />
                         </td>
                         <td
                           className="rounded py-10 text-center"
@@ -299,11 +173,7 @@ export default function Cart() {
             ) : (
               <MobileCartProducts
                 products={products}
-                handleChangeQuantity={handleChangeQuantity}
                 handleRemoveProduct={handleRemoveProduct}
-                handleDecreaseQuantity={handleDecreaseQuantity}
-                handleIncreaseQuantity={handleIncreaseQuantity}
-                cartQuantityRefs={cartQuantityRefs}
               />
             )}
 
@@ -377,20 +247,12 @@ export default function Cart() {
 
 type MobileCartProductsProps = {
   products: Product[]
-  handleChangeQuantity: (id: string) => void
   handleRemoveProduct: (id: string) => void
-  handleIncreaseQuantity: (id: string) => void
-  handleDecreaseQuantity: (id: string) => void
-  cartQuantityRefs: MutableRefObject<Map<string, HTMLInputElement>>
 }
 
 function MobileCartProducts({
   products,
-  handleChangeQuantity,
   handleRemoveProduct,
-  handleDecreaseQuantity,
-  handleIncreaseQuantity,
-  cartQuantityRefs,
 }: MobileCartProductsProps) {
   return (
     <div className="w-full">
@@ -414,49 +276,11 @@ function MobileCartProducts({
             <div className="flex w-full flex-col items-center gap-2">
               <p className="">{product.name}</p>
               <span className="block">Price: ${product.price}</span>
-              <div className="mx-auto flex w-fit items-center rounded border border-gray-600 py-px pl-2 pr-px focus-within:border-[--tw-ring-offset-color] focus-within:ring-2">
-                <input
-                  type="text"
-                  ref={(el) =>
-                    el && cartQuantityRefs.current.set(product.id, el)
-                  }
-                  defaultValue={product.cartQuantity}
-                  onBlur={() => handleChangeQuantity(product.id)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      const ref = cartQuantityRefs.current.get(product.id)
-                      if (ref) {
-                        ref.blur()
-                      }
-                    }
-                  }}
-                  className="w-[2.5rem] rounded border-0 p-0 focus:ring-0"
-                  data-testid="quantity-input"
-                />
-                <div>
-                  <button
-                    onClick={() => handleIncreaseQuantity(product.id)}
-                    disabled={
-                      product.quantity ===
-                      Number(cartQuantityRefs.current.get(product.id)?.value)
-                    }
-                    className="block cursor-pointer rounded transition hover:bg-gray-400 disabled:cursor-not-allowed disabled:hover:bg-transparent"
-                  >
-                    <ChevronUp className="h-4 md:h-5" />
-                  </button>
-                  <button
-                    onClick={() => handleDecreaseQuantity(product.id)}
-                    disabled={
-                      Number(
-                        cartQuantityRefs.current.get(product.id)?.value,
-                      ) === 1
-                    }
-                    className="not:disabled:hover:bg-gray-400 block cursor-pointer rounded transition hover:bg-gray-400 disabled:cursor-not-allowed disabled:hover:bg-transparent"
-                  >
-                    <ChevronDown className="h-4 md:h-5" />
-                  </button>
-                </div>
-              </div>
+              <QuantityInput
+                defaultValue={product.cartQuantity ?? 1}
+                productId={product.id}
+                productsQuantity={product.quantity}
+              />
 
               <div data-testid="product-subtotal-val" className="text-center">
                 Subtotal: ${product.price * (product.cartQuantity ?? 1)}
@@ -482,6 +306,107 @@ function MobileCartProducts({
           </div>
         </Fragment>
       ))}
+    </div>
+  )
+}
+
+type QuantityInputProps = {
+  defaultValue: number
+  productId: string
+  productsQuantity: number
+}
+
+function QuantityInput({
+  defaultValue,
+  productId,
+  productsQuantity,
+}: QuantityInputProps) {
+  const { setProducts } = useContext(ProductsContext)
+
+  const ref = useRef<HTMLInputElement>(null)
+
+  function handleIncreaseQuantity(id: string) {
+    const currentRef = ref.current
+    if (currentRef) {
+      currentRef.value = (Number(currentRef.value) + 1).toString()
+    }
+
+    handleChangeQuantity(id)
+  }
+
+  function handleDecreaseQuantity(id: string) {
+    const currentRef = ref.current
+    if (currentRef) {
+      currentRef.value = (Number(currentRef.value) - 1).toString()
+    }
+
+    handleChangeQuantity(id)
+  }
+
+  function handleChangeQuantity(id: string) {
+    const currentRef = ref.current
+    let quantity = Number(currentRef?.value)
+
+    if (quantity <= 0) {
+      if (currentRef) {
+        currentRef.value = '1'
+        quantity = Number(currentRef.value)
+      }
+      return
+    }
+
+    if (productsQuantity < quantity) {
+      if (currentRef) {
+        currentRef.value = productsQuantity.toString()
+        quantity = Number(currentRef.value)
+      }
+    }
+
+    const cartProducts: LSCart[] = JSON.parse(
+      localStorage.getItem(LocalStorage.CART) ?? '[]',
+    )
+
+    const productIdx = cartProducts.findIndex((cp) => cp.id === id)
+
+    cartProducts[productIdx].quantity = quantity
+    localStorage.setItem(LocalStorage.CART, JSON.stringify(cartProducts))
+
+    setProducts((products) =>
+      products.map((p) => (p.id === id ? { ...p, cartQuantity: quantity } : p)),
+    )
+  }
+
+  return (
+    <div className="mx-auto flex w-fit items-center rounded border border-gray-600 py-px pl-2 pr-px focus-within:border-[--tw-ring-offset-color] focus-within:ring-2">
+      <input
+        type="text"
+        ref={ref}
+        defaultValue={defaultValue}
+        onBlur={() => handleChangeQuantity(productId)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            ref.current && ref.current.blur()
+          }
+        }}
+        className="w-[2.5rem] rounded border-0 p-0 focus:ring-0"
+        data-testid="quantity-input"
+      />
+      <div>
+        <button
+          onClick={() => handleIncreaseQuantity(productId)}
+          disabled={productsQuantity === Number(ref.current?.value)}
+          className="block cursor-pointer rounded transition hover:bg-gray-400 disabled:cursor-not-allowed disabled:hover:bg-transparent"
+        >
+          <ChevronUp className="h-4 md:h-5" />
+        </button>
+        <button
+          onClick={() => handleDecreaseQuantity(productId)}
+          disabled={Number(ref.current?.value) === 1}
+          className="not:disabled:hover:bg-gray-400 block cursor-pointer rounded transition hover:bg-gray-400 disabled:cursor-not-allowed disabled:hover:bg-transparent"
+        >
+          <ChevronDown className="h-4 md:h-5" />
+        </button>
+      </div>
     </div>
   )
 }

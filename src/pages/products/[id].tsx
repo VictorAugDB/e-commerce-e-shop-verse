@@ -1,7 +1,6 @@
 import { randomUUID } from 'crypto'
 import { motion } from 'framer-motion'
 import {
-  GetStaticPathsContext,
   GetStaticProps,
   GetStaticPropsContext,
   GetStaticPropsResult,
@@ -172,7 +171,7 @@ export default function Product({
   )
 }
 
-export async function getStaticPaths(context: GetStaticPathsContext) {
+export async function getStaticPaths() {
   const products = await getProductsData()
   const paths = products.map((p) => ({
     params: { id: p.id },
