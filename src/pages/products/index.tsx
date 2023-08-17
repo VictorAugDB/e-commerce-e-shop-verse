@@ -20,7 +20,7 @@ type ProductsProps = {
 export default function Products({
   products,
 }: InferGetStaticPropsType<GetStaticProps<ProductsProps>>) {
-  const { search } = useRouter().query
+  const { search, category } = useRouter().query
   const [productsState, setProductsState] = useState(products)
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -32,7 +32,15 @@ export default function Products({
         ),
       )
     }
-  }, [search, products])
+
+    if (category && typeof category === 'string') {
+      setProductsState(
+        products.filter((p) =>
+          p.category.toLocaleLowerCase().toLowerCase().includes(category),
+        ),
+      )
+    }
+  }, [search, products, category])
 
   function handleSearch() {
     if (!inputRef) {
