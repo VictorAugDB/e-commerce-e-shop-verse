@@ -396,6 +396,7 @@ function QuantityInput({
           onClick={() => handleIncreaseQuantity(productId)}
           disabled={productsQuantity === Number(ref.current?.value)}
           className="block cursor-pointer rounded transition hover:bg-gray-400 disabled:cursor-not-allowed disabled:hover:bg-transparent"
+          data-testid="increase-quantity"
         >
           <ChevronUp className="h-4 md:h-5" />
         </button>
@@ -403,6 +404,7 @@ function QuantityInput({
           onClick={() => handleDecreaseQuantity(productId)}
           disabled={Number(ref.current?.value) === 1}
           className="not:disabled:hover:bg-gray-400 block cursor-pointer rounded transition hover:bg-gray-400 disabled:cursor-not-allowed disabled:hover:bg-transparent"
+          data-testid="decrease-quantity"
         >
           <ChevronDown className="h-4 md:h-5" />
         </button>

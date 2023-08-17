@@ -28,7 +28,7 @@ export function ConfirmationDialog({
           <RadixAlertDialog.Cancel asChild>
             <Button variant="light">Cancel</Button>
           </RadixAlertDialog.Cancel>
-          <RadixAlertDialog.Action asChild>
+          <RadixAlertDialog.Action data-testid="action-button" asChild>
             {actionButton}
           </RadixAlertDialog.Action>
         </div>

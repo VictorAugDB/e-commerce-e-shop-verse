@@ -11,7 +11,12 @@ export default function AlertDialog({ button, children }: DialogProps) {
 
   return (
     <RadixAlertDialog.Root open={open} onOpenChange={setOpen}>
-      <RadixAlertDialog.Trigger asChild>{button}</RadixAlertDialog.Trigger>
+      <RadixAlertDialog.Trigger
+        data-testid="open-remove-product-dialog"
+        asChild
+      >
+        {button}
+      </RadixAlertDialog.Trigger>
       <RadixAlertDialog.Portal>
         <RadixAlertDialog.Overlay
           onClick={() => setOpen(false)}
