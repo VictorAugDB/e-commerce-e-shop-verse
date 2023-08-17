@@ -182,7 +182,7 @@ export default function Header() {
               />
               <div
                 className={twMerge(
-                  'absolute -top-3 flex h-4 w-fit min-w-[1rem] items-center justify-center rounded-full bg-red-500 p-1 text-xs text-white',
+                  'absolute -top-3 flex h-4 w-fit min-w-[1rem] items-center justify-center rounded-full bg-green-700 p-1 text-xs text-white',
                   cartQuantity < 100 ? '-right-3' : '-right-6',
                 )}
               >
