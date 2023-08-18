@@ -34,8 +34,8 @@ export const getProducts = async ({
   }
 
   const res = await fetch(
-    (process.env.NEXT_PUBLIC_VERCEL_URL ?? 'http://localhost:3000/') +
-      'api/products' +
+    (process.env.NEXT_PUBLIC_VERCEL_URL ?? 'http://localhost:3000') +
+      '/api/products' +
       query,
     {
       next: {
@@ -49,8 +49,8 @@ export const getProducts = async ({
 
 export const getProductById = async (id: string): Promise<Product> => {
   const res = await fetch(
-    (process.env.NEXT_PUBLIC_VERCEL_URL ?? 'http://localhost:3000/') +
-      `api/products/${id}`,
+    (process.env.NEXT_PUBLIC_VERCEL_URL ?? 'http://localhost:3000') +
+      `/api/products/${id}`,
     {
       next: { revalidate: 60 * 60 * 12 },
     },
@@ -66,16 +66,16 @@ export const getProductsByIds = async (ids: string[]): Promise<Product[]> => {
 
   const queryParams = ids.map((id) => `id=${id}`).join('&')
   const res = await fetch(
-    (process.env.NEXT_PUBLIC_VERCEL_URL ?? 'http://localhost:3000/') +
-      `api/products?${queryParams}`,
+    (process.env.NEXT_PUBLIC_VERCEL_URL ?? 'http://localhost:3000') +
+      `/api/products?${queryParams}`,
   )
   return res.json()
 }
 
 export const getCoupons = async (): Promise<Coupon[]> => {
   const res = await fetch(
-    (process.env.NEXT_PUBLIC_VERCEL_URL ?? 'http://localhost:3000/') +
-      'api/coupons',
+    (process.env.NEXT_PUBLIC_VERCEL_URL ?? 'http://localhost:3000') +
+      '/api/coupons',
   )
   return await res.json()
 }
