@@ -82,6 +82,10 @@ export default function Cart() {
       setIsMobileSize(mediaQuery.matches)
     }
 
+    if (mediaQuery.matches) {
+      handler()
+    }
+
     mediaQuery.addEventListener('change', handler)
 
     return () => {
