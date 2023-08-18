@@ -62,7 +62,7 @@ export default function Product({
     setSelectedSize(size)
   }
 
-  function handleIncreaseQuantity(productQuantity: number) {
+  function handleIncreaseQuantity() {
     setQuantity(quantity + 1)
   }
 
@@ -211,6 +211,11 @@ export default function Product({
               <div className="flex h-[2.85rem] items-center border-x-0 border-y border-gray-600 px-1 text-center leading-6">
                 <input
                   value={quantity}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.currentTarget.blur()
+                    }
+                  }}
                   onChange={(e) =>
                     handleChangeQuantity(
                       Number(e.target.value),
@@ -225,7 +230,7 @@ export default function Product({
                 variant="green"
                 disabled={quantity === product.quantity}
                 className="h-[2.85rem] rounded-l-none border border-l-0 border-green-600 text-2xl"
-                onClick={() => handleIncreaseQuantity(product.quantity)}
+                onClick={() => handleIncreaseQuantity()}
               >
                 +
               </Button>
