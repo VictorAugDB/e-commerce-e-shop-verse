@@ -51,6 +51,12 @@ function SearchInput(
       <input
         className={input({ textSize })}
         onBlur={handleCheckHasValue}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            e.currentTarget.blur()
+            handleSearch()
+          }
+        }}
         type="text"
         ref={ref}
         {...props}
