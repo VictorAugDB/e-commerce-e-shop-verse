@@ -60,10 +60,10 @@ export default function Wishlist() {
   }
 
   return (
-    <div className="px-[8.4375rem] pt-20">
+    <div className="px-2 pt-20 2xl:px-[8.4375rem]">
       {products.length > 0 ? (
         <>
-          <div className="flex items-center justify-between gap-2">
+          <div className="flex flex-wrap items-center justify-center gap-6 sm:justify-between">
             <h4 className="font-normal">Wishlist ({products.length})</h4>
             <Button
               onClick={handleMoveAllToCart}
