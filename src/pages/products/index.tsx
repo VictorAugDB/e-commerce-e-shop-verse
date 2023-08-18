@@ -25,12 +25,16 @@ export default function Products({
   const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
-    if (search && typeof search === 'string') {
-      setProductsState(
-        products.filter((p) =>
-          p.name.toLocaleLowerCase().toLowerCase().includes(search),
-        ),
-      )
+    if (typeof search === 'string') {
+      if (!search) {
+        setProductsState(products)
+      } else {
+        setProductsState(
+          products.filter((p) =>
+            p.name.toLocaleLowerCase().toLowerCase().includes(search),
+          ),
+        )
+      }
     }
 
     if (category && typeof category === 'string') {
