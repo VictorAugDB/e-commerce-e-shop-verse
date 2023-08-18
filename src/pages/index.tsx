@@ -1,4 +1,3 @@
-import * as React from 'react'
 import { ArrowUp } from 'react-feather'
 import { IconType } from 'react-icons'
 import { AiOutlineCamera } from 'react-icons/ai'
@@ -94,21 +93,21 @@ export default function HomePage({
       name: 'iPhone 14 Series',
       description: 'Up to 10% off Voucher',
       imagePath: '/images/promotion-image.png',
-      id: '123',
+      id: '1',
     },
     {
       imageLogoPath: '/images/promotion-logo.png',
       name: 'iPhone 14 Series',
       description: 'Up to 11% off Voucher',
       imagePath: '/images/promotion-image.png',
-      id: '1234',
+      id: '2',
     },
     {
       imageLogoPath: '/images/promotion-logo.png',
       name: 'iPhone 14 Series',
       description: 'Up to 12% off Voucher',
       imagePath: '/images/promotion-image.png',
-      id: '12345',
+      id: '3',
     },
   ]
 
@@ -179,10 +178,7 @@ export default function HomePage({
               <p className="px-1 text-xs">Seconds</p>
             </div>
           </div>
-          <Button
-            variant="ghost"
-            className="w-fit border border-white px-12 py-4 text-white hover:shadow-white"
-          >
+          <Button className="w-fit border border-white px-12 py-4 text-white hover:shadow-white">
             Buy Now!
           </Button>
         </div>
