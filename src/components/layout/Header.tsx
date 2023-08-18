@@ -159,7 +159,8 @@ export default function Header() {
           <div onClick={() => handleChangeTab('wishlist')} className="relative">
             <Link href="/wishlist">
               <Heart
-                className="h-5 w-5 fill-transparent transition-all hover:fill-red-400 sm:h-6 sm:w-6"
+                data-is-active={currentTab === 'wishlist'}
+                className="h-5 w-5 fill-transparent transition-all hover:fill-red-400 data-[is-active=true]:fill-red-400 sm:h-6 sm:w-6"
                 strokeWidth={currentTab === 'wishlist' ? 2.5 : 2}
               />
               {currentTab === 'wishlist' && (
