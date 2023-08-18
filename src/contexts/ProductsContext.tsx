@@ -49,6 +49,7 @@ export type Coupon = {
 interface ProductsContextType {
   handleApplyCoupon: (
     couponRef: RefObject<HTMLInputElement>,
+    customSubtotal?: number,
   ) => Promise<void | undefined>
   products: Product[]
 
