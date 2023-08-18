@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion'
 import Link from 'next/link'
 import {
   MouseEvent as ReactMouseEvent,
@@ -86,7 +87,6 @@ export default function Product({
   return (
     <Link
       href={`/products/${id}`}
-      scroll={false}
       className="w-full max-w-[16.875rem] justify-self-center"
     >
       <div className="group flex flex-1 cursor-pointer flex-col gap-4 transition-all hover:scale-105 hover:shadow-lg">
@@ -97,7 +97,12 @@ export default function Product({
             </div>
           )}
           {!isWishList ? (
-            <div
+            <motion.div
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              initial={{ opacity: 0, scale: 0.5 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.2 }}
               onClick={(e) => {
                 handleToggleWishList(e, id)
               }}
@@ -107,7 +112,7 @@ export default function Product({
                 data-wished={wishClicked}
                 className="h-[1.125rem] w-[1.125rem] fill-transparent transition group-hover/wishlist:fill-red-400 data-[wished=true]:fill-red-400"
               />
-            </div>
+            </motion.div>
           ) : (
             <div
               onClick={(e) => {
