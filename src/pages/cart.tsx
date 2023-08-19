@@ -13,6 +13,7 @@ import { ConfirmationDialog } from '@/components/dialogs/ConfirmationDialog'
 import NextImage from '@/components/NextImage'
 import Steps from '@/components/Steps'
 
+import { LoadingContext } from '@/contexts/LoadingProvider'
 import { Product, ProductsContext } from '@/contexts/ProductsContext'
 import { LocalStorage, LSCart } from '@/models/localStorage'
 
@@ -26,6 +27,7 @@ export default function Cart() {
     setCartQuantity,
   } = useContext(ProductsContext)
   const [isMobileSize, setIsMobileSize] = useState(false)
+  const { setLoading } = useContext(LoadingContext)
 
   const router = useRouter()
 
@@ -42,9 +44,13 @@ export default function Cart() {
           return { props: { products: [] } }
         }
 
+        setLoading(true)
+
         const apiProducts = await getProductsByIds(
           cartProducts.map((cp) => cp.id),
         )
+
+        setLoading(false)
 
         setProducts(
           apiProducts.map((p) => ({
@@ -54,7 +60,7 @@ export default function Cart() {
         )
       })()
     }
-  }, [setProducts])
+  }, [setProducts, setLoading])
 
   function handleRemoveProduct(id: string) {
     setProducts(products.filter((p) => p.id !== id))

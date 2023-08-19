@@ -5,6 +5,7 @@ import '@/styles/globals.css'
 
 import Layout from '@/components/layout/Layout'
 
+import { LoadingProvider } from '@/contexts/LoadingProvider'
 import { ProductsProvider } from '@/contexts/ProductsContext'
 const poppins = Poppins({
   subsets: ['latin'],
@@ -15,11 +16,13 @@ const poppins = Poppins({
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <ProductsProvider>
-      <Layout font={poppins}>
-        <Component {...pageProps} />
-      </Layout>
-    </ProductsProvider>
+    <LoadingProvider>
+      <ProductsProvider>
+        <Layout font={poppins}>
+          <Component {...pageProps} />
+        </Layout>
+      </ProductsProvider>
+    </LoadingProvider>
   )
 }
 
