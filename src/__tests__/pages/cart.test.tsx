@@ -1,10 +1,12 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { ReactNode } from 'react'
 import '@/__tests__/__mocks__/matchMedia'
 
 import * as httpUtils from '@/lib/http'
 
 import Cart from '@/app/cart/page'
+import { ErrorProvider } from '@/contexts/ErrorProvider'
 import {
   Product,
   ProductSize,
@@ -41,6 +43,13 @@ const coupon = {
 }
 
 jest.mock('@/lib/http')
+jest.mock('next/navigation')
+
+const contextProvider = ({ children }: { children: ReactNode }) => (
+  <ErrorProvider>
+    <ProductsProvider>{children}</ProductsProvider>
+  </ErrorProvider>
+)
 
 describe('Cart functionalities', () => {
   describe('subtotal', () => {
@@ -68,9 +77,7 @@ describe('Cart functionalities', () => {
         .mockImplementation(jest.fn(() => JSON.stringify(localStorageMock)))
 
       render(<Cart />, {
-        wrapper: ({ children }) => (
-          <ProductsProvider>{children}</ProductsProvider>
-        ),
+        wrapper: contextProvider,
       })
 
       const subtotal = localStorageMock[0].quantity * product.price
@@ -104,9 +111,7 @@ describe('Cart functionalities', () => {
         .mockImplementation(jest.fn(() => Promise.resolve(mockData)))
 
       render(<Cart />, {
-        wrapper: ({ children }) => (
-          <ProductsProvider>{children}</ProductsProvider>
-        ),
+        wrapper: contextProvider,
       })
 
       const subtotal = 68 * product.price
@@ -150,9 +155,7 @@ describe('Cart functionalities', () => {
         .mockImplementation(jest.fn(() => Promise.resolve([coupon])))
 
       render(<Cart />, {
-        wrapper: ({ children }) => (
-          <ProductsProvider>{children}</ProductsProvider>
-        ),
+        wrapper: contextProvider,
       })
 
       const input = await screen.findByPlaceholderText<HTMLInputElement>(
@@ -201,9 +204,7 @@ describe('Cart functionalities', () => {
         .mockImplementation(jest.fn(() => Promise.resolve([coupon])))
 
       render(<Cart />, {
-        wrapper: ({ children }) => (
-          <ProductsProvider>{children}</ProductsProvider>
-        ),
+        wrapper: contextProvider,
       })
 
       const input = await screen.findByPlaceholderText<HTMLInputElement>(
@@ -249,9 +250,7 @@ describe('Cart functionalities', () => {
         .mockImplementation(jest.fn(() => Promise.resolve(mockProducts)))
 
       render(<Cart />, {
-        wrapper: ({ children }) => (
-          <ProductsProvider>{children}</ProductsProvider>
-        ),
+        wrapper: contextProvider,
       })
 
       const increaseButtons = await screen.findAllByTestId<HTMLButtonElement>(
@@ -291,9 +290,7 @@ describe('Cart functionalities', () => {
         .mockImplementation(jest.fn(() => Promise.resolve(mockProducts)))
 
       render(<Cart />, {
-        wrapper: ({ children }) => (
-          <ProductsProvider>{children}</ProductsProvider>
-        ),
+        wrapper: contextProvider,
       })
 
       const decreaseButtons = await screen.findAllByTestId<HTMLButtonElement>(
@@ -343,9 +340,7 @@ describe('Cart functionalities', () => {
         .mockImplementation(jest.fn(() => Promise.resolve(mockProducts)))
 
       render(<Cart />, {
-        wrapper: ({ children }) => (
-          <ProductsProvider>{children}</ProductsProvider>
-        ),
+        wrapper: contextProvider,
       })
 
       const quantityInputs = await screen.findAllByTestId<HTMLInputElement>(
@@ -405,9 +400,7 @@ describe('Cart functionalities', () => {
         .mockImplementation(jest.fn(() => Promise.resolve(mockProducts)))
 
       render(<Cart />, {
-        wrapper: ({ children }) => (
-          <ProductsProvider>{children}</ProductsProvider>
-        ),
+        wrapper: contextProvider,
       })
 
       const quantityInputs = await screen.findAllByTestId<HTMLInputElement>(
@@ -467,9 +460,7 @@ describe('Cart functionalities', () => {
         .mockImplementation(jest.fn(() => Promise.resolve(mockProducts)))
 
       render(<Cart />, {
-        wrapper: ({ children }) => (
-          <ProductsProvider>{children}</ProductsProvider>
-        ),
+        wrapper: contextProvider,
       })
 
       const quantityInputs = await screen.findAllByTestId<HTMLInputElement>(
@@ -516,9 +507,7 @@ describe('Cart functionalities', () => {
         .mockImplementation(jest.fn(() => Promise.resolve(mockProducts)))
 
       render(<Cart />, {
-        wrapper: ({ children }) => (
-          <ProductsProvider>{children}</ProductsProvider>
-        ),
+        wrapper: contextProvider,
       })
 
       const quantityInputs = await screen.findAllByTestId<HTMLInputElement>(
@@ -565,9 +554,7 @@ describe('Cart functionalities', () => {
         .mockImplementation(jest.fn(() => Promise.resolve(mockProducts)))
 
       render(<Cart />, {
-        wrapper: ({ children }) => (
-          <ProductsProvider>{children}</ProductsProvider>
-        ),
+        wrapper: contextProvider,
       })
 
       const quantityInputs = await screen.findAllByTestId<HTMLInputElement>(
@@ -619,9 +606,7 @@ describe('Cart functionalities', () => {
         .mockImplementation(jest.fn(() => Promise.resolve(mockProducts)))
 
       render(<Cart />, {
-        wrapper: ({ children }) => (
-          <ProductsProvider>{children}</ProductsProvider>
-        ),
+        wrapper: contextProvider,
       })
 
       const quantityInputs = await screen.findAllByTestId<HTMLInputElement>(
@@ -675,9 +660,7 @@ describe('Cart functionalities', () => {
         .mockImplementation(jest.fn(() => Promise.resolve([coupon])))
 
       render(<Cart />, {
-        wrapper: ({ children }) => (
-          <ProductsProvider>{children}</ProductsProvider>
-        ),
+        wrapper: contextProvider,
       })
 
       const openRemoveProductDialogButton = await screen.findAllByTestId(
