@@ -8,6 +8,9 @@ export default {
       fontFamily: {
         sans: ['var(--font-poppins)'],
       },
+      height: {
+        'error-screen': 'calc(100vh - 196px)',
+      },
       colors: {
         bg: 'rgb(var(--tw-color-bg) / <alpha-value>)',
         dark: '#222222',

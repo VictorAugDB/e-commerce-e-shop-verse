@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import React, { Fragment, useContext, useEffect, useRef, useState } from 'react'
 import { ChevronDown, ChevronUp, Trash } from 'react-feather'
 
@@ -13,6 +13,7 @@ import { ConfirmationDialog } from '@/components/dialogs/ConfirmationDialog'
 import NextImage from '@/components/NextImage'
 import Steps from '@/components/Steps'
 
+import { useError } from '@/contexts/ErrorProvider'
 import { LoadingContext } from '@/contexts/LoadingProvider'
 import { Product, ProductsContext } from '@/contexts/ProductsContext'
 import { LocalStorage, LSCart } from '@/models/localStorage'
@@ -28,13 +29,26 @@ export default function Cart() {
   } = useContext(ProductsContext)
   const [isMobileSize, setIsMobileSize] = useState(false)
   const { setLoading } = useContext(LoadingContext)
+  const { catchAsyncFunction, clearErrorState, error } = useError()
 
   const router = useRouter()
 
   useEffect(() => {
+    if (error) {
+      const aux = error
+      clearErrorState()
+
+      throw aux
+    }
+  }, [error, clearErrorState])
+
+  useEffect(() => {
     setProducts([])
+
     if (typeof window !== 'undefined') {
-      ;(async () => {
+      const loadProducts = async () => {
+        setLoading(true)
+
         const cartProducts: LSCart[] = JSON.parse(
           localStorage.getItem(LocalStorage.CART) ?? '[]',
         )
@@ -43,8 +57,6 @@ export default function Cart() {
         if (!cartProducts) {
           return { props: { products: [] } }
         }
-
-        setLoading(true)
 
         const apiProducts = await getProductsByIds(
           cartProducts.map((cp) => cp.id),
@@ -58,9 +70,11 @@ export default function Cart() {
             cartQuantity: map.get(p.id),
           })),
         )
-      })()
+      }
+
+      catchAsyncFunction(loadProducts)
     }
-  }, [setProducts, setLoading])
+  }, [setProducts, setLoading, catchAsyncFunction])
 
   function handleRemoveProduct(id: string) {
     setProducts(products.filter((p) => p.id !== id))
@@ -100,12 +114,7 @@ export default function Cart() {
   }, [])
 
   function redirectToCheckout() {
-    router.push({
-      pathname: '/checkout',
-      query: {
-        from: 'cart',
-      },
-    })
+    router.push('/checkout?from=cart')
   }
 
   return (

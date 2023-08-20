@@ -7,7 +7,7 @@ import { ArrowRight } from 'react-feather'
 import NextImage from '@/components/NextImage'
 import ShopNowButton from '@/components/ShopNowButton'
 
-import { Promotion } from '@/pages'
+import { Promotion } from '@/app/(home)/page'
 
 export type PromotionProps = {
   promotions: Promotion[]

@@ -4,12 +4,12 @@ import '@/__tests__/__mocks__/matchMedia'
 
 import * as httpUtils from '@/lib/http'
 
+import Cart from '@/app/cart/page'
 import {
   Product,
   ProductSize,
   ProductsProvider,
 } from '@/contexts/ProductsContext'
-import Cart from '@/pages/cart'
 
 type TestProdcut = Product & {
   cartQuantity: number

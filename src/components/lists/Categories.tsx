@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { DynamicIcon } from '@/components/DynamicIcon'
 import ListHeader from '@/components/lists/ListHeader'
 
-import { CategoriesWithIcons } from '@/pages'
+import { CategoriesWithIcons } from '@/app/(home)/page'
 
 type CategoriesProps = {
   categories: CategoriesWithIcons[]

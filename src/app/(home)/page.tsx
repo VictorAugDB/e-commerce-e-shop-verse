@@ -1,4 +1,3 @@
-import { ArrowUp } from 'react-feather'
 import { IconType } from 'react-icons'
 import { AiOutlineCamera } from 'react-icons/ai'
 import { BsPhone, BsSmartwatch } from 'react-icons/bs'
@@ -18,20 +17,12 @@ import ListHeader from '@/components/lists/ListHeader'
 import ListProducts from '@/components/lists/ListProducts'
 import NextImage from '@/components/NextImage'
 import { Promotions } from '@/components/Promotions'
-import Seo from '@/components/Seo'
 
-import { Product } from '@/contexts/ProductsContext'
+import { ScrollTop } from '@/app/(home)/ScrollTop'
 
 export type CategoriesWithIcons = {
   name: string
   icon: IconType
-}
-
-export type HomePageProps = {
-  flashSales: Product[]
-  bestSellings: Product[]
-  products: Product[]
-  newArrival: Product[]
 }
 
 export type Promotion = {
@@ -42,12 +33,41 @@ export type Promotion = {
   id: string
 }
 
-export default function HomePage({
-  bestSellings,
-  flashSales,
-  products,
-  newArrival,
-}: HomePageProps) {
+export default async function HomePage() {
+  const products = await getProductsData()
+  // TODO create this methods to fetch data from and external database in the data file
+  // const flashSales = await getProducts({ discount: 1, limit: 4 })
+  // const bestSellings = await getProducts({
+  //   bestSelling: true,
+  //   limit: 4,
+  //   revalidate: 3,
+  // })
+  // const products = await getProducts({ limit: 4, revalidate: 24 })
+  // let newArrival = await getProducts({ revalidate: 3 })
+
+  // TODO Remove this when the methods are created
+  const flashSales = products.filter((p) => p.discount >= 1).slice(0, 4)
+  const bestSellings = products
+    .sort((a, b) => b.numberOfSales - a.numberOfSales)
+    .slice(0, 4)
+
+  // TODO Ref 1
+  // let newArrival = await getProducts({ revalidate: 3 })
+  // newArrival = newArrival
+  //   .sort(
+  //     (a, b) =>
+  //       new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+  //   )
+  //   .slice(0, 4)
+
+  let newArrival = products
+  newArrival = newArrival
+    .sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    )
+    .slice(0, 4)
+
   const categories = [
     "Woman's fashion",
     "Men's Fashion",
@@ -111,15 +131,8 @@ export default function HomePage({
     },
   ]
 
-  function handleScrollTop() {
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-  }
-
   return (
     <div className="flex flex-col items-center gap-20 px-2 sm:px-8 2xl:px-[8.4375rem]">
-      {/* <Seo templateTitle='Home' /> */}
-      <Seo />
-
       <div className="flex w-full gap-[2.8125rem]">
         <nav
           className="
@@ -223,58 +236,7 @@ export default function HomePage({
         </div>
       </div>
       <Differentials />
-
-      <button
-        onClick={handleScrollTop}
-        className="mb-[-6.75rem] ml-auto flex h-[2.875rem] w-[2.875rem] items-center justify-center rounded-full border-none bg-white hover:shadow-lg"
-      >
-        <ArrowUp />
-      </button>
+      <ScrollTop />
     </div>
   )
-}
-
-export async function getStaticProps() {
-  const products = await getProductsData()
-  // TODO create this methods to fetch data from and external database in the data file
-  // const flashSales = await getProducts({ discount: 1, limit: 4 })
-  // const bestSellings = await getProducts({
-  //   bestSelling: true,
-  //   limit: 4,
-  //   revalidate: 3,
-  // })
-  // const products = await getProducts({ limit: 4, revalidate: 24 })
-  // let newArrival = await getProducts({ revalidate: 3 })
-
-  // TODO Remove this when the methods are created
-  const flashSales = products.filter((p) => p.discount >= 1).slice(0, 4)
-  const bestSellings = products
-    .sort((a, b) => b.numberOfSales - a.numberOfSales)
-    .slice(0, 4)
-
-  // TODO Ref 1
-  // let newArrival = await getProducts({ revalidate: 3 })
-  // newArrival = newArrival
-  //   .sort(
-  //     (a, b) =>
-  //       new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-  //   )
-  //   .slice(0, 4)
-
-  let newArrival = products
-  newArrival = newArrival
-    .sort(
-      (a, b) =>
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-    )
-    .slice(0, 4)
-
-  return {
-    props: {
-      flashSales,
-      bestSellings,
-      products: products.slice(0, 4),
-      newArrival,
-    },
-  }
 }

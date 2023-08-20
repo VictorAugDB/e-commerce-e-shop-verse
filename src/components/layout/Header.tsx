@@ -3,7 +3,7 @@
 import * as Tabs from '@radix-ui/react-tabs'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
+import { usePathname, useRouter } from 'next/navigation'
 import { useContext, useEffect, useRef, useState } from 'react'
 import { Heart, Menu, ShoppingCart, X } from 'react-feather'
 import { CSSTransition } from 'react-transition-group'
@@ -23,9 +23,9 @@ const links = [
 
 export default function Header() {
   const router = useRouter()
-  const pathname = router.pathname
+  const pathname = usePathname()
   const [currentTab, setCurrentTab] = useState(
-    pathname !== '/' ? pathname.slice(1) : 'home',
+    pathname && pathname !== '/' ? pathname.slice(1) : 'home',
   )
   const [isNavVisible, setIsNavVisible] = useState(false)
   const [isSmallScreen, setIsSmallScreen] = useState(false)
@@ -84,12 +84,7 @@ export default function Header() {
   }
 
   function handleSearch() {
-    router.push({
-      pathname: 'products',
-      query: {
-        search: inputRef.current?.value,
-      },
-    })
+    router.push(`/products?search=${inputRef.current?.value}`)
   }
 
   return (
