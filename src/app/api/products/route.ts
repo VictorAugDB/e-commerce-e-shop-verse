@@ -8,7 +8,7 @@ import { Product } from '@/contexts/ProductsContext'
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url)
-  const ids = searchParams.get('id')
+  const ids = searchParams.getAll('id[]')
   const queryskip = searchParams.get('skip')
   const limit = searchParams.get('limit')
   const queryCategory = searchParams.get('category')

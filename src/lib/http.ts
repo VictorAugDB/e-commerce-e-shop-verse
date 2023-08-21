@@ -55,7 +55,7 @@ export const getProductsByIds = async (ids: string[]): Promise<Product[]> => {
     return []
   }
 
-  const queryParams = ids.map((id) => `id=${id}`).join('&')
+  const queryParams = ids.map((id) => `id[]=${id}`).join('&')
   const res = await fetch(`/api/products?${queryParams}`)
 
   return res.json()
