@@ -10,6 +10,7 @@ import { CSSTransition } from 'react-transition-group'
 import { twMerge } from 'tailwind-merge'
 
 import UnstyledLink from '@/components/links/UnstyledLink'
+import NextImage from '@/components/NextImage'
 import SearchInput from '@/components/SearchInput'
 
 import { ProductsContext } from '@/contexts/ProductsContext'
@@ -110,7 +111,18 @@ export default function Header() {
             href="/"
             className="whitespace-nowrap pr-8 text-lg font-bold md:text-2xl xl:pr-[12.5rem]"
           >
-            E-Shopverse
+            <div className="flex items-center gap-2">
+              <div className="overflow-hidden rounded">
+                <NextImage
+                  alt="logo"
+                  width={32}
+                  height={32}
+                  src="/images/logo.png"
+                  className="object-contain"
+                ></NextImage>
+              </div>
+              E-Shopverse
+            </div>
           </Link>
           <Tabs.List className="flex w-fit flex-col justify-between gap-8 gap-x-12 lg:w-full lg:flex-row lg:items-center">
             {links.map(({ href, label }) => (
