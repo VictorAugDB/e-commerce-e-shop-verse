@@ -1,4 +1,4 @@
-import { Metadata, ResolvedMetadata } from 'next'
+import { Metadata } from 'next'
 import { NextFontWithVariable } from 'next/dist/compiled/@next/font'
 import { Poppins } from 'next/font/google'
 import { headers } from 'next/headers'
@@ -15,15 +15,7 @@ import { ErrorProvider } from '@/contexts/ErrorProvider'
 import { LoadingProvider } from '@/contexts/LoadingProvider'
 import { ProductsProvider } from '@/contexts/ProductsContext'
 
-type MetadataProps = {
-  params: { id: string }
-  searchParams: { [key: string]: string | string[] | undefined }
-}
-
-export async function generateMetadata(
-  { params, searchParams }: MetadataProps,
-  parent: ResolvedMetadata,
-): Promise<Metadata> {
+export async function generateMetadata(): Promise<Metadata> {
   const headersList = headers()
   const activePath = headersList.get('x-invoke-path')
   const routes = [
