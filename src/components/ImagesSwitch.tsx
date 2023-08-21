@@ -6,7 +6,7 @@ import { CSSTransition, SwitchTransition } from 'react-transition-group'
 
 import NextImage from '@/components/NextImage'
 
-import { ImageType } from '@/pages/products/[id]'
+import { ImageType } from '@/app/products/[id]'
 
 type ImagesSwitchProps = {
   productImages: ImageType[]

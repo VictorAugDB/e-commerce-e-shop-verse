@@ -1,6 +1,7 @@
-import { Metadata } from 'next'
+import { Metadata, ResolvedMetadata } from 'next'
 import { NextFontWithVariable } from 'next/dist/compiled/@next/font'
 import { Poppins } from 'next/font/google'
+import { headers } from 'next/headers'
 import { ReactNode } from 'react'
 import { twMerge } from 'tailwind-merge'
 
@@ -14,8 +15,50 @@ import { ErrorProvider } from '@/contexts/ErrorProvider'
 import { LoadingProvider } from '@/contexts/LoadingProvider'
 import { ProductsProvider } from '@/contexts/ProductsContext'
 
-export const metadata: Metadata = {
-  title: 'My Page Title',
+type MetadataProps = {
+  params: { id: string }
+  searchParams: { [key: string]: string | string[] | undefined }
+}
+
+export async function generateMetadata(
+  { params, searchParams }: MetadataProps,
+  parent: ResolvedMetadata,
+): Promise<Metadata> {
+  const headersList = headers()
+  const activePath = headersList.get('x-invoke-path')
+  const routes = [
+    '/',
+    '/contact',
+    '/about',
+    '/products',
+    '/cart',
+    '/wishlist',
+    '/sign-in',
+    '/sign-up',
+  ]
+
+  function currentPage() {
+    if (activePath && routes.includes(activePath)) {
+      const currPath = activePath.slice(1).split('-')
+
+      if (currPath[0] === '') {
+        return 'Home'
+      } else {
+        return currPath
+          .map((cp) => `${cp.slice(0, 1).toUpperCase()}${cp.slice(1)}`)
+          .join(' ')
+      }
+    } else {
+      return 'Not found'
+    }
+  }
+
+  return {
+    title: `E-Shopverse | ${currentPage()}`,
+    icons: {
+      icon: '/favicon/favicon.ico',
+    },
+  }
 }
 
 const poppins = Poppins({

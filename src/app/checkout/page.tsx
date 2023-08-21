@@ -1,6 +1,7 @@
+'use client'
+
 import { motion } from 'framer-motion'
-import { useSearchParams } from 'next/navigation'
-import { useRouter } from 'next/router'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { ComponentProps, useContext, useEffect, useState } from 'react'
 
 import { getProductById } from '@/lib/http'
@@ -16,8 +17,8 @@ import { Product, ProductsContext } from '@/contexts/ProductsContext'
 export default function Checkout() {
   const searchParams = useSearchParams()
   const [product, setProduct] = useState<Product | null>(null)
-  const from = searchParams.get('from')
-  const quantity = Number(searchParams.get('quantity'))
+  const from = searchParams && searchParams.get('from')
+  const quantity = Number(searchParams && searchParams.get('quantity'))
   const router = useRouter()
 
   const {
@@ -46,7 +47,7 @@ export default function Checkout() {
       }
 
       if (from === 'product') {
-        const id = searchParams.get('id')
+        const id = searchParams && searchParams.get('id')
         const prod = id ? await getProductById(id) : null
 
         if (prod) {

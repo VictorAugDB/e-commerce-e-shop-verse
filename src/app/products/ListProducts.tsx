@@ -1,14 +1,9 @@
-import {
-  GetStaticProps,
-  GetStaticPropsResult,
-  InferGetStaticPropsType,
-} from 'next'
-import { useRouter } from 'next/router'
+'use client'
+
+import { useSearchParams } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 
-import { getProductsData } from '@/lib/data'
-
-import ListProducts from '@/components/lists/ListProducts'
+import { default as ListProductsComponent } from '@/components/lists/ListProducts'
 import SearchInput from '@/components/SearchInput'
 
 import { Product } from '@/contexts/ProductsContext'
@@ -17,11 +12,11 @@ type ProductsProps = {
   products: Product[]
 }
 
-export default function Products({
-  products,
-}: InferGetStaticPropsType<GetStaticProps<ProductsProps>>) {
-  const { search, category } = useRouter().query
-  const [productsState, setProductsState] = useState(products)
+export function ListProducts({ products }: ProductsProps) {
+  const searchParams = useSearchParams()
+  const search = searchParams?.get('search')
+  const category = searchParams?.get('category')
+  const [productsState, setProductsState] = useState<Product[]>(products)
   const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -66,23 +61,16 @@ export default function Products({
   }
 
   return (
-    <div className="space-y-4  pt-20 sm:px-8 2xl:px-[8.4375rem]">
+    <>
       <SearchInput
         handleSearch={handleSearch}
         ref={inputRef}
         placeholder="Search"
       />
-      <ListProducts products={productsState} hasCartButton></ListProducts>
-    </div>
+      <ListProductsComponent
+        products={productsState}
+        hasCartButton
+      ></ListProductsComponent>
+    </>
   )
-}
-
-export const getStaticProps: GetStaticProps<ProductsProps> = async (): Promise<
-  GetStaticPropsResult<ProductsProps>
-> => {
-  const products = await getProductsData()
-
-  return {
-    props: { products },
-  }
 }

@@ -1,25 +1,29 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 
-import { NextApiRequest, NextApiResponse } from 'next'
+import { NextResponse } from 'next/server'
 
 import { getProductsData } from '@/lib/data'
 
 import { Product } from '@/contexts/ProductsContext'
 
-export default async function getProducts(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
-  const query = req.query
-  const ids = query.id
+export async function GET(req: Request) {
+  const { searchParams } = new URL(req.url)
+  const ids = searchParams.get('id')
+  const queryskip = searchParams.get('skip')
+  const limit = searchParams.get('limit')
+  const queryCategory = searchParams.get('category')
+  const _sort = searchParams.get('_sort')
+  const _order = searchParams.get('_order')
+  const discountGte = searchParams.get('discount_gte')
+
   let products: Product[] = await getProductsData()
 
-  if (query.limit) {
-    const skip = Number(query.skip) ?? 0
-    products = products.slice(skip, skip + Number(query.limit))
+  if (limit) {
+    const skip = Number(queryskip) ?? 0
+    products = products.slice(skip, skip + Number(limit))
   }
 
-  const category = query.category
+  const category = queryCategory
 
   if (category && typeof category === 'string') {
     products = products.filter(
@@ -27,8 +31,8 @@ export default async function getProducts(
     )
   }
 
-  const sort = query._sort
-  const order = query._order ?? 'asc'
+  const sort = _sort
+  const order = _order ?? 'asc'
 
   if (sort && typeof sort === 'string' && sort in products[0]) {
     if (typeof products[0][sort as keyof Product] === 'number') {
@@ -42,15 +46,15 @@ export default async function getProducts(
     }
   }
 
-  const discountGreaterThanOrEqual = Number(query.discount_gte)
+  const discountGreaterThanOrEqual = Number(discountGte)
 
   if (discountGreaterThanOrEqual >= 0) {
     products = products.filter((p) => p.discount >= discountGreaterThanOrEqual)
   }
 
   if (ids && ids.length > 0) {
-    res.status(200).json(products.filter((p) => ids.includes(p.id)))
+    return NextResponse.json(products.filter((p) => ids.includes(p.id)))
   } else {
-    res.status(200).json(products)
+    return NextResponse.json(products)
   }
 }

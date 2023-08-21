@@ -1,3 +1,5 @@
+'use client'
+
 import Link from 'next/link'
 import {
   MouseEvent as ReactMouseEvent,
@@ -14,7 +16,7 @@ import ListProducts from '@/components/lists/ListProducts'
 import { Product, ProductsContext } from '@/contexts/ProductsContext'
 import { LocalStorage, LSWishlist } from '@/models/localStorage'
 
-export default function Wishlist() {
+export function Products() {
   const [products, setProducts] = useState<Product[]>([])
   const { handleAddToCart } = useContext(ProductsContext)
 
@@ -60,7 +62,7 @@ export default function Wishlist() {
   }
 
   return (
-    <div className="px-2 pt-20 2xl:px-[8.4375rem]">
+    <>
       {products.length > 0 ? (
         <>
           <div className="flex flex-wrap items-center justify-center gap-6 sm:justify-between">
@@ -96,6 +98,6 @@ export default function Wishlist() {
           </Link>
         </div>
       )}
-    </div>
+    </>
   )
 }
