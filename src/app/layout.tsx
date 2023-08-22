@@ -1,3 +1,4 @@
+import { Analytics } from '@vercel/analytics/react'
 import { Metadata } from 'next'
 import { NextFontWithVariable } from 'next/dist/compiled/@next/font'
 import { Poppins } from 'next/font/google'
@@ -86,6 +87,7 @@ export default function RootLayout({
 
                 <Footer />
               </main>
+              <Analytics />
             </ProductsProvider>
           </LoadingProvider>
         </ErrorProvider>
