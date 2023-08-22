@@ -25,14 +25,16 @@ const links = [
 export default function Header() {
   const router = useRouter()
   const pathname = usePathname()
-  const [currentTab, setCurrentTab] = useState(
-    pathname && pathname !== '/' ? pathname.slice(1) : 'home',
-  )
+  const [currentTab, setCurrentTab] = useState('/')
   const [isNavVisible, setIsNavVisible] = useState(false)
   const [isSmallScreen, setIsSmallScreen] = useState(false)
   const menuRef = useRef<null | HTMLDivElement>(null)
   const { cartQuantity } = useContext(ProductsContext)
   const inputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    setCurrentTab(pathname && pathname !== '/' ? pathname.slice(1) : 'home')
+  }, [pathname])
 
   useEffect(() => {
     const mediaQuery = window.matchMedia('(max-width: 1024px)')
