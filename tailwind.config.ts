@@ -71,6 +71,20 @@ export default {
             opacity: '0',
           },
         },
+        spinner: {
+          '0%': {
+            strokeDashOffset: (-3.14 * 2 * 20).toString(),
+            transform: 'rotate(0deg)',
+          },
+          '50%': {
+            strokeDashoffset: (3.14 * 2 * 20).toString(),
+            transform: 'rotate(540deg)',
+          },
+          '100%': {
+            strokeDashoffset: (-3.14 * 2 * 20).toString(),
+            transform: 'rotate(1080deg)',
+          },
+        },
       },
       animation: {
         flicker: 'flicker 3s linear infinite',
@@ -79,6 +93,7 @@ export default {
         contentShow: 'contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1)',
         contentOverlayCLose:
           'contentOverlayCLose 150ms cubic-bezier(0.16, 1, 0.3, 1)',
+        spinner: 'spinner 4s ease-out infinite',
       },
     },
   },

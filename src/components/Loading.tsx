@@ -13,7 +13,7 @@ export default function Loading() {
   return (
     <>
       {loading && (
-        <div className="fixed flex h-full w-full items-center justify-center bg-black/80 text-white">
+        <div className="fixed top-0 flex h-full w-full items-center justify-center bg-black/80 text-white">
           <div className="relative h-12 w-12">
             <motion.svg
               xmlns="http://www.w3.org/2000/svg"
