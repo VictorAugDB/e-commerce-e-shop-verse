@@ -10,6 +10,7 @@
     "skipLibCheck": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
+    "strictPropertyInitialization": false,
     "noEmit": true,
     "esModuleInterop": true,
     "module": "esnext",
@@ -39,7 +40,7 @@
     "**/*.tsx",
     "src/app/*.tsx",
     ".next/types/**/*.ts"
-, "src/app/layout.tsx"  ],
+, "src/app/layout.tsx", "src/lib/mongo.ts"  ],
   "exclude": [
     "node_modules"
   ],
