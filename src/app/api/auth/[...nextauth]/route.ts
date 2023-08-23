@@ -14,6 +14,7 @@ const authOptions: AuthOptions = {
   adapter: MongoDBAdapter(clientPromise, {
     databaseName: 'e-shopverse',
   }),
+  secret: process.env.NEXT_SECRET,
 }
 
 const handler = NextAuth({
