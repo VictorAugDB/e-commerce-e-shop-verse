@@ -4,13 +4,15 @@ import * as Tabs from '@radix-ui/react-tabs'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { useContext, useEffect, useRef, useState } from 'react'
+import { useSession } from 'next-auth/react'
+import { Fragment, useContext, useEffect, useRef, useState } from 'react'
 import { Heart, Menu, ShoppingCart, X } from 'react-feather'
 import { CSSTransition } from 'react-transition-group'
 import { twMerge } from 'tailwind-merge'
 
 import UnstyledLink from '@/components/links/UnstyledLink'
 import NextImage from '@/components/NextImage'
+import Profile from '@/components/Profile'
 import SearchInput from '@/components/SearchInput'
 
 import { ProductsContext } from '@/contexts/ProductsContext'
@@ -19,7 +21,7 @@ const links = [
   { href: '/', label: 'Home' },
   { href: '/contact', label: 'Contact' },
   { href: '/about', label: 'About' },
-  { href: '/sign-up', label: 'Sign Up' },
+  { href: '/sign-in', label: 'Sign In' },
 ]
 
 export default function Header() {
@@ -31,6 +33,7 @@ export default function Header() {
   const menuRef = useRef<null | HTMLDivElement>(null)
   const { cartQuantity } = useContext(ProductsContext)
   const inputRef = useRef<HTMLInputElement>(null)
+  const { data: session } = useSession()
 
   useEffect(() => {
     setCurrentTab(pathname && pathname !== '/' ? pathname.slice(1) : 'home')
@@ -128,30 +131,29 @@ export default function Header() {
           </Link>
           <Tabs.List className="flex w-fit flex-col justify-between gap-8 gap-x-12 lg:w-full lg:flex-row lg:items-center">
             {links.map(({ href, label }) => (
-              <Tabs.Trigger
-                data-state={
-                  currentTab === label.toLowerCase() ? 'active' : 'inactive'
-                }
-                value={label}
-                key={`${href}${label}`}
-                className="relative w-fit data-[state=active]:font-semibold lg:w-auto"
-              >
-                <>
-                  <UnstyledLink
+              <Fragment key={href}>
+                {href === '/sign-in' ? (
+                  <>
+                    {!session && (
+                      <Tab
+                        currentTab={currentTab}
+                        handleChangeTab={handleChangeTab}
+                        href={href}
+                        label={label}
+                        key={href}
+                      />
+                    )}
+                  </>
+                ) : (
+                  <Tab
+                    currentTab={currentTab}
+                    handleChangeTab={handleChangeTab}
                     href={href}
-                    className="whitespace-nowrap text-base transition hover:text-gray-600"
-                    onClick={() => handleChangeTab(label)}
-                  >
-                    {label}
-                  </UnstyledLink>
-                  {currentTab === label.toLowerCase() && (
-                    <motion.div
-                      layoutId="activeTab"
-                      className="absolute h-px w-full bg-gray-600"
-                    ></motion.div>
-                  )}
-                </>
-              </Tabs.Trigger>
+                    label={label}
+                    key={href}
+                  />
+                )}
+              </Fragment>
             ))}
           </Tabs.List>
         </Tabs.Root>
@@ -207,7 +209,42 @@ export default function Header() {
             )}
           </div>
         </div>
+        <Profile />
       </div>
     </header>
+  )
+}
+
+type TabProps = {
+  href: string
+  label: string
+  currentTab: string
+  handleChangeTab: (label: string) => void
+}
+
+function Tab({ href, label, currentTab, handleChangeTab }: TabProps) {
+  return (
+    <Tabs.Trigger
+      data-state={currentTab === label.toLowerCase() ? 'active' : 'inactive'}
+      value={label}
+      key={`${href}${label}`}
+      className="relative w-fit data-[state=active]:font-semibold lg:w-auto"
+    >
+      <>
+        <UnstyledLink
+          href={href}
+          className="whitespace-nowrap text-base transition hover:text-gray-600"
+          onClick={() => handleChangeTab(label)}
+        >
+          {label}
+        </UnstyledLink>
+        {currentTab === label.toLowerCase() && (
+          <motion.div
+            layoutId="activeTab"
+            className="absolute h-px w-full bg-gray-600"
+          ></motion.div>
+        )}
+      </>
+    </Tabs.Trigger>
   )
 }

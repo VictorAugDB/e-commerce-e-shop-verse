@@ -15,6 +15,7 @@ import Loading from '@/components/Loading'
 import { ErrorProvider } from '@/contexts/ErrorProvider'
 import { LoadingProvider } from '@/contexts/LoadingProvider'
 import { ProductsProvider } from '@/contexts/ProductsContext'
+import { SessionProvider } from '@/contexts/SessionProvider'
 
 export async function generateMetadata(): Promise<Metadata> {
   const headersList = headers()
@@ -71,26 +72,28 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <ErrorProvider>
-          <LoadingProvider>
-            <ProductsProvider>
-              <main
-                className={twMerge(
-                  poppins.variable,
-                  'grid w-full grid-rows-[1fr_1fr_1fr] font-sans',
-                )}
-              >
-                <Header />
+        <SessionProvider>
+          <ErrorProvider>
+            <LoadingProvider>
+              <ProductsProvider>
+                <main
+                  className={twMerge(
+                    poppins.variable,
+                    'grid w-full grid-rows-[1fr_1fr_1fr] font-sans',
+                  )}
+                >
+                  <Header />
 
-                <div className="block h-full w-full">{children}</div>
-                <Loading />
+                  <div className="block h-full w-full">{children}</div>
+                  <Loading />
 
-                <Footer />
-              </main>
-              <Analytics />
-            </ProductsProvider>
-          </LoadingProvider>
-        </ErrorProvider>
+                  <Footer />
+                </main>
+                {process.env.NODE_ENV === 'production' && <Analytics />}
+              </ProductsProvider>
+            </LoadingProvider>
+          </ErrorProvider>
+        </SessionProvider>
       </body>
     </html>
   )
