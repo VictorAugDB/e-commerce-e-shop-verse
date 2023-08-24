@@ -1,7 +1,18 @@
+import { redirect } from 'next/navigation'
+import { getServerSession } from 'next-auth'
+
 import { GoogleButton } from '@/components/GoogleButton'
 import NextImage from '@/components/NextImage'
 
-export default function SignIn() {
+import { authOptions } from '@/app/api/auth/authOptions'
+
+export default async function SignIn() {
+  const session = await getServerSession(authOptions)
+
+  if (session) {
+    redirect('/')
+  }
+
   return (
     <div className="grid grid-cols-1 gap-32 px-2 xl:grid-cols-[1fr_0.5fr] xl:px-0">
       <div className="hidden h-[48.8125rem] bg-green-50 xl:block">

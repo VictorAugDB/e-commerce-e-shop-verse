@@ -1,21 +1,6 @@
-import { MongoDBAdapter } from '@next-auth/mongodb-adapter'
-import NextAuth, { AuthOptions } from 'next-auth'
-import GoogleProvider from 'next-auth/providers/google'
+import NextAuth from 'next-auth'
 
-import clientPromise from '@/lib/mongo'
-
-const authOptions: AuthOptions = {
-  providers: [
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID ?? '',
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? '',
-    }),
-  ],
-  adapter: MongoDBAdapter(clientPromise, {
-    databaseName: 'e-shopverse',
-  }),
-  secret: process.env.NEXT_SECRET,
-}
+import { authOptions } from '@/app/api/auth/authOptions'
 
 const handler = NextAuth({
   ...authOptions,
