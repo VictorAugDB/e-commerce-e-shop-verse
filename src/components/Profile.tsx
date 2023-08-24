@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion } from 'framer-motion'
 import { useSession } from 'next-auth/react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   Icon as FeatherIcon,
   LogOut,
@@ -19,8 +19,24 @@ export default function Profile() {
   const [isMouseIn, setIsMouseIn] = useState(false)
   const { data: session } = useSession()
 
+  useEffect(() => {
+    if (isMouseIn) {
+      const handler = () => {
+        setIsMouseIn(false)
+      }
+
+      window.addEventListener('scroll', handler)
+      window.addEventListener('mousedown', handler)
+
+      return () => {
+        window.removeEventListener('scroll', handler)
+        window.removeEventListener('mousedown', handler)
+      }
+    }
+  }, [isMouseIn])
+
   return (
-    <div className="flex h-8 w-8 justify-center">
+    <div className="flex h-8 w-8 justify-end">
       {session && session.user && session.user.image ? (
         <Picture
           imageUrl={session.user.image}
@@ -77,6 +93,7 @@ function Picture({
   return (
     <motion.div
       onClick={handleShowOptions}
+      onMouseDown={(e) => e.stopPropagation()}
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.9 }}
       className={twMerge(
@@ -105,7 +122,12 @@ type OptionProps = {
 
 function Option({ icon: Icon, title }: OptionProps) {
   return (
-    <div className="flex cursor-pointer items-center gap-4 rounded p-[.375rem] transition-all hover:bg-white/10">
+    <div
+      onMouseDown={(e) => {
+        e.stopPropagation()
+      }}
+      className="flex cursor-pointer items-center gap-4 rounded p-[.375rem] transition-all hover:bg-white/10"
+    >
       <Icon />
       {title}
     </div>
