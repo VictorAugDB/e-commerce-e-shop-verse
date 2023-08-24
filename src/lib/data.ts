@@ -34,6 +34,12 @@ export function getProductDataByid(id: string): Promise<Product | undefined> {
   )
 }
 
+export function getProductsDataByIds(ids: string[]): Promise<Product[]> {
+  return new Promise((resolve) =>
+    resolve(data.products.filter((p) => ids.includes(p.id))),
+  )
+}
+
 export function getCouponsData(): Promise<Coupon[]> {
   // it will fetch data from a database in the future, that's necessary to getStaticPaths and getStaticProps fetch data
   const coupons: Coupon[] = data.coupons
