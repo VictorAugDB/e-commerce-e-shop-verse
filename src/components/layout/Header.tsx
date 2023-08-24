@@ -33,7 +33,7 @@ export default function Header() {
   const menuRef = useRef<null | HTMLDivElement>(null)
   const { cartQuantity } = useContext(ProductsContext)
   const inputRef = useRef<HTMLInputElement>(null)
-  const { data: session } = useSession()
+  const { data: session, status } = useSession()
 
   useEffect(() => {
     setCurrentTab(pathname && pathname !== '/' ? pathname.slice(1) : 'home')
@@ -129,33 +129,35 @@ export default function Header() {
               E-Shopverse
             </div>
           </Link>
-          <Tabs.List className="flex w-fit flex-col justify-between gap-8 gap-x-12 lg:w-full lg:flex-row lg:items-center">
-            {links.map(({ href, label }) => (
-              <Fragment key={href}>
-                {href === '/sign-in' ? (
-                  <>
-                    {!session && (
-                      <Tab
-                        currentTab={currentTab}
-                        handleChangeTab={handleChangeTab}
-                        href={href}
-                        label={label}
-                        key={href}
-                      />
-                    )}
-                  </>
-                ) : (
-                  <Tab
-                    currentTab={currentTab}
-                    handleChangeTab={handleChangeTab}
-                    href={href}
-                    label={label}
-                    key={href}
-                  />
-                )}
-              </Fragment>
-            ))}
-          </Tabs.List>
+          {status !== 'loading' && (
+            <Tabs.List className="flex w-fit flex-col justify-between gap-8 gap-x-12 lg:w-full lg:flex-row lg:items-center">
+              {links.map(({ href, label }) => (
+                <Fragment key={href}>
+                  {href === '/sign-in' ? (
+                    <>
+                      {!session && (
+                        <Tab
+                          currentTab={currentTab}
+                          handleChangeTab={handleChangeTab}
+                          href={href}
+                          label={label}
+                          key={href}
+                        />
+                      )}
+                    </>
+                  ) : (
+                    <Tab
+                      currentTab={currentTab}
+                      handleChangeTab={handleChangeTab}
+                      href={href}
+                      label={label}
+                      key={href}
+                    />
+                  )}
+                </Fragment>
+              ))}
+            </Tabs.List>
+          )}
         </Tabs.Root>
       </CSSTransition>
       <div className="flex w-full items-center justify-between gap-2 sm:gap-6">
