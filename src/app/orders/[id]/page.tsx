@@ -1,107 +1,76 @@
-import { Check } from 'react-feather'
+import { redirect } from 'next/navigation'
 
-import { getProductsDataByIds } from '@/lib/data'
+import { getOrdersData, getProductsDataByIds } from '@/lib/data'
+import { MongoDBOrders } from '@/lib/db/mongodb/orders'
+import { IntlHelper } from '@/lib/helpers/Intl'
 
+import Divider from '@/components/Divider'
 import NextImage from '@/components/NextImage'
 
+import { DeliveryInfo } from '@/app/orders/[id]/DeliveryInfo'
+import { Detail } from '@/app/orders/[id]/Detail'
 import { Order } from '@/app/orders/page'
 
 export async function generateStaticParams() {
-  const orders: Order[] = await new Promise((resolve) =>
-    resolve([
-      {
-        products: ['1', '2', '3'],
-        createdAt: '2023-08-24T14:09:04.258Z',
-        status: 'Shipping',
-        price: 299.3,
-        id: '1',
-        address: '2727 Lakeshore Rd undefined Nampa, Tennessee 78410',
-      },
-      {
-        products: ['1', '2', '3'],
-        createdAt: '2023-08-24T14:09:04.258Z',
-        status: 'Shipping',
-        price: 299.3,
-        id: '2',
-        address: '2727 Lakeshore Rd undefined Nampa, Tennessee 78410',
-      },
-      {
-        products: ['1', '2', '3'],
-        createdAt: '2023-08-24T14:09:04.258Z',
-        status: 'Shipping',
-        price: 299.3,
-        id: '3',
-        address: '2727 Lakeshore Rd undefined Nampa, Tennessee 78410',
-      },
-      {
-        products: ['1', '2', '3'],
-        createdAt: '2023-08-24T14:09:04.258Z',
-        status: 'Shipping',
-        price: 299.3,
-        id: '4',
-        address: '2727 Lakeshore Rd undefined Nampa, Tennessee 78410',
-      },
-    ]),
-  )
+  const orders: Order[] = await getOrdersData()
 
-  return orders.map((p) => ({ id: p.id }))
+  return orders.map((p) => ({ id: p._id }))
 }
 export default async function Order({ params }: { params: { id: string } }) {
-  const order: Order = await new Promise((resolve) =>
-    resolve({
-      products: ['1', '2', '3'],
-      id: params.id,
-      createdAt: '2023-08-24T14:09:04.258Z',
-      status: 'Shipping',
-      price: 299.3,
-      trackingNumber: 'LQNSU346JK',
-      shippingDate: '2023-08-24T14:09:04.258Z',
-      shippingType: 'POS Reggular',
-      address: '2727 Lakeshore Rd undefined Nampa, Tennessee 78410',
-    }),
-  )
+  const statuses = {
+    'Order Placed': 0,
+    'Payment Confirmed': 1,
+    'Order Processed': 2,
+    Shipping: 3,
+    Delivered: 4,
+  }
+
+  const mongoDbOrdersClient = new MongoDBOrders()
+  const order = await mongoDbOrdersClient.getOrderById(params.id)
+
+  if (!order) {
+    redirect('/orders')
+  }
+
   const products = await getProductsDataByIds(order.products)
 
   return (
     <div className="mt-20 space-y-6 px-2 md:px-8 lg:mt-6 2xl:px-[8.4375rem]">
       <h3 className="text-center">Order Details</h3>
-      <div className="flex items-center lg:flex-col">
-        <div className="relative z-10 w-full lg:w-fit">
-          <div className="flex w-fit flex-col items-center justify-center gap-3 lg:flex-row lg:items-start">
-            <div className="flex flex-col items-center">
-              <Status />
-              <div className="hidden bg-green-700 lg:block lg:h-16 lg:w-0.5"></div>
-            </div>
-            <p>Packing</p>
-          </div>
-          <div className="absolute left-5 top-3 -z-10 h-px w-full bg-green-700 lg:hidden"></div>
-        </div>
-        <div className="relative z-10 w-full lg:w-fit">
-          <div className="flex w-fit flex-col items-center justify-center gap-3 lg:flex-row lg:items-start">
-            <div className="flex flex-col items-center">
-              <Status />
-              <div className="hidden bg-green-700 lg:block lg:h-16 lg:w-0.5"></div>
-            </div>
-            <p>Packing</p>
-          </div>
-          <div className="absolute left-5 top-3 -z-10 h-px w-full bg-green-700 lg:hidden"></div>
-        </div>
-        <div className="relative z-10 w-full lg:w-fit">
-          <div className="flex w-fit flex-col items-center justify-center gap-3 lg:flex-row lg:items-start">
-            <div className="flex flex-col items-center">
-              <Status />
-              <div className="hidden bg-green-700 lg:block lg:h-16 lg:w-0.5"></div>
-            </div>
-            <p>Packing</p>
-          </div>
-          <div className="absolute left-5 top-3 -z-10 h-px w-full bg-green-700 lg:hidden"></div>
-        </div>
-        <div>
-          <div className="flex w-fit flex-col items-center justify-center gap-3 lg:flex-row">
-            <Status />
-            <p>Packing</p>
-          </div>
-        </div>
+      <div className="flex flex-col items-center">
+        <DeliveryInfo
+          title="Order Placed"
+          description="We have received your order"
+          isChecked={statuses[order.status] >= statuses['Order Placed']}
+        />
+        <DeliveryInfo
+          title="Payment Confirmed"
+          description={
+            statuses[order.status] > 1
+              ? 'We have received your payment'
+              : 'Awaiting payment...'
+          }
+          hasDivider
+          isChecked={statuses[order.status] >= statuses['Payment Confirmed']}
+        />
+        <DeliveryInfo
+          title="Order Processed"
+          description="we are preparing your order"
+          hasDivider
+          isChecked={statuses[order.status] >= statuses['Order Processed']}
+        />
+        <DeliveryInfo
+          title="Shipping"
+          description={`Order #${order.trackingNumber} from E-shopverse`}
+          hasDivider
+          isChecked={statuses[order.status] >= statuses['Shipping']}
+        />
+        <DeliveryInfo
+          title="Delivered"
+          description="The products arrived at your address"
+          hasDivider
+          isChecked={statuses[order.status] >= statuses['Delivered']}
+        />
       </div>
       <div className="space-y-3">
         <h4>Products</h4>
@@ -124,53 +93,62 @@ export default async function Order({ params }: { params: { id: string } }) {
               <div className="flex flex-col justify-between">
                 <p className="font-bold">{p.name}</p>
                 <p className="font-bold text-green-700">
-                  {Intl.NumberFormat('en-US', {
-                    style: 'currency',
-                    currency: 'USD',
-                  }).format(order.price)}
+                  {IntlHelper.formatNumberCurrency(p.price, 'en-US', 'USD')}
                 </p>
               </div>
             </div>
           ))}
         </div>
       </div>
-      {order.shippingDate && (
-        <div className="space-y-3">
+      {order.shippingDate && order.shippingType && order.trackingNumber && (
+        <div className="mx-auto space-y-3 lg:w-1/2">
           <h4>Shipping Details</h4>
           <div className="space-y-3 rounded border border-gray-400 p-4">
-            <div className="flex justify-between gap-2">
-              <p className="text-gray-600">Data Shipping</p>
-              <p className="text-end">
-                {Intl.DateTimeFormat('en-US', {
-                  month: 'long',
-                  day: 'numeric',
-                  year: 'numeric',
-                }).format(new Date(order.createdAt))}
-              </p>
-            </div>
-            <div className="flex justify-between gap-2">
-              <p className="text-gray-600">Shipping Type</p>
-              <p className="text-end">{order.shippingType}</p>
-            </div>
-            <div className="flex justify-between gap-2">
-              <p className="text-gray-600">Tracking Number</p>
-              <p className="text-end">{order.trackingNumber}</p>
-            </div>
-            <div className="flex justify-between gap-2">
-              <p className="text-gray-600">Address</p>
-              <p className="text-end">{order.address}</p>
-            </div>
+            <Detail
+              title="Date Shipping"
+              value={IntlHelper.formatDateMonthLong(
+                order.shippingDate,
+                'en-US',
+              )}
+            />
+            <Detail title="Shipping Type" value={order.shippingType} />
+            <Detail title="Tracking Number" value={order.trackingNumber} />
+            <Detail title="Address" value={order.address} />
           </div>
         </div>
       )}
-    </div>
-  )
-}
-
-function Status() {
-  return (
-    <div className="flex h-6 w-6 items-center justify-center rounded-full bg-green-600 text-white">
-      <Check className="w-4" />
+      <div className="mx-auto space-y-3 lg:w-1/2">
+        <h4>Payment Details</h4>
+        <div className="space-y-3 rounded border border-gray-400 p-4">
+          <Detail
+            title={`Items (${products.length})`}
+            value={IntlHelper.formatNumberCurrency(
+              order.subtotal,
+              'en-US',
+              'USD',
+            )}
+          />
+          <Detail
+            title="Shipping"
+            value={IntlHelper.formatNumberCurrency(
+              order.shipping,
+              'en-US',
+              'USD',
+            )}
+          />
+          <Divider />
+          <Detail
+            title="Total Price"
+            value={IntlHelper.formatNumberCurrency(
+              order.subtotal + order.shipping - order.discounts,
+              'en-US',
+              'USD',
+            )}
+            valueClassName="font-bold text-green-700"
+            titleClassName="font-bold text-black"
+          />
+        </div>
+      </div>
     </div>
   )
 }

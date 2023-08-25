@@ -1,6 +1,7 @@
 'use client'
 
 import { AnimatePresence, motion } from 'framer-motion'
+import Link from 'next/link'
 import { useSession } from 'next-auth/react'
 import { useEffect, useState } from 'react'
 import {
@@ -61,11 +62,11 @@ export default function Profile() {
             transition={{ duration: 0.2 }}
             className="absolute -bottom-48 flex w-fit flex-col rounded bg-slate-800 px-4 py-2 text-white"
           >
-            <Option icon={User} title="Manage My Account" />
-            <Option icon={ShoppingBag} title="My Order" />
-            <Option icon={XCircle} title="My Cancellations" />
-            <Option icon={Star} title="My Reviews" />
-            <Option icon={LogOut} title="Logout" />
+            <Option icon={User} title="Manage My Account" href="#" />
+            <Option icon={ShoppingBag} title="My Orders" href="/orders" />
+            <Option icon={XCircle} title="My Cancellations" href="#" />
+            <Option icon={Star} title="My Reviews" href="#" />
+            <Option icon={LogOut} title="Logout" href="#" />
           </motion.div>
         )}
       </AnimatePresence>
@@ -118,18 +119,21 @@ function Picture({
 type OptionProps = {
   icon: FeatherIcon
   title: string
+  href: string
 }
 
-function Option({ icon: Icon, title }: OptionProps) {
+function Option({ icon: Icon, title, href }: OptionProps) {
   return (
-    <div
-      onMouseDown={(e) => {
-        e.stopPropagation()
-      }}
-      className="flex cursor-pointer items-center gap-4 rounded p-[.375rem] transition-all hover:bg-white/10"
-    >
-      <Icon />
-      {title}
-    </div>
+    <Link href={href}>
+      <div
+        onMouseDown={(e) => {
+          e.stopPropagation()
+        }}
+        className="flex cursor-pointer items-center gap-4 rounded p-[.375rem] transition-all hover:bg-white/10"
+      >
+        <Icon />
+        {title}
+      </div>
+    </Link>
   )
 }
