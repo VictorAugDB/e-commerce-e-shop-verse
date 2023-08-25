@@ -1,5 +1,6 @@
-import data from 'db.json'
+import data from 'public/db.json'
 
+import { Order } from '@/app/orders/page'
 import { Coupon, Product } from '@/contexts/ProductsContext'
 
 type GetProductsData = {
@@ -38,6 +39,10 @@ export function getProductsDataByIds(ids: string[]): Promise<Product[]> {
   return new Promise((resolve) =>
     resolve(data.products.filter((p) => ids.includes(p.id))),
   )
+}
+
+export function getOrdersData(): Promise<Order[]> {
+  return new Promise((resolve) => resolve(data.orders as Order[]))
 }
 
 export function getCouponsData(): Promise<Coupon[]> {
