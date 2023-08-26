@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 3000 --turbo",
+    "dev": "next dev -p 3000",
+    "dev-turbo": "next dev -p 3000 --turbo",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -37,6 +38,7 @@
     "react-icons": "^4.8.0",
     "react-transition-group": "^4.4.5",
     "saslprep": "^1.0.3",
+    "swr": "^2.2.1",
     "tailwind-merge": "^1.12.0",
     "tailwind-variants": "^0.1.13",
     "yarn": "^1.22.19"
