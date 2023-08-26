@@ -1,12 +1,15 @@
 import { redirect } from 'next/navigation'
+import { getServerSession } from 'next-auth'
 
 import { getOrdersData, getProductsDataByIds } from '@/lib/data'
 import { MongoDBOrders } from '@/lib/db/mongodb/orders'
+import { MongoDBUsers } from '@/lib/db/mongodb/users'
 import { IntlHelper } from '@/lib/helpers/Intl'
 
 import Divider from '@/components/Divider'
 import NextImage from '@/components/NextImage'
 
+import { authOptions } from '@/app/api/auth/authOptions'
 import { DeliveryInfo } from '@/app/orders/[id]/DeliveryInfo'
 import { Detail } from '@/app/orders/[id]/Detail'
 import { Order } from '@/app/orders/page'
@@ -14,9 +17,21 @@ import { Order } from '@/app/orders/page'
 export async function generateStaticParams() {
   const orders: Order[] = await getOrdersData()
 
-  return orders.map((p) => ({ id: p._id }))
+  return orders.map((p) => ({ id: p.id }))
 }
 export default async function Order({ params }: { params: { id: string } }) {
+  const session = await getServerSession(authOptions)
+  if (!(session && session.user && session.user.email)) {
+    redirect('/')
+  }
+
+  const mongoDbUsersClient = new MongoDBUsers()
+  const user = (await mongoDbUsersClient.getUser(session.user.email)) as any
+
+  if (!user.orders.find((o: string) => o === params.id)) {
+    redirect('/')
+  }
+
   const statuses = {
     'Order Placed': 0,
     'Payment Confirmed': 1,

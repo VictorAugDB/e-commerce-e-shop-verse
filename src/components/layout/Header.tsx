@@ -94,7 +94,7 @@ export default function Header() {
   }
 
   return (
-    <header className="fixed top-0 z-50 flex h-14 w-full items-center gap-2 border-b border-gray-300 bg-white px-2 shadow sm:px-4 lg:sticky lg:px-8 lg:py-0 2xl:px-[8.4375rem]">
+    <header className="fixed top-0 z-50 flex h-14 w-full items-center gap-2 border-b border-gray-300 bg-white px-2 shadow sm:px-4 lg:px-8 lg:py-0 2xl:px-[8.4375rem]">
       <Menu onClick={toogleNav} className="lg:hidden" />
       {isNavVisible && isSmallScreen && (
         <div className="fixed left-0 top-0 z-10 h-screen w-screen bg-[rgba(0,0,0,0.2)]"></div>

@@ -104,7 +104,7 @@ export function Product({
     }
 
     router.push(
-      `/checkout?from=product&id=${product.id}&size=${selectedSize}&quantity=${quantity}`,
+      `/checkout/product?id=${product.id}&size=${selectedSize}&quantity=${quantity}`,
     )
   }
 

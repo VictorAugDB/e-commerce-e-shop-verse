@@ -1,6 +1,11 @@
 'use client'
 
-import React, { ComponentProps, useState } from 'react'
+import React, {
+  ComponentProps,
+  ForwardedRef,
+  forwardRef,
+  useState,
+} from 'react'
 
 type InputProps = ComponentProps<'input'> & {
   name: string
@@ -8,12 +13,10 @@ type InputProps = ComponentProps<'input'> & {
   id: string
 }
 
-export default function InputBorderBottom({
-  placeholder,
-  id,
-  name,
-  ...props
-}: InputProps) {
+function InputBorderBottom(
+  { placeholder, id, name, ...props }: InputProps,
+  ref: ForwardedRef<HTMLInputElement>,
+) {
   const [hasValue, setHasValue] = useState(false)
 
   function handleCheckHasValue(e: React.ChangeEvent<HTMLInputElement>) {
@@ -31,6 +34,7 @@ export default function InputBorderBottom({
         name={name}
         id={id}
         type="text"
+        ref={ref}
         onBlur={handleCheckHasValue}
         className="w-full border-0 bg-transparent p-0 pb-2 outline-none focus:ring-0"
         {...props}
@@ -45,3 +49,5 @@ export default function InputBorderBottom({
     </div>
   )
 }
+
+export default forwardRef(InputBorderBottom)

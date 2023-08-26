@@ -20,7 +20,7 @@ export type Order = {
   subtotal: number
   shipping: number
   discounts: number
-  _id: string
+  id: string
   address: string
   shippingDate?: string
   shippingType?: string
@@ -48,7 +48,7 @@ export default async function Orders() {
       <h3 className="text-center">Orders</h3>
       <div className="space-y-4 lg:grid lg:grid-cols-3 lg:gap-4 lg:space-y-0">
         {orders.map((o) => (
-          <Link key={o._id} href={`/orders/${o._id}`}>
+          <Link key={o.id} href={`/orders/${o.id}`}>
             <div className="cursor-pointer space-y-3 rounded border border-gray-400 bg-white p-4 transition-all hover:scale-105 hover:shadow-lg">
               <div className="space-y-4">
                 <h4>{o.trackingNumber}</h4>

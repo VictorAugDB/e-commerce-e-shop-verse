@@ -5,7 +5,7 @@ import NextImage from '@/components/NextImage'
 
 export default function Footer() {
   return (
-    <div className="mt-[8.75rem] bg-black px-2 pb-6 pt-20 text-white sm:px-8">
+    <div className="row-start-3 mt-[8.75rem] bg-black px-2 pb-6 pt-20 text-white sm:px-8">
       <div className="flex flex-col items-center justify-center gap-4 divide-y md:flex-row md:flex-wrap md:items-start md:justify-between md:divide-y-0 2xl:gap-[5.4375rem]">
         <div className="flex w-full max-w-[17.5rem] flex-col gap-4 md:w-auto md:max-w-max">
           <div className="flex flex-col gap-6">
