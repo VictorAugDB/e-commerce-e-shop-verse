@@ -1,4 +1,4 @@
-import { Collection } from 'mongodb'
+import { Collection, Document } from 'mongodb'
 
 import clientPromise from '@/lib/mongo'
 
@@ -8,7 +8,7 @@ export class MongoDB {
     private readonly collection: string,
   ) {}
 
-  async init(): Promise<Collection<Document>> {
+  async init<T extends Document>(): Promise<Collection<T>> {
     const client = await clientPromise
     return client.db(this.dbName).collection(this.collection)
   }
