@@ -79,12 +79,14 @@ export default function RootLayout({
                 <main
                   className={twMerge(
                     poppins.variable,
-                    'grid w-full grid-rows-[1fr_1fr_1fr] font-sans',
+                    'grid w-full grid-rows-[56px_1fr_1fr] font-sans',
                   )}
                 >
                   <Header />
 
-                  <div className="block h-full w-full">{children}</div>
+                  <div className="row-start-2 block h-full w-full">
+                    {children}
+                  </div>
                   <Loading />
 
                   <Footer />
