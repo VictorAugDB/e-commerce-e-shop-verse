@@ -3,7 +3,6 @@ import { getServerSession } from 'next-auth'
 
 import { getOrdersData, getProductsDataByIds } from '@/lib/data'
 import { MongoDBOrders } from '@/lib/db/mongodb/orders'
-import { MongoDBUsers } from '@/lib/db/mongodb/users'
 import { IntlHelper } from '@/lib/helpers/Intl'
 
 import Divider from '@/components/Divider'
@@ -25,10 +24,7 @@ export default async function Order({ params }: { params: { id: string } }) {
     redirect('/')
   }
 
-  const mongoDbUsersClient = new MongoDBUsers()
-  const user = (await mongoDbUsersClient.getUser(session.user.email)) as any
-
-  if (!user.orders.find((o: string) => o === params.id)) {
+  if (!session.user.ordersIds.find((o: string) => o === params.id)) {
     redirect('/')
   }
 

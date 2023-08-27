@@ -3,7 +3,6 @@ import { redirect } from 'next/navigation'
 import { getServerSession } from 'next-auth'
 
 import { MongoDBOrders } from '@/lib/db/mongodb/orders'
-import { MongoDBUsers } from '@/lib/db/mongodb/users'
 import { IntlHelper } from '@/lib/helpers/Intl'
 
 import { authOptions } from '@/app/api/auth/authOptions'
@@ -33,15 +32,11 @@ export default async function Orders() {
     redirect('/')
   }
 
-  const mongoDbUsersClient = new MongoDBUsers()
   const mongoDbOrdersClient = new MongoDBOrders()
-  const user = (await mongoDbUsersClient.getUser(session.user.email)) as any
 
-  if (!user) {
-    redirect('/')
-  }
-
-  const orders: Order[] = await mongoDbOrdersClient.getOrdersByIds(user.orders)
+  const orders: Order[] = await mongoDbOrdersClient.getOrdersByIds(
+    session.user.ordersIds,
+  )
 
   return (
     <div className="mt-20 space-y-4 px-2 md:px-8 lg:mt-6 2xl:px-[8.4375rem]">
