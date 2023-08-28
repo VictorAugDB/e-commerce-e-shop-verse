@@ -62,7 +62,7 @@ export default function Profile() {
             transition={{ duration: 0.2 }}
             className="absolute -bottom-48 flex w-fit flex-col rounded bg-slate-800 px-4 py-2 text-white"
           >
-            <Option icon={User} title="Manage My Account" href="#" />
+            <Option icon={User} title="Manage My Account" href="/profile" />
             <Option icon={ShoppingBag} title="My Orders" href="/orders" />
             <Option icon={XCircle} title="My Cancellations" href="#" />
             <Option icon={Star} title="My Reviews" href="#" />

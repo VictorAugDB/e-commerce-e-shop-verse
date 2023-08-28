@@ -5,6 +5,7 @@ import { getServerSession } from 'next-auth'
 import { MongoDBOrders } from '@/lib/db/mongodb/orders'
 import { IntlHelper } from '@/lib/helpers/Intl'
 
+import { UserAddress } from '@/@types/next-auth'
 import { authOptions } from '@/app/api/auth/authOptions'
 
 export type Order = {
@@ -20,7 +21,7 @@ export type Order = {
   shipping: number
   discounts: number
   id: string
-  address: string
+  address: UserAddress & { id: string }
   shippingDate?: string
   shippingType?: string
   trackingNumber?: string

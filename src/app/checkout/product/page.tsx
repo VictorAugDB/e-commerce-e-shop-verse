@@ -1,49 +1,120 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { useSearchParams } from 'next/navigation'
-import { ComponentProps, useContext, useRef, useState } from 'react'
-import useSWR from 'swr'
+import { notFound, redirect, useSearchParams } from 'next/navigation'
+import { useSession } from 'next-auth/react'
+import { ComponentProps, useContext, useEffect, useState } from 'react'
+import useSWR, { SWRResponse } from 'swr'
+
+import { Address } from '@/lib/db/mongodb/addresses'
+import {
+  CustomAddress,
+  linkUserAddressDataWithAddressData,
+} from '@/lib/helpers/linkUserAddressDataWithAddressData'
 
 import ApplyCoupon from '@/components/ApplyCoupon'
 import Button from '@/components/buttons/Button'
-import InputBorderBottom from '@/components/InputBorderBottom'
 import NextImage from '@/components/NextImage'
 import PaymentSuccess from '@/components/PaymentSuccess'
 import Steps from '@/components/Steps'
 
+import { UserAddress } from '@/@types/next-auth'
 import { Order } from '@/app/orders/page'
-import { ProductsContext } from '@/contexts/ProductsContext'
+import { useLoading } from '@/contexts/LoadingProvider'
+import { Product, ProductsContext } from '@/contexts/ProductsContext'
 
-const fetcher = (args: any) => fetch(args).then((res) => res.json())
+const fetcher = (args: string) =>
+  fetch(args).then((res) => {
+    if (res.status !== 200) {
+      return undefined
+    }
+    return res.json()
+  })
+
+// type Custom
 
 export default function Checkout() {
   const searchParams = useSearchParams()
   const id = searchParams && searchParams.get('id')
-  const { data: product, error } = useSWR(`/api/products/${id}`, fetcher)
-  const [orderId, setorderId] = useState<string | null>(null)
+  const {
+    data: product,
+    error: _productError,
+    isLoading: isProductLoading,
+  }: SWRResponse<Product> = useSWR(`/api/products/${id}`, fetcher)
+  const { data: session } = useSession()
+  const [selectedAddress, setSelectedAddress] = useState<CustomAddress | null>(
+    null,
+  )
+
+  const query =
+    session &&
+    session.user &&
+    session.user.addresses.length > 0 &&
+    session.user.addresses.map((a) => `ids[]=${a.id}`).join('&')
+  const {
+    data: addressesRes,
+    error: _,
+    isLoading: isAddressesLoading,
+  }: SWRResponse<Address[]> = useSWR(`/api/addresses?${query}`, fetcher)
+
+  const [addresses, setAddresses] = useState<CustomAddress[]>([])
+
+  const { setLoading } = useLoading()
+
+  const [orderId, setOrderId] = useState<string | null>(null)
+
+  useEffect(() => {
+    setLoading(!product || isAddressesLoading)
+    if (!product && !isProductLoading) {
+      setLoading(false)
+
+      notFound()
+    }
+  }, [product, setLoading, isAddressesLoading, isProductLoading])
+
+  useEffect(() => {
+    if (!addressesRes && !isAddressesLoading) {
+      alert('Please add an address before continue')
+      setLoading(false)
+      redirect('/profile')
+    }
+
+    if (addressesRes && !isAddressesLoading && session?.user.addresses) {
+      const customAddresses = linkUserAddressDataWithAddressData(
+        session.user.addresses as Array<UserAddress & { id: string }>,
+        addressesRes as Address[],
+        session?.user.defaultAddressId,
+      )
+
+      setAddresses(customAddresses)
+      const defaultAddress = customAddresses.find((ca) => ca.isDefault)
+      setSelectedAddress(defaultAddress ?? customAddresses[0])
+    }
+  }, [
+    addressesRes,
+    session?.user.addresses,
+    session?.user.defaultAddressId,
+    isAddressesLoading,
+    setLoading,
+  ])
 
   const quantity = Number(searchParams && searchParams.get('quantity'))
-  const inputsRef = {
-    firstName: useRef<HTMLInputElement>(null),
-    companyName: useRef<HTMLInputElement>(null),
-    streetAddress: useRef<HTMLInputElement>(null),
-    apartment: useRef<HTMLInputElement>(null),
-    city: useRef<HTMLInputElement>(null),
-    phoneNumber: useRef<HTMLInputElement>(null),
-    email: useRef<HTMLInputElement>(null),
-  }
 
   const { currentCoupon, calculateShipping, shipping } =
     useContext(ProductsContext)
 
-  const subtotal = product.price * quantity
-  const discounts = currentCoupon
-    ? Math.min(
-        currentCoupon.limit,
-        (product.price * quantity * currentCoupon.percentage) / 100,
-      )
-    : 0
+  useEffect(() => {
+    calculateShipping()
+  }, [calculateShipping])
+
+  const subtotal = product ? product.price * quantity : 0
+  const discounts =
+    currentCoupon && product
+      ? Math.min(
+          currentCoupon.limit,
+          (product.price * quantity * currentCoupon.percentage) / 100,
+        )
+      : 0
 
   const currTotal = subtotal + shipping - discounts
 
@@ -51,12 +122,23 @@ export default function Checkout() {
     // TODO payment provider calls
 
     // Order
+    if (!selectedAddress) {
+      alert('You need to select an address to continue')
+      return
+    }
+
+    const productId = (product && product.id) as string
     const order: Omit<Order, 'id'> = {
-      address: 'Some address',
+      address: {
+        id: selectedAddress.id,
+        number: selectedAddress.number,
+        apartmentName: selectedAddress.apartmentName,
+        complement: selectedAddress.complement,
+      },
       createdAt: new Date().toISOString(),
       status: 'Order Placed',
       discounts,
-      products: [product.id],
+      products: [productId],
       shipping,
       subtotal,
     }
@@ -65,138 +147,121 @@ export default function Checkout() {
       body: JSON.stringify(order),
     }).then((res) => res.json())
 
-    setorderId(id)
+    setOrderId(id)
   }
 
   return (
     <>
-      {orderId ? (
-        <PaymentSuccess id={orderId} />
-      ) : (
-        <div className="px-2 sm:px-8 2xl:px-[8.4375rem]">
-          <Steps
-            flow="product-checkout"
-            currentStep={3}
-            category={product?.category ?? ''}
-            productName={product?.name ?? ''}
-          />
-          <h1 className="text-center md:text-start">Billing Details</h1>
-          <div className="mt-10 grid w-full grid-cols-1 gap-4 md:grid-cols-2">
-            <div className="flex w-full flex-col gap-6 md:max-w-[28.1875rem]">
-              <InputBorderBottom
-                name="first-name"
-                id="first-name"
-                ref={inputsRef.firstName}
-                placeholder="First Name"
+      {!product ? null : (
+        <>
+          {orderId ? (
+            <PaymentSuccess id={orderId} />
+          ) : (
+            <div className="px-2 sm:px-8 2xl:px-[8.4375rem]">
+              <Steps
+                flow="product-checkout"
+                currentStep={3}
+                category={product?.category ?? ''}
+                productName={product?.name ?? ''}
               />
-              <InputBorderBottom
-                name="company-name"
-                id="company-name"
-                ref={inputsRef.companyName}
-                placeholder="Company Name. (optional)"
-              />
-              <InputBorderBottom
-                name="street-address"
-                id="street-address"
-                ref={inputsRef.streetAddress}
-                placeholder="Street Address"
-              />
-              <InputBorderBottom
-                name="apartment"
-                id="apartment"
-                ref={inputsRef.apartment}
-                placeholder="Apartment, floor, etc. (optional)"
-              />
-              <InputBorderBottom
-                name="town/city"
-                id="town/city"
-                ref={inputsRef.city}
-                placeholder="Town/City"
-              />
-              <InputBorderBottom
-                name="phone-number"
-                id="phone-number"
-                ref={inputsRef.phoneNumber}
-                placeholder="Phone Number"
-              />
-              <InputBorderBottom
-                name="e-mail"
-                id="e-mail"
-                ref={inputsRef.email}
-                placeholder="E-mail"
-              />
-            </div>
-            <div className="flex flex-col items-center gap-8 md:items-start">
-              <div className="flex max-w-[26.5625rem] flex-col gap-8">
-                <ProductDetails
-                  key={product.id}
-                  imagePath={product.images[0]}
-                  name={product.name}
-                  price={product.price}
-                />
-                <div className="flex flex-col gap-4">
-                  <div className="flex items-center justify-between">
-                    <p>Subtotal:</p>
-                    <p>${subtotal}</p>
-                  </div>
-                  <span className="h-px w-full bg-gray-400"></span>
-                  <div className=" flex items-center justify-between">
-                    <p>Shipping:</p>
-                    <p>{shipping === 0 ? 'Free' : `$${shipping}`}</p>
-                  </div>
-                  <span className="h-px w-full bg-gray-400"></span>
-                  <div className="flex items-center justify-between">
-                    <p>Discounts:</p>
-                    <p>${discounts}</p>
-                  </div>
-                  <span className="h-px w-full bg-gray-400"></span>
+              <h1 className="text-center md:text-start">Billing Details</h1>
+              <div className="mt-10 grid w-full grid-cols-1 gap-4 md:grid-cols-2">
+                <div className="flex w-full flex-col gap-6 md:max-w-[28.1875rem]">
+                  <h3>Choose address</h3>
+                  {addresses &&
+                    addresses.length &&
+                    addresses.map((a) => (
+                      <div key={a.id} className="space-y-2">
+                        <div
+                          onClick={() => setSelectedAddress(a)}
+                          data-selected={
+                            selectedAddress && selectedAddress.id === a.id
+                          }
+                          className="cursor-pointer space-y-1 rounded border border-gray-400 bg-white p-4 ring-green-700 data-[selected=true]:ring-2"
+                        >
+                          <p>CEP: {a.zipCode}</p>
+                          <p>
+                            {a.city}, {a.street}, {a.number}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                </div>
+                <div className="flex flex-col items-center gap-8 md:items-start">
+                  <div className="flex max-w-[26.5625rem] flex-col gap-8">
+                    <ProductDetails
+                      key={product.id}
+                      imagePath={product.images[0]}
+                      name={product.name}
+                      price={product.price}
+                    />
+                    <div className="flex flex-col gap-4">
+                      <div className="flex items-center justify-between">
+                        <p>Subtotal:</p>
+                        <p>${subtotal}</p>
+                      </div>
+                      <span className="h-px w-full bg-gray-400"></span>
+                      <div className=" flex items-center justify-between">
+                        <p>Shipping:</p>
+                        <p>{shipping === 0 ? 'Free' : `$${shipping}`}</p>
+                      </div>
+                      <span className="h-px w-full bg-gray-400"></span>
+                      <div className="flex items-center justify-between">
+                        <p>Discounts:</p>
+                        <p>${discounts}</p>
+                      </div>
+                      <span className="h-px w-full bg-gray-400"></span>
 
-                  <div className="flex items-center justify-between">
-                    <p>Total:</p>
-                    <p>${currTotal}</p>
+                      <div className="flex items-center justify-between">
+                        <p>Total:</p>
+                        <p>${currTotal}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between gap-4">
+                      <RadioButton
+                        id="bank"
+                        defaultChecked
+                        name="payment-type"
+                        label="Bank"
+                      />
+                      <div className="flex flex-wrap items-center gap-2">
+                        <NextImage
+                          width={42}
+                          height={28}
+                          src="/images/visa.png"
+                          alt="visa"
+                        />
+                        <NextImage
+                          width={42}
+                          height={28}
+                          src="/images/mastercard.png"
+                          alt="mastercard"
+                        />
+                      </div>
+                    </div>
+                    <RadioButton
+                      id="cash"
+                      name="payment-type"
+                      label="Cash on delivery"
+                    />
                   </div>
-                </div>
-                <div className="flex items-center justify-between gap-4">
-                  <RadioButton
-                    id="bank"
-                    defaultChecked
-                    name="payment-type"
-                    label="Bank"
+                  <ApplyCoupon
+                    customSubtotal={
+                      product ? product.price * quantity : undefined
+                    }
                   />
-                  <div className="flex flex-wrap items-center gap-2">
-                    <NextImage
-                      width={42}
-                      height={28}
-                      src="/images/visa.png"
-                      alt="visa"
-                    />
-                    <NextImage
-                      width={42}
-                      height={28}
-                      src="/images/mastercard.png"
-                      alt="mastercard"
-                    />
-                  </div>
+                  <Button
+                    onClick={handleFinishOrder}
+                    variant="green"
+                    className="mx-auto w-fit px-12 py-4 xl:mx-0"
+                  >
+                    Place Order
+                  </Button>
                 </div>
-                <RadioButton
-                  id="cash"
-                  name="payment-type"
-                  label="Cash on delivery"
-                />
               </div>
-              <ApplyCoupon
-                customSubtotal={product ? product.price * quantity : undefined}
-              />
-              <Button
-                onClick={handleFinishOrder}
-                variant="green"
-                className="mx-auto w-fit px-12 py-4 xl:mx-0"
-              >
-                Place Order
-              </Button>
             </div>
-          </div>
-        </div>
+          )}
+        </>
       )}
     </>
   )

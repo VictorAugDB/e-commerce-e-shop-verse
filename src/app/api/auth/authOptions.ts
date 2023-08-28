@@ -13,7 +13,24 @@ export const authOptions: AuthOptions = {
   ],
   callbacks: {
     async session({ session, user }) {
-      session.user.ordersIds = user.orders.map((o) => o.toString())
+      session.user.ordersIds = user.orders
+        ? user.orders.map((o) => o.toString())
+        : []
+      session.user.addresses = user.addresses
+        ? user.addresses.map((a) => {
+            const { _id, ...rest } = a
+            return {
+              id: _id.toString(),
+              ...rest,
+            }
+          })
+        : []
+
+      session.user.id = user.id.toString()
+
+      session.user.defaultAddressId =
+        user.defaultAddressId && user.defaultAddressId.toString()
+
       return session as Session
     },
   },

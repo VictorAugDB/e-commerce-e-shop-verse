@@ -2,7 +2,7 @@ import React from 'react'
 
 type StepsProps =
   | {
-      flow: 'buy' | 'contact' | 'about'
+      flow: 'buy' | 'contact' | 'about' | 'profile'
       currentStep: number
     }
   | {
@@ -21,6 +21,8 @@ export default function Steps(props: StepsProps) {
         return ['Home', 'Contact']
       case 'about':
         return ['Home', 'About']
+      case 'profile':
+        return ['Home', 'My Account']
       case 'product':
         return ['Account', props.category, props.productName]
       case 'product-checkout':

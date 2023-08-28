@@ -11,7 +11,8 @@ import {
   useState,
 } from 'react'
 
-import { getCoupons, getProductById } from '@/lib/http'
+import { getCouponsData } from '@/lib/data'
+import { getProductById } from '@/lib/http'
 
 import { LocalStorage, LSCart } from '@/models/localStorage'
 
@@ -96,7 +97,7 @@ export function ProductsProvider({ children }: ProductsContextProps) {
 
   function calculateShipping(): void {
     // get user cep and call the API of the shipping service
-    setShipping(0)
+    setShipping(20)
   }
 
   useEffect(() => {
@@ -140,7 +141,7 @@ export function ProductsProvider({ children }: ProductsContextProps) {
 
     const coupon = couponRef.current.value
     // call the api to check the coupons
-    const availableCoupons = await getCoupons()
+    const availableCoupons = await getCouponsData()
 
     const couponInfo = availableCoupons.find(
       (ac) => ac.name.toLowerCase() === coupon,
@@ -157,9 +158,11 @@ export function ProductsProvider({ children }: ProductsContextProps) {
 
       if (customSubtotal) {
         if (customSubtotal < couponInfo.minVal) {
+          alert(`The minimun value to use this coupon is $${couponInfo.minVal}`)
           return
         }
       } else if (subtotal < couponInfo.minVal) {
+        alert(`The minimun value to use this coupon is $${couponInfo.minVal}`)
         return
       }
 

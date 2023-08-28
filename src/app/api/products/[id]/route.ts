@@ -1,6 +1,5 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 
-import { redirect } from 'next/navigation'
 import { NextResponse } from 'next/server'
 
 import { getProductsData } from '@/lib/data'
@@ -14,6 +13,8 @@ export async function GET(
   if (product) {
     return NextResponse.json(product)
   } else {
-    return redirect('/')
+    return NextResponse.json(null, {
+      status: 404,
+    })
   }
 }

@@ -17,7 +17,7 @@ function InputBorderBottom(
   { placeholder, id, name, ...props }: InputProps,
   ref: ForwardedRef<HTMLInputElement>,
 ) {
-  const [hasValue, setHasValue] = useState(false)
+  const [hasValue, setHasValue] = useState(!!props.defaultValue)
 
   function handleCheckHasValue(e: React.ChangeEvent<HTMLInputElement>) {
     const value = e.target.value
@@ -28,7 +28,7 @@ function InputBorderBottom(
   return (
     <div
       data-has-value={hasValue}
-      className="group relative border-b border-gray-600 transition focus-within:border-green-700 data-[has-value=true]:border-green-700"
+      className="group relative my-4 border-b border-gray-600 transition focus-within:border-green-700 data-[has-value=true]:border-green-700"
     >
       <input
         name={name}

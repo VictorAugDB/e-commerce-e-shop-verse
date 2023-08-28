@@ -124,7 +124,7 @@ export default async function Order({ params }: { params: { id: string } }) {
             />
             <Detail title="Shipping Type" value={order.shippingType} />
             <Detail title="Tracking Number" value={order.trackingNumber} />
-            <Detail title="Address" value={order.address} />
+            <Detail title="Address" value="TODO" />
           </div>
         </div>
       )}
@@ -138,6 +138,13 @@ export default async function Order({ params }: { params: { id: string } }) {
               'en-US',
               'USD',
             )}
+          />
+          <Detail
+            title="Discounts"
+            value={
+              '-' +
+              IntlHelper.formatNumberCurrency(order.discounts, 'en-US', 'USD')
+            }
           />
           <Detail
             title="Shipping"

@@ -21,6 +21,18 @@ export class MongoDBUsers extends MongoDB {
     )
   }
 
+  async setDefaultAddress(userId: string, id: string) {
+    const collection = await this.collectionObj
+    await collection.updateOne(
+      {
+        _id: new ObjectId(userId),
+      },
+      {
+        $set: { defaultAddressId: id },
+      },
+    )
+  }
+
   async getUser(email: string) {
     try {
       const collection = await this.collectionObj
