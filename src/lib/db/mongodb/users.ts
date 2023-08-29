@@ -3,6 +3,8 @@ import { Collection, Document, ObjectId } from 'mongodb'
 import { MongoDB } from '@/lib/db/mongodb'
 import { errorHandler } from '@/lib/helpers/errorHandler'
 
+import { UserAddress } from '@/@types/next-auth'
+
 export class MongoDBUsers extends MongoDB {
   private collectionObj: Promise<Collection<Document>>
 
@@ -18,6 +20,16 @@ export class MongoDBUsers extends MongoDB {
         _id: new ObjectId(userId),
       },
       { $push: { orders: new ObjectId(orderId) } },
+    )
+  }
+
+  async linkAddress(userId: string, address: UserAddress & { _id: ObjectId }) {
+    const collection = await this.collectionObj
+    await collection.updateOne(
+      {
+        _id: new ObjectId(userId),
+      },
+      { $push: { addresses: address } },
     )
   }
 

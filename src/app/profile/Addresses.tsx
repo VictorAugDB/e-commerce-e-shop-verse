@@ -7,7 +7,7 @@ import { CustomAddress } from '@/lib/helpers/linkUserAddressDataWithAddressData'
 
 import Button from '@/components/buttons/Button'
 
-import { EditAddress } from '@/app/profile/EditAddress'
+import { ManageAddress } from '@/app/profile/ManageAddress'
 
 type AddressesProps = {
   addresses: CustomAddress[]
@@ -27,6 +27,7 @@ export function Addresses({
     serverAddresses.filter((sa) => !sa.isDefault),
   )
   const [showOtherAddresses, setShowOtherAddresses] = useState(false)
+  const [isAdding, setIsAdding] = useState(false)
 
   function handleToggleOtherAddresses() {
     setShowOtherAddresses(!showOtherAddresses)
@@ -45,30 +46,68 @@ export function Addresses({
     setAddresses(serverAddresses.filter((a) => a.id !== id))
   }
 
+  function toogleIsAdding() {
+    setIsAdding(!isAdding)
+  }
+
   return (
     <>
       {defaultAddress ? (
         <div className="space-y-4">
           <p className="font-medium">Default Address</p>
-          <EditAddress {...defaultAddress} />
+          <ManageAddress userId={userId} action="edit" {...defaultAddress} />
           <AnimatePresence>
-            {showOtherAddresses &&
-              addresses.map((a, idx) => (
-                <motion.div
-                  key={a.id}
-                  className="space-y-4"
-                  initial={{ opacity: 0 }}
-                  exit={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <Address
-                    address={a}
-                    idx={idx}
-                    handleSetDefaultAddress={handleSetDefaultAddress}
-                  />
-                </motion.div>
-              ))}
+            {showOtherAddresses && (
+              <>
+                {addresses.map((a, idx) => (
+                  <motion.div
+                    key={a.id}
+                    className="space-y-4"
+                    initial={{ opacity: 0 }}
+                    exit={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <Address
+                      address={a}
+                      idx={idx}
+                      handleSetDefaultAddress={handleSetDefaultAddress}
+                      userId={userId}
+                    />
+                  </motion.div>
+                ))}
+                {isAdding ? (
+                  <motion.div
+                    key="address"
+                    className="space-y-4"
+                    initial={{ opacity: 0 }}
+                    exit={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <ManageAddress
+                      userId={userId}
+                      action="add"
+                      setIsAdding={setIsAdding}
+                      setAddresses={setAddresses}
+                    />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="button"
+                    className="space-y-4"
+                    initial={{ opacity: 0 }}
+                    exit={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <Button onClick={toogleIsAdding} variant="green">
+                      + Add address
+                    </Button>
+                  </motion.div>
+                )}
+              </>
+            )}
           </AnimatePresence>
 
           <p
@@ -91,6 +130,7 @@ export function Addresses({
               address={a}
               idx={idx}
               handleSetDefaultAddress={handleSetDefaultAddress}
+              userId={userId}
             />
           ))}
         </div>
@@ -103,17 +143,19 @@ type ListAddressesProps = {
   address: CustomAddress
   idx: number
   handleSetDefaultAddress: (id: string) => void
+  userId: string
 }
 
 function Address({
   address,
   idx,
+  userId,
   handleSetDefaultAddress,
 }: ListAddressesProps) {
   return (
     <>
       <p className="font-medium">Address {idx + 1}</p>
-      <EditAddress {...address} />
+      <ManageAddress userId={userId} action="edit" {...address} />
       <div className="flex flex-wrap items-center gap-2">
         <p>Set as default address?</p>
         <Button

@@ -10,9 +10,7 @@ export type Address = {
   street: string
 }
 
-type AddressWithoutId = Omit<Address, 'id' | 'products'> & {
-  products: ObjectId[]
-}
+type AddressWithoutId = Omit<Address, 'id'>
 
 type AddressMongoRes = Omit<Address, 'id'> & {
   _id: ObjectId
@@ -23,7 +21,7 @@ export class MongoDbAddresses extends MongoDB {
 
   constructor() {
     super('e-shopverse', 'addresses')
-    this.collectionObj = this.init()
+    this.collectionObj = this.init<AddressWithoutId>()
   }
 
   async getAddressesByIds(ids: string[]): Promise<Address[]> {
@@ -46,5 +44,27 @@ export class MongoDbAddresses extends MongoDB {
     } catch (err) {
       throw errorHandler(err)
     }
+  }
+
+  async insertAddress(address: AddressWithoutId): Promise<ObjectId> {
+    const collection = await this.collectionObj
+
+    const addressId = await this.checkAddressExists(address.zipCode)
+
+    if (addressId) {
+      return addressId
+    }
+
+    const res = await collection.insertOne(address)
+    return res.insertedId
+  }
+
+  async checkAddressExists(zipCode: string): Promise<ObjectId | null> {
+    const collection = await this.collectionObj
+
+    const address = await collection.findOne({
+      zipCode: zipCode,
+    })
+    return address ? address._id : null
   }
 }
