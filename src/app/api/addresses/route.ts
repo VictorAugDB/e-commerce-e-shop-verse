@@ -43,3 +43,71 @@ export async function POST(req: Request) {
 
   return NextResponse.json({ id: addressId.toString() })
 }
+
+export async function PUT(req: Request) {
+  const body: CustomAddress & { userId: string } = await req.json()
+  const {
+    city,
+    number,
+    street,
+    zipCode,
+    apartmentName,
+    complement,
+    userId,
+    id: addressId,
+    isDefault,
+  } = body
+
+  const mongoDbAddressesClient = new MongoDbAddresses()
+  const newAddressId = await mongoDbAddressesClient.updateAddress({
+    id: addressId,
+    city,
+    street,
+    zipCode,
+  })
+  const mongoDbUsersClient = new MongoDBUsers()
+
+  // Address didn't exist | Address updated
+  if (newAddressId) {
+    await mongoDbUsersClient.deleteAddress(userId, addressId)
+    await mongoDbUsersClient.linkAddress(userId, {
+      _id: newAddressId,
+      number,
+      apartmentName,
+      complement,
+    })
+    if (isDefault) {
+      mongoDbUsersClient.setDefaultAddress(userId, newAddressId.toString())
+    }
+  } else {
+    await mongoDbUsersClient.updateAddress(userId, {
+      _id: addressId,
+      number,
+      apartmentName,
+      complement,
+    })
+  }
+
+  return NextResponse.json(
+    newAddressId ? { id: newAddressId.toString() } : null,
+  )
+}
+
+export async function DELETE(req: Request) {
+  const body: {
+    userId: string
+    addressId: string
+    newDefault?: string
+  } = await req.json()
+  const { userId, addressId, newDefault } = body
+
+  const mongoDbUsersClient = new MongoDBUsers()
+
+  if (newDefault) {
+    mongoDbUsersClient.setDefaultAddress(userId, newDefault)
+  }
+
+  await mongoDbUsersClient.deleteAddress(userId, addressId)
+
+  return NextResponse.json(null)
+}

@@ -59,6 +59,28 @@ export class MongoDbAddresses extends MongoDB {
     return res.insertedId
   }
 
+  async updateAddress(address: Address): Promise<ObjectId | null> {
+    const collection = await this.collectionObj
+    const { id, ...rest } = address
+
+    const addressId = await this.checkAddressExists(address.zipCode)
+
+    if (!addressId) {
+      const res = await collection.insertOne(rest)
+      return res.insertedId
+    }
+
+    await collection.updateOne(
+      {
+        _id: new ObjectId(id),
+      },
+      {
+        $set: rest,
+      },
+    )
+    return null
+  }
+
   async checkAddressExists(zipCode: string): Promise<ObjectId | null> {
     const collection = await this.collectionObj
 

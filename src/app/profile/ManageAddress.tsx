@@ -1,5 +1,12 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Dispatch, SetStateAction, useRef, useState } from 'react'
+import {
+  ChangeEvent,
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useState,
+} from 'react'
+import { Trash2 } from 'react-feather'
 import { useForm } from 'react-hook-form'
 import * as z from 'zod'
 
@@ -7,7 +14,7 @@ import { getAddressByZipCode } from '@/lib/helpers/getAddressByZipCode'
 import { CustomAddress } from '@/lib/helpers/linkUserAddressDataWithAddressData'
 
 import Button from '@/components/buttons/Button'
-import InputBorderBottom from '@/components/InputBorderBottom'
+import RRFInput from '@/components/RRFInput'
 
 import { useLoading } from '@/contexts/LoadingProvider'
 
@@ -15,15 +22,15 @@ type AddAddress = {
   action: 'add'
   setIsAdding: (isAdding: boolean) => void
   setAddresses: Dispatch<SetStateAction<CustomAddress[]>>
+  newDefault?: never
 }
 
 type EditAddress = {
   action: 'edit'
   setIsAdding?: never
-  setAddresses?: never
+  setAddresses: Dispatch<SetStateAction<CustomAddress[]>>
+  newDefault?: string
 }
-
-type FieldName = keyof Omit<CustomAddress, 'isDefault' | 'id'>
 
 type ManageAddressProps = Partial<CustomAddress> &
   (AddAddress | EditAddress) & {
@@ -31,12 +38,18 @@ type ManageAddressProps = Partial<CustomAddress> &
   }
 
 const manageAddressFormSchema = z.object({
-  zipCode: z.string(),
-  street: z.string(),
   apartmentName: z.string().optional(),
-  number: z.string(),
   complement: z.string().optional(),
+  number: z.string().nonempty('The Number is required'),
+  street: z.string(),
   city: z.string(),
+  zipCode: z
+    .string()
+    .nonempty('The Zip Code is required')
+    .refine(
+      (zipCode) => zipCode.length === 9,
+      'Zip Code must have 9 characters',
+    ),
 })
 
 type ManageAddressFormInputs = z.infer<typeof manageAddressFormSchema>
@@ -46,65 +59,101 @@ export function ManageAddress({
   setIsAdding,
   setAddresses,
   userId,
+  newDefault,
   ...address
 }: ManageAddressProps) {
   const { city, number, street, zipCode, apartmentName, complement, id } =
     address
+  const methods = useForm<ManageAddressFormInputs>({
+    resolver: zodResolver(manageAddressFormSchema),
+    defaultValues: {
+      apartmentName,
+      city,
+      complement,
+      number,
+      street,
+      zipCode,
+    },
+  })
   const {
     register,
     handleSubmit,
-    formState: { isSubmitting },
+    formState: { isSubmitting, errors },
     reset,
-    getValues,
-  } = useForm<ManageAddressFormInputs>({
-    resolver: zodResolver(manageAddressFormSchema),
-  })
+    setFocus,
+    setValue,
+    trigger,
+  } = methods
   const { setLoading } = useLoading()
-  const cityRef = useRef<HTMLInputElement | null>(null)
-  const streetRef = useRef<HTMLInputElement | null>(null)
+  const [isEditting, setIsEditting] = useState(false)
 
-  const { ref: cityRefCb, ...cityRegister } = register('city')
-  const { ref: streetRefCb, ...streetRegister } = register('street')
-
-  const [editedFields, setEditedFields] = useState(new Set<FieldName>())
-
-  async function handleAddEditFields(fieldName: FieldName) {
-    const currValues = getValues()
-    const currVal = currValues[fieldName]
-    const defaultVal = address[fieldName] ?? ''
-
-    // Add - Remove
-    if (!editedFields.has(fieldName) && currVal !== defaultVal) {
-      setEditedFields(new Set(editedFields.add(fieldName)))
-    } else if (editedFields.has(fieldName) && currVal === defaultVal) {
-      const newEditFields = new Set(editedFields)
-      newEditFields.delete(fieldName)
-      setEditedFields(new Set(newEditFields))
+  useEffect(() => {
+    if (errors.zipCode) {
+      setFocus('zipCode')
     }
-
-    if (fieldName === 'zipCode') {
-      if (currVal) {
-        const { street, city } = await getAddressByZipCode(currVal)
-        const currStreetRef = streetRef.current
-        const currCityRef = cityRef.current
-        if (currStreetRef && currCityRef) {
-          currCityRef.value = city
-          currStreetRef.value = street
-          currCityRef.focus()
-          currStreetRef.focus()
-        }
-      }
-    }
-  }
+  }, [errors, setFocus])
 
   function handleCancelEdit() {
     reset()
 
-    setEditedFields(new Set())
+    setIsEditting(false)
   }
 
-  function handleEditAddress() {
-    return
+  async function handleEditAddress(data: ManageAddressFormInputs) {
+    if (action === 'edit') {
+      setLoading(true)
+      const addressId: string | null = await fetch('/api/addresses', {
+        method: 'PUT',
+        body: JSON.stringify({
+          ...data,
+          userId,
+          id: address.id,
+          isDefault: address.isDefault,
+        }),
+      }).then((res) => res.json())
+
+      const prevAddressId = address.id as string
+
+      const newAddress: CustomAddress = {
+        ...data,
+        id: addressId ? addressId : prevAddressId,
+        isDefault: address.isDefault ?? false,
+      }
+
+      setAddresses((addresses) =>
+        addresses.map((a) => (a.id !== address.id ? a : newAddress)),
+      )
+      setIsEditting(false)
+      setLoading(false)
+    }
+  }
+
+  async function handleDeleteAddress() {
+    setLoading(true)
+    await fetch('/api/addresses', {
+      method: 'DELETE',
+      body: JSON.stringify({
+        userId,
+        addressId: address.id,
+        newDefault: address.isDefault ? newDefault : undefined,
+      }),
+    }).then((res) => res.json())
+
+    setAddresses((addresses) => addresses.filter((a) => a.id !== address.id))
+
+    setLoading(false)
+  }
+
+  async function handleUpdateZipCode(e: ChangeEvent<HTMLInputElement>) {
+    if (e.target.value.length !== 9) {
+      setValue('street', '')
+      setValue('city', '')
+    } else {
+      const { city, street } = await getAddressByZipCode(e.target.value)
+      setValue('street', street)
+      setValue('city', city)
+    }
+    trigger('zipCode')
   }
 
   async function handleAddAddress(data: ManageAddressFormInputs) {
@@ -129,66 +178,92 @@ export function ManageAddress({
   }
 
   return (
-    <div className="space-y-1">
+    <div className="space-y-2">
       <form
         id={`form-${id}`}
         onSubmit={handleSubmit(
           action === 'add' ? handleAddAddress : handleEditAddress,
         )}
-        className="grid gap-x-4 md:grid-cols-2 lg:grid-cols-3"
+        className="grid gap-4 md:grid-cols-2 lg:grid-cols-3"
       >
-        <InputBorderBottom
-          id={`zip-code-${id}`}
-          defaultValue={zipCode}
-          handleBlur={() => handleAddEditFields('zipCode')}
-          placeholder="Zip Code"
-          {...register('zipCode')}
-        />
-        <InputBorderBottom
-          id={`street-address-${id}`}
-          readOnly
-          defaultValue={street}
-          placeholder="Street Address"
-          {...streetRegister}
-          ref={(e) => {
-            streetRefCb(e)
-            streetRef.current = e
-          }}
-        />
-        <InputBorderBottom
-          id={`apartmentName-${id}`}
-          defaultValue={apartmentName}
-          handleBlur={() => handleAddEditFields('apartmentName')}
-          placeholder="Apartment name, floor, etc. (optional)"
-          {...register('apartmentName')}
-        />
-        <InputBorderBottom
-          id={`house-number-${id}`}
-          defaultValue={number}
-          handleBlur={() => handleAddEditFields('number')}
-          placeholder="House Number / Apartment Number"
-          {...register('number')}
-        />
-        <InputBorderBottom
-          id={`complement-${id}`}
-          defaultValue={complement}
-          handleBlur={() => handleAddEditFields('complement')}
-          placeholder="Complement"
-          {...register('complement')}
-        />
-        <InputBorderBottom
-          id={`town/city-${id}`}
-          readOnly
-          defaultValue={city}
-          placeholder="Town/City"
-          {...cityRegister}
-          ref={(e) => {
-            cityRefCb(e)
-            cityRef.current = e
-          }}
-        />
+        <div className="space-y-1">
+          <RRFInput
+            id={`zip-code-${id}`}
+            mask="zipCode"
+            handleChange={handleUpdateZipCode}
+            readOnly={!isEditting && action !== 'add'}
+            placeholder="Zip Code"
+            {...register('zipCode')}
+          />
+          {errors.zipCode && (
+            <span className="block text-red-700">{errors.zipCode.message}</span>
+          )}
+        </div>
+
+        <div className="space-y-1">
+          <RRFInput
+            id={`street-address-${id}`}
+            readOnly
+            placeholder="Street Address"
+            {...register('street')}
+          />
+          {errors.street && (
+            <span className="block text-red-700">{errors.street.message}</span>
+          )}
+        </div>
+
+        <div className="space-y-1">
+          <RRFInput
+            id={`apartmentName-${id}`}
+            readOnly={!isEditting && action !== 'add'}
+            placeholder="Apartment name, floor, etc. (optional)"
+            {...register('apartmentName')}
+          />
+          {errors.apartmentName && (
+            <span className="block text-red-700">
+              {errors.apartmentName.message}
+            </span>
+          )}
+        </div>
+
+        <div className="space-y-1">
+          <RRFInput
+            readOnly={!isEditting && action !== 'add'}
+            placeholder="House Number / Apartment Number"
+            {...register('number')}
+          />
+          {errors.number && (
+            <span className="block text-red-700">{errors.number.message}</span>
+          )}
+        </div>
+
+        <div className="space-y-1">
+          <RRFInput
+            id={`complement-${id}`}
+            readOnly={!isEditting && action !== 'add'}
+            placeholder="Complement"
+            {...register('complement')}
+          />
+          {errors.complement && (
+            <span className="block text-red-700">
+              {errors.complement.message}
+            </span>
+          )}
+        </div>
+
+        <div className="space-y-1">
+          <RRFInput
+            id={`town/city-${id}`}
+            readOnly
+            placeholder="Town/City"
+            {...register('city')}
+          />
+          {errors.city && (
+            <span className="block text-red-700">{errors.city.message}</span>
+          )}
+        </div>
       </form>
-      {(editedFields.size > 0 || action === 'add') && (
+      {isEditting || action === 'add' ? (
         <div className="flex flex-wrap items-center gap-4">
           <p className="font-medium">
             {action === 'edit' ? 'Confirm Changes?' : 'Add Address?'}
@@ -211,6 +286,18 @@ export function ManageAddress({
             >
               Yes
             </Button>
+          </div>
+        </div>
+      ) : (
+        <div className="flex items-center justify-between">
+          <Button onClick={() => setIsEditting(true)} variant="green">
+            Edit
+          </Button>
+          <div
+            onClick={handleDeleteAddress}
+            className="cursor-pointer rounded bg-white p-2 text-red-700 transition-all hover:bg-gray-100"
+          >
+            <Trash2 />
           </div>
         </div>
       )}

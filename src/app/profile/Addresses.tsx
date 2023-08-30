@@ -1,7 +1,9 @@
 'use client'
 
+import * as Collapsible from '@radix-ui/react-collapsible'
 import { AnimatePresence, motion } from 'framer-motion'
-import { useState } from 'react'
+import { Dispatch, SetStateAction, useState } from 'react'
+import { ChevronDown, ChevronRight } from 'react-feather'
 
 import { CustomAddress } from '@/lib/helpers/linkUserAddressDataWithAddressData'
 
@@ -28,6 +30,7 @@ export function Addresses({
   )
   const [showOtherAddresses, setShowOtherAddresses] = useState(false)
   const [isAdding, setIsAdding] = useState(false)
+  const [openAddressId, setOpenAddressId] = useState<string | null>(null)
 
   function handleToggleOtherAddresses() {
     setShowOtherAddresses(!showOtherAddresses)
@@ -55,8 +58,22 @@ export function Addresses({
       {defaultAddress ? (
         <div className="space-y-4">
           <p className="font-medium">Default Address</p>
-          <ManageAddress userId={userId} action="edit" {...defaultAddress} />
+          <ManageAddress
+            setAddresses={setAddresses}
+            userId={userId}
+            action="edit"
+            newDefault={addresses[0].id}
+            {...defaultAddress}
+          />
           <AnimatePresence>
+            <p
+              onClick={handleToggleOtherAddresses}
+              className="w-fit cursor-pointer font-medium text-green-700 transition-all hover:font-bold"
+            >
+              {!showOtherAddresses
+                ? 'Show other addresses'
+                : 'Hide other addresses'}
+            </p>
             {showOtherAddresses && (
               <>
                 {addresses.map((a, idx) => (
@@ -68,7 +85,14 @@ export function Addresses({
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.2 }}
                   >
-                    <Address
+                    <CollapsibleAddress
+                      setAddresses={setAddresses}
+                      open={openAddressId === a.id}
+                      setOpen={() =>
+                        openAddressId === a.id
+                          ? setOpenAddressId(null)
+                          : setOpenAddressId(a.id)
+                      }
                       address={a}
                       idx={idx}
                       handleSetDefaultAddress={handleSetDefaultAddress}
@@ -79,7 +103,7 @@ export function Addresses({
                 {isAdding ? (
                   <motion.div
                     key="address"
-                    className="space-y-4"
+                    className="space-y-4 rounded border border-gray-400 p-2"
                     initial={{ opacity: 0 }}
                     exit={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
@@ -109,15 +133,6 @@ export function Addresses({
               </>
             )}
           </AnimatePresence>
-
-          <p
-            onClick={handleToggleOtherAddresses}
-            className="w-fit cursor-pointer font-medium text-green-700 transition-all hover:font-bold"
-          >
-            {!showOtherAddresses
-              ? 'Show other addresses'
-              : 'Hide other addresses'}
-          </p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -126,6 +141,7 @@ export function Addresses({
           </p>
           {addresses.map((a, idx) => (
             <Address
+              setAddresses={setAddresses}
               key={a.id}
               address={a}
               idx={idx}
@@ -139,11 +155,12 @@ export function Addresses({
   )
 }
 
-type ListAddressesProps = {
+type AddressProps = {
   address: CustomAddress
   idx: number
   handleSetDefaultAddress: (id: string) => void
   userId: string
+  setAddresses: Dispatch<SetStateAction<CustomAddress[]>>
 }
 
 function Address({
@@ -151,11 +168,17 @@ function Address({
   idx,
   userId,
   handleSetDefaultAddress,
-}: ListAddressesProps) {
+  setAddresses,
+}: AddressProps) {
   return (
     <>
       <p className="font-medium">Address {idx + 1}</p>
-      <ManageAddress userId={userId} action="edit" {...address} />
+      <ManageAddress
+        setAddresses={setAddresses}
+        userId={userId}
+        action="edit"
+        {...address}
+      />
       <div className="flex flex-wrap items-center gap-2">
         <p>Set as default address?</p>
         <Button
@@ -166,5 +189,52 @@ function Address({
         </Button>
       </div>
     </>
+  )
+}
+
+type CollapsibleAddressProps = {
+  address: CustomAddress
+  idx: number
+  handleSetDefaultAddress: (id: string) => void
+  open: boolean
+  setOpen: (id: string | null) => void
+  userId: string
+  setAddresses: Dispatch<SetStateAction<CustomAddress[]>>
+}
+
+function CollapsibleAddress({
+  address,
+  idx,
+  userId,
+  handleSetDefaultAddress,
+  open,
+  setOpen,
+  setAddresses,
+}: CollapsibleAddressProps) {
+  return (
+    <Collapsible.Root
+      open={open}
+      onOpenChange={() => setOpen(address.id)}
+      className="flex flex-col gap-2 rounded border border-gray-400 p-2"
+    >
+      <Collapsible.Trigger>
+        <div className="flex items-center">
+          <p>{!open ? <ChevronRight /> : <ChevronDown />}</p>
+          <p>
+            {address.zipCode}, {address.city}, {address.street},{' '}
+            {address.number}
+          </p>
+        </div>
+      </Collapsible.Trigger>
+      <Collapsible.Content className="space-y-2 overflow-hidden data-[state='closed']:animate-collapsibleSlideUp data-[state='open']:animate-collapsibleSlideDown">
+        <Address
+          setAddresses={setAddresses}
+          address={address}
+          userId={userId}
+          idx={idx}
+          handleSetDefaultAddress={handleSetDefaultAddress}
+        />
+      </Collapsible.Content>
+    </Collapsible.Root>
   )
 }

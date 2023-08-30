@@ -33,6 +33,28 @@ export class MongoDBUsers extends MongoDB {
     )
   }
 
+  async updateAddress(userId: string, address: UserAddress & { _id: string }) {
+    const collection = await this.collectionObj
+    await collection.updateOne(
+      {
+        _id: new ObjectId(userId),
+        'addresses._id': new ObjectId(address._id),
+      },
+      { $set: { addresses: address } },
+    )
+  }
+
+  async deleteAddress(userId: string, addressId: string) {
+    const collection = await this.collectionObj
+    console.log(userId, addressId)
+    await collection.updateOne(
+      {
+        _id: new ObjectId(userId),
+      },
+      { $pull: { addresses: { _id: new ObjectId(addressId) } } },
+    )
+  }
+
   async setDefaultAddress(userId: string, id: string) {
     const collection = await this.collectionObj
     await collection.updateOne(
