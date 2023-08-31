@@ -11,11 +11,11 @@ import { useForm } from 'react-hook-form'
 import * as z from 'zod'
 
 import { getAddressByZipCode } from '@/lib/helpers/getAddressByZipCode'
-import { CustomAddress } from '@/lib/helpers/linkUserAddressDataWithAddressData'
 
 import Button from '@/components/buttons/Button'
 import RRFInput from '@/components/RRFInput'
 
+import { CustomAddress } from '@/app/profile/page'
 import { useLoading } from '@/contexts/LoadingProvider'
 
 type AddAddress = {
@@ -47,9 +47,10 @@ const manageAddressFormSchema = z.object({
     .string()
     .nonempty('The Zip Code is required')
     .refine(
-      (zipCode) => zipCode.length === 9,
+      (zipCode) => zipCode.length === 10,
       'Zip Code must have 9 characters',
-    ),
+    )
+    .transform((zipCode) => zipCode.replace(/[\D]/g, '')),
 })
 
 type ManageAddressFormInputs = z.infer<typeof manageAddressFormSchema>
@@ -64,7 +65,16 @@ export function ManageAddress({
 }: ManageAddressProps) {
   const { city, number, street, zipCode, apartmentName, complement, id } =
     address
-  const methods = useForm<ManageAddressFormInputs>({
+
+  const {
+    register,
+    handleSubmit,
+    formState: { isSubmitting, errors },
+    reset,
+    setFocus,
+    setValue,
+    trigger,
+  } = useForm<ManageAddressFormInputs>({
     resolver: zodResolver(manageAddressFormSchema),
     defaultValues: {
       apartmentName,
@@ -75,15 +85,7 @@ export function ManageAddress({
       zipCode,
     },
   })
-  const {
-    register,
-    handleSubmit,
-    formState: { isSubmitting, errors },
-    reset,
-    setFocus,
-    setValue,
-    trigger,
-  } = methods
+
   const { setLoading } = useLoading()
   const [isEditting, setIsEditting] = useState(false)
 
@@ -106,11 +108,13 @@ export function ManageAddress({
         method: 'PUT',
         body: JSON.stringify({
           ...data,
-          userId,
           id: address.id,
-          isDefault: address.isDefault,
         }),
-      }).then((res) => res.json())
+      }).then((res) =>
+        res.json().catch((err) => {
+          throw new Error(err)
+        }),
+      )
 
       const prevAddressId = address.id as string
 
@@ -145,7 +149,8 @@ export function ManageAddress({
   }
 
   async function handleUpdateZipCode(e: ChangeEvent<HTMLInputElement>) {
-    if (e.target.value.length !== 9) {
+    const zipCodeVal = e.target.value.replace(/[\D]/g, '')
+    if (zipCodeVal.length !== 9) {
       setValue('street', '')
       setValue('city', '')
     } else {
@@ -158,20 +163,32 @@ export function ManageAddress({
 
   async function handleAddAddress(data: ManageAddressFormInputs) {
     if (action === 'add') {
-      setLoading(true)
-      const addressId = await fetch('/api/addresses', {
-        method: 'POST',
-        body: JSON.stringify({ ...data, userId }),
-      }).then((res) => res.json())
+      try {
+        setLoading(true)
+        const addressId = await fetch('/api/addresses', {
+          method: 'POST',
+          body: JSON.stringify({ ...data, userId }),
+        }).then(async (res) => {
+          if (res.status === 400) {
+            const err = await res.json()
+            throw new Error(err.message)
+          }
 
-      const newAddress: CustomAddress = {
-        ...data,
-        id: addressId,
-        isDefault: false,
+          return res.json()
+        })
+
+        const newAddress: CustomAddress = {
+          ...data,
+          id: addressId,
+          isDefault: false,
+        }
+
+        setAddresses((state) => [...state, newAddress])
+        setIsAdding(false)
+      } catch (err) {
+        if (err instanceof Error) alert(err.message)
       }
 
-      setAddresses((state) => [...state, newAddress])
-      setIsAdding(false)
       reset()
       setLoading(false)
     }
@@ -190,6 +207,7 @@ export function ManageAddress({
           <RRFInput
             id={`zip-code-${id}`}
             mask="zipCode"
+            defaultValue={zipCode}
             handleChange={handleUpdateZipCode}
             readOnly={!isEditting && action !== 'add'}
             placeholder="Zip Code"
@@ -204,6 +222,7 @@ export function ManageAddress({
           <RRFInput
             id={`street-address-${id}`}
             readOnly
+            defaultValue={street}
             placeholder="Street Address"
             {...register('street')}
           />
@@ -216,6 +235,7 @@ export function ManageAddress({
           <RRFInput
             id={`apartmentName-${id}`}
             readOnly={!isEditting && action !== 'add'}
+            defaultValue={apartmentName}
             placeholder="Apartment name, floor, etc. (optional)"
             {...register('apartmentName')}
           />
@@ -229,6 +249,7 @@ export function ManageAddress({
         <div className="space-y-1">
           <RRFInput
             readOnly={!isEditting && action !== 'add'}
+            defaultValue={number}
             placeholder="House Number / Apartment Number"
             {...register('number')}
           />
@@ -241,6 +262,7 @@ export function ManageAddress({
           <RRFInput
             id={`complement-${id}`}
             readOnly={!isEditting && action !== 'add'}
+            defaultValue={complement}
             placeholder="Complement"
             {...register('complement')}
           />
@@ -255,6 +277,7 @@ export function ManageAddress({
           <RRFInput
             id={`town/city-${id}`}
             readOnly
+            defaultValue={city}
             placeholder="Town/City"
             {...register('city')}
           />

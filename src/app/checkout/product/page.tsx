@@ -7,10 +7,6 @@ import { ComponentProps, useContext, useEffect, useState } from 'react'
 import useSWR, { SWRResponse } from 'swr'
 
 import { Address } from '@/lib/db/mongodb/addresses'
-import {
-  CustomAddress,
-  linkUserAddressDataWithAddressData,
-} from '@/lib/helpers/linkUserAddressDataWithAddressData'
 
 import ApplyCoupon from '@/components/ApplyCoupon'
 import Button from '@/components/buttons/Button'
@@ -18,7 +14,6 @@ import NextImage from '@/components/NextImage'
 import PaymentSuccess from '@/components/PaymentSuccess'
 import Steps from '@/components/Steps'
 
-import { UserAddress } from '@/@types/next-auth'
 import { Order } from '@/app/orders/page'
 import { useLoading } from '@/contexts/LoadingProvider'
 import { Product, ProductsContext } from '@/contexts/ProductsContext'
@@ -42,22 +37,22 @@ export default function Checkout() {
     isLoading: isProductLoading,
   }: SWRResponse<Product> = useSWR(`/api/products/${id}`, fetcher)
   const { data: session } = useSession()
-  const [selectedAddress, setSelectedAddress] = useState<CustomAddress | null>(
-    null,
-  )
+  const defaultAddressId =
+    session && session.user && session.user.defaultAddressId
+  const [selectedAddress, setSelectedAddress] = useState<Address | null>(null)
 
   const query =
     session &&
     session.user &&
     session.user.addresses.length > 0 &&
-    session.user.addresses.map((a) => `ids[]=${a.id}`).join('&')
+    session.user.addresses.map((id) => `ids[]=${id}`).join('&')
   const {
     data: addressesRes,
     error: _,
     isLoading: isAddressesLoading,
   }: SWRResponse<Address[]> = useSWR(`/api/addresses?${query}`, fetcher)
 
-  const [addresses, setAddresses] = useState<CustomAddress[]>([])
+  const [addresses, setAddresses] = useState<Address[]>([])
 
   const { setLoading } = useLoading()
 
@@ -80,15 +75,11 @@ export default function Checkout() {
     }
 
     if (addressesRes && !isAddressesLoading && session?.user.addresses) {
-      const customAddresses = linkUserAddressDataWithAddressData(
-        session.user.addresses as Array<UserAddress & { id: string }>,
-        addressesRes as Address[],
-        session?.user.defaultAddressId,
+      setAddresses(addressesRes)
+      const defaultAddress = addressesRes.find(
+        (ca) => ca.id === defaultAddressId,
       )
-
-      setAddresses(customAddresses)
-      const defaultAddress = customAddresses.find((ca) => ca.isDefault)
-      setSelectedAddress(defaultAddress ?? customAddresses[0])
+      setSelectedAddress(defaultAddress ?? addressesRes[0])
     }
   }, [
     addressesRes,

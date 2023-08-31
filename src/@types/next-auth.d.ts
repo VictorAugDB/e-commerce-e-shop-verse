@@ -15,11 +15,7 @@ declare module 'next-auth' {
       /** The user's postal address. */
       id: string
       ordersIds: string[]
-      addresses: Array<
-        UserAddress & {
-          id: string
-        }
-      >
+      addresses: string[]
       defaultAddressId?: string
     } & DefaultSession['user']
   }
@@ -28,11 +24,7 @@ declare module 'next-auth' {
 declare module 'next-auth/adapters' {
   interface AdapterUser {
     orders?: ObjectId[]
-    addresses?: Array<
-      UserAddress & {
-        _id: ObjectId
-      }
-    >
+    addresses?: ObjectId[]
     defaultAddressId: ObjectId
   }
 }

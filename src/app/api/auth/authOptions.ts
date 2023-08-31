@@ -17,13 +17,7 @@ export const authOptions: AuthOptions = {
         ? user.orders.map((o) => o.toString())
         : []
       session.user.addresses = user.addresses
-        ? user.addresses.map((a) => {
-            const { _id, ...rest } = a
-            return {
-              id: _id.toString(),
-              ...rest,
-            }
-          })
+        ? user.addresses.map((a) => a.toString())
         : []
 
       session.user.id = user.id.toString()

@@ -1,10 +1,9 @@
 import { Dispatch, SetStateAction } from 'react'
 
-import { CustomAddress } from '@/lib/helpers/linkUserAddressDataWithAddressData'
-
 import Button from '@/components/buttons/Button'
 
 import { ManageAddress } from '@/app/profile/ManageAddress'
+import { CustomAddress } from '@/app/profile/page'
 
 type AddAddressProps = {
   userId: string

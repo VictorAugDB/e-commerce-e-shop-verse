@@ -1,16 +1,27 @@
 import { Collection, Document, ObjectId } from 'mongodb'
+import { AdapterUser } from 'next-auth/adapters'
 
 import { MongoDB } from '@/lib/db/mongodb'
 import { errorHandler } from '@/lib/helpers/errorHandler'
 
 import { UserAddress } from '@/@types/next-auth'
 
+type MongoUser = Omit<AdapterUser, 'id'> & {
+  _id: ObjectId
+}
+
+type User = Omit<MongoUser, '_id' | 'orders' | 'addresses'> & {
+  id: string
+  orders: string[]
+  addresses: Array<UserAddress & { id: string }>
+}
+
 export class MongoDBUsers extends MongoDB {
-  private collectionObj: Promise<Collection<Document>>
+  private collectionObj: Promise<Collection<MongoUser & Document>>
 
   constructor() {
     super('e-shopverse', 'users')
-    this.collectionObj = this.init()
+    this.collectionObj = this.init<MongoUser>()
   }
 
   async linkOrder(userId: string, orderId: string) {
@@ -23,35 +34,28 @@ export class MongoDBUsers extends MongoDB {
     )
   }
 
-  async linkAddress(userId: string, address: UserAddress & { _id: ObjectId }) {
+  async linkAddress(userId: string, addressId: ObjectId) {
     const collection = await this.collectionObj
-    await collection.updateOne(
-      {
-        _id: new ObjectId(userId),
-      },
-      { $push: { addresses: address } },
-    )
-  }
+    const user = await collection.findOne<MongoUser>(new ObjectId(userId))
+    if (!user) {
+      throw new Error('User does not exist!')
+    }
 
-  async updateAddress(userId: string, address: UserAddress & { _id: string }) {
-    const collection = await this.collectionObj
     await collection.updateOne(
       {
         _id: new ObjectId(userId),
-        'addresses._id': new ObjectId(address._id),
       },
-      { $set: { addresses: address } },
+      { $push: { addresses: addressId } },
     )
   }
 
   async deleteAddress(userId: string, addressId: string) {
     const collection = await this.collectionObj
-    console.log(userId, addressId)
     await collection.updateOne(
       {
         _id: new ObjectId(userId),
       },
-      { $pull: { addresses: { _id: new ObjectId(addressId) } } },
+      { $pull: { addresses: new ObjectId(addressId) } },
     )
   }
 
@@ -70,13 +74,33 @@ export class MongoDBUsers extends MongoDB {
   async getUser(email: string) {
     try {
       const collection = await this.collectionObj
-      const user = (await collection.findOne({ email })) as any
-      return {
-        ...user,
-        orders: user.orders.map((o: any) => o.toString()),
+      const user = await collection.findOne<MongoUser>({ email })
+      if (!user) {
+        return null
       }
+
+      return formatUser(user)
     } catch (err) {
       throw errorHandler(err)
     }
+  }
+}
+
+function formatUser(user: MongoUser): User {
+  const { _id, addresses, orders, ...rest } = user
+
+  return {
+    id: _id.toString(),
+    orders: orders ? orders.map((o) => o.toString()) : [],
+    addresses: addresses
+      ? addresses.map((a) => {
+          const { _id: addressId, ...restAddress } = a
+          return {
+            id: addressId,
+            ...restAddress,
+          }
+        })
+      : [],
+    ...rest,
   }
 }

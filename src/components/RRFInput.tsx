@@ -8,7 +8,7 @@ import {
 
 const masks = {
   zipCode: (e: KeyboardEvent<HTMLInputElement>) => {
-    e.currentTarget.maxLength = 9
+    e.currentTarget.maxLength = 10
     const newValue = e.currentTarget.value
       .replace(/\D/g, '')
       .replace(/^(\d{5})(\d)/, '$1-$2')

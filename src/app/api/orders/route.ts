@@ -24,7 +24,7 @@ export async function POST(req: Request) {
   const data = await req.json()
   const mongoDbOrdersClient = new MongoDBOrders()
   const id = await mongoDbOrdersClient.insertOrder(data)
-  await mongoDbUsersClient.linkOrder(user._id.toString(), id)
+  await mongoDbUsersClient.linkOrder(user.id.toString(), id)
 
   return NextResponse.json({ id })
 }

@@ -8,6 +8,9 @@ export type Address = {
   zipCode: string
   city: string
   street: string
+  number: string
+  apartmentName?: string
+  complement?: string
 }
 
 type AddressWithoutId = Omit<Address, 'id'>
@@ -27,10 +30,12 @@ export class MongoDbAddresses extends MongoDB {
   async getAddressesByIds(ids: string[]): Promise<Address[]> {
     try {
       const collection = await this.collectionObj
+      ids = Array.from(new Set(ids).keys())
 
       const res = collection.find<AddressMongoRes>({
         _id: { $in: ids.map((id) => new ObjectId(id)) },
       })
+
       const addresses = await res.toArray()
 
       return addresses.map((a) => {
@@ -49,26 +54,13 @@ export class MongoDbAddresses extends MongoDB {
   async insertAddress(address: AddressWithoutId): Promise<ObjectId> {
     const collection = await this.collectionObj
 
-    const addressId = await this.checkAddressExists(address.zipCode)
-
-    if (addressId) {
-      return addressId
-    }
-
     const res = await collection.insertOne(address)
     return res.insertedId
   }
 
-  async updateAddress(address: Address): Promise<ObjectId | null> {
+  async updateAddress(address: Address) {
     const collection = await this.collectionObj
     const { id, ...rest } = address
-
-    const addressId = await this.checkAddressExists(address.zipCode)
-
-    if (!addressId) {
-      const res = await collection.insertOne(rest)
-      return res.insertedId
-    }
 
     await collection.updateOne(
       {
@@ -78,15 +70,5 @@ export class MongoDbAddresses extends MongoDB {
         $set: rest,
       },
     )
-    return null
-  }
-
-  async checkAddressExists(zipCode: string): Promise<ObjectId | null> {
-    const collection = await this.collectionObj
-
-    const address = await collection.findOne({
-      zipCode: zipCode,
-    })
-    return address ? address._id : null
   }
 }

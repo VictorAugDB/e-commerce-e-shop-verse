@@ -1,33 +1,30 @@
-'use client'
-
 import * as Collapsible from '@radix-ui/react-collapsible'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Dispatch, SetStateAction, useState } from 'react'
 import { ChevronDown, ChevronRight } from 'react-feather'
 
-import { CustomAddress } from '@/lib/helpers/linkUserAddressDataWithAddressData'
+import { Address } from '@/lib/db/mongodb/addresses'
 
 import Button from '@/components/buttons/Button'
 
 import { ManageAddress } from '@/app/profile/ManageAddress'
+import { CustomAddress } from '@/app/profile/page'
 
 type AddressesProps = {
   addresses: CustomAddress[]
   userId: string
+  setAddresses: Dispatch<SetStateAction<CustomAddress[]>>
+  defaultAddress: Address | null
+  setDefaultAddress: Dispatch<SetStateAction<CustomAddress | null>>
 }
 
 export function Addresses({
-  addresses: serverAddresses,
+  addresses,
   userId,
+  defaultAddress,
+  setAddresses,
+  setDefaultAddress,
 }: AddressesProps) {
-  const [defaultAddress, setDefaultAddress] = useState(
-    serverAddresses.length > 0
-      ? serverAddresses.find((a) => a.isDefault)
-      : null,
-  )
-  const [addresses, setAddresses] = useState(
-    serverAddresses.filter((sa) => !sa.isDefault),
-  )
   const [showOtherAddresses, setShowOtherAddresses] = useState(false)
   const [isAdding, setIsAdding] = useState(false)
   const [openAddressId, setOpenAddressId] = useState<string | null>(null)
@@ -45,8 +42,8 @@ export function Addresses({
       }),
     }).then((res) => res.json())
 
-    setDefaultAddress(addresses.find((a) => a.id === id))
-    setAddresses(serverAddresses.filter((a) => a.id !== id))
+    setDefaultAddress(addresses.find((a) => a.id === id) ?? null)
+    setAddresses(addresses.filter((a) => a.id !== id))
   }
 
   function toogleIsAdding() {
@@ -62,10 +59,10 @@ export function Addresses({
             setAddresses={setAddresses}
             userId={userId}
             action="edit"
-            newDefault={addresses[0].id}
+            newDefault={addresses[0] && addresses[0].id}
             {...defaultAddress}
           />
-          <AnimatePresence>
+          {addresses.length > 0 && (
             <p
               onClick={handleToggleOtherAddresses}
               className="w-fit cursor-pointer font-medium text-green-700 transition-all hover:font-bold"
@@ -74,81 +71,109 @@ export function Addresses({
                 ? 'Show other addresses'
                 : 'Hide other addresses'}
             </p>
+          )}
+
+          <AnimatePresence>
             {showOtherAddresses && (
-              <>
-                {addresses.map((a, idx) => (
-                  <motion.div
-                    key={a.id}
-                    className="space-y-4"
-                    initial={{ opacity: 0 }}
-                    exit={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <CollapsibleAddress
-                      setAddresses={setAddresses}
-                      open={openAddressId === a.id}
-                      setOpen={() =>
-                        openAddressId === a.id
-                          ? setOpenAddressId(null)
-                          : setOpenAddressId(a.id)
-                      }
-                      address={a}
-                      idx={idx}
-                      handleSetDefaultAddress={handleSetDefaultAddress}
-                      userId={userId}
-                    />
-                  </motion.div>
-                ))}
-                {isAdding ? (
-                  <motion.div
-                    key="address"
-                    className="space-y-4 rounded border border-gray-400 p-2"
-                    initial={{ opacity: 0 }}
-                    exit={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <ManageAddress
-                      userId={userId}
-                      action="add"
-                      setIsAdding={setIsAdding}
-                      setAddresses={setAddresses}
-                    />
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    key="button"
-                    className="space-y-4"
-                    initial={{ opacity: 0 }}
-                    exit={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <Button onClick={toogleIsAdding} variant="green">
-                      + Add address
-                    </Button>
-                  </motion.div>
-                )}
-              </>
+              <motion.div
+                key="addresses"
+                className="space-y-4"
+                initial={{ opacity: 0 }}
+                exit={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.2 }}
+              >
+                <AnimatePresence>
+                  {addresses.map((a, idx) => (
+                    <motion.div
+                      key={a.id}
+                      initial={{ opacity: 0 }}
+                      exit={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <CollapsibleAddress
+                        setAddresses={setAddresses}
+                        open={openAddressId === a.id}
+                        setOpen={() =>
+                          openAddressId === a.id
+                            ? setOpenAddressId(null)
+                            : setOpenAddressId(a.id)
+                        }
+                        address={a}
+                        idx={idx}
+                        handleSetDefaultAddress={() =>
+                          handleSetDefaultAddress(a.id)
+                        }
+                        userId={userId}
+                      />
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              </motion.div>
+            )}
+            {isAdding ? (
+              <motion.div
+                key="address"
+                className="space-y-4 rounded border border-gray-400 p-2"
+                initial={{ opacity: 0 }}
+                exit={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.2 }}
+              >
+                <ManageAddress
+                  userId={userId}
+                  action="add"
+                  setIsAdding={setIsAdding}
+                  setAddresses={setAddresses}
+                />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="button"
+                className="space-y-4"
+                initial={{ opacity: 0 }}
+                exit={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.2 }}
+              >
+                <Button onClick={toogleIsAdding} variant="green">
+                  + Add address
+                </Button>
+              </motion.div>
             )}
           </AnimatePresence>
         </div>
       ) : (
         <div className="space-y-4">
-          <p className="font-bold">
-            We identified that you don't have a default please set one
-          </p>
-          {addresses.map((a, idx) => (
-            <Address
-              setAddresses={setAddresses}
-              key={a.id}
-              address={a}
-              idx={idx}
-              handleSetDefaultAddress={handleSetDefaultAddress}
-              userId={userId}
-            />
-          ))}
+          {addresses.length > 0 ? (
+            <>
+              <p className="font-bold">
+                We've identified that you don't have a default address please
+                set one
+              </p>
+              {addresses.map((a, idx) => (
+                <Address
+                  setAddresses={setAddresses}
+                  key={a.id}
+                  address={a}
+                  idx={idx}
+                  handleSetDefaultAddress={() => handleSetDefaultAddress(a.id)}
+                  userId={userId}
+                />
+              ))}
+            </>
+          ) : (
+            <>
+              <p className="font-bold">Please add your first address.</p>
+              <ManageAddress
+                userId={userId}
+                action="add"
+                setIsAdding={setIsAdding}
+                setAddresses={setAddresses}
+              />
+            </>
+          )}
         </div>
       )}
     </>

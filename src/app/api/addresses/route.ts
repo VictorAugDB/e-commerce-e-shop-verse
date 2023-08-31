@@ -2,9 +2,8 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 
-import { MongoDbAddresses } from '@/lib/db/mongodb/addresses'
+import { Address, MongoDbAddresses } from '@/lib/db/mongodb/addresses'
 import { MongoDBUsers } from '@/lib/db/mongodb/users'
-import { CustomAddress } from '@/lib/helpers/linkUserAddressDataWithAddressData'
 
 export async function GET(req: NextRequest) {
   const searchParams = req.nextUrl.searchParams
@@ -21,8 +20,7 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: Request) {
-  const body: Omit<CustomAddress, 'id' | 'isDefault'> & { userId: string } =
-    await req.json()
+  const body: Address & { userId: string } = await req.json()
   const { city, number, street, zipCode, apartmentName, complement, userId } =
     body
 
@@ -31,66 +29,33 @@ export async function POST(req: Request) {
     city,
     street,
     zipCode,
-  })
-
-  const mongoDbUsersClient = new MongoDBUsers()
-  await mongoDbUsersClient.linkAddress(userId, {
-    _id: addressId,
     number,
     apartmentName,
     complement,
   })
+
+  const mongoDbUsersClient = new MongoDBUsers()
+  await mongoDbUsersClient.linkAddress(userId, addressId)
 
   return NextResponse.json({ id: addressId.toString() })
 }
 
 export async function PUT(req: Request) {
-  const body: CustomAddress & { userId: string } = await req.json()
-  const {
-    city,
-    number,
-    street,
-    zipCode,
-    apartmentName,
-    complement,
-    userId,
-    id: addressId,
-    isDefault,
-  } = body
+  const body: Address = await req.json()
+  const { city, number, street, zipCode, apartmentName, complement, id } = body
 
   const mongoDbAddressesClient = new MongoDbAddresses()
-  const newAddressId = await mongoDbAddressesClient.updateAddress({
-    id: addressId,
+  await mongoDbAddressesClient.updateAddress({
+    id,
     city,
     street,
     zipCode,
+    number,
+    apartmentName,
+    complement,
   })
-  const mongoDbUsersClient = new MongoDBUsers()
 
-  // Address didn't exist | Address updated
-  if (newAddressId) {
-    await mongoDbUsersClient.deleteAddress(userId, addressId)
-    await mongoDbUsersClient.linkAddress(userId, {
-      _id: newAddressId,
-      number,
-      apartmentName,
-      complement,
-    })
-    if (isDefault) {
-      mongoDbUsersClient.setDefaultAddress(userId, newAddressId.toString())
-    }
-  } else {
-    await mongoDbUsersClient.updateAddress(userId, {
-      _id: addressId,
-      number,
-      apartmentName,
-      complement,
-    })
-  }
-
-  return NextResponse.json(
-    newAddressId ? { id: newAddressId.toString() } : null,
-  )
+  return NextResponse.json(null)
 }
 
 export async function DELETE(req: Request) {

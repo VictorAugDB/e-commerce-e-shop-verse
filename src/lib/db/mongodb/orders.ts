@@ -50,7 +50,9 @@ export class MongoDBOrders extends MongoDB {
   async getOrderById(id: string): Promise<OrderWithId | null> {
     try {
       const collection = await this.collectionObj
-      const order = await collection.findOne({ _id: new ObjectId(id) })
+      const order = await collection.findOne<OrderMongoRes>({
+        _id: new ObjectId(id),
+      })
       if (!order) return null
 
       return formatOrder(order)
