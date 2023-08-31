@@ -87,6 +87,7 @@ export default function Checkout() {
     session?.user.defaultAddressId,
     isAddressesLoading,
     setLoading,
+    defaultAddressId,
   ])
 
   const quantity = Number(searchParams && searchParams.get('quantity'))

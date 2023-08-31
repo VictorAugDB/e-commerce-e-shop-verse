@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion'
 import { redirect } from 'next/navigation'
 import { useSession } from 'next-auth/react'
-import { ComponentProps, useContext, useEffect, useRef, useState } from 'react'
+import { ComponentProps, useContext, useEffect, useState } from 'react'
 import useSWR from 'swr'
 import { SWRResponse } from 'swr'
 
@@ -72,16 +72,6 @@ export default function Checkout() {
   ])
 
   const [orderId, setorderId] = useState<string | null>(null)
-
-  const inputsRef = {
-    firstName: useRef<HTMLInputElement>(null),
-    companyName: useRef<HTMLInputElement>(null),
-    streetAddress: useRef<HTMLInputElement>(null),
-    apartment: useRef<HTMLInputElement>(null),
-    city: useRef<HTMLInputElement>(null),
-    phoneNumber: useRef<HTMLInputElement>(null),
-    email: useRef<HTMLInputElement>(null),
-  }
 
   const {
     subtotal,
