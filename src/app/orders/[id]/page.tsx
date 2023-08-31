@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import { getServerSession } from 'next-auth'
 
-import { getOrdersData, getProductsDataByIds } from '@/lib/data'
+import { getProductsDataByIds } from '@/lib/data'
 import { MongoDBOrders } from '@/lib/db/mongodb/orders'
 import { IntlHelper } from '@/lib/helpers/Intl'
 
@@ -14,7 +14,9 @@ import { Detail } from '@/app/orders/[id]/Detail'
 import { Order } from '@/app/orders/page'
 
 export async function generateStaticParams() {
-  const orders: Order[] = await getOrdersData()
+  const mongoDbOrdersClient = new MongoDBOrders()
+
+  const orders: Order[] = await mongoDbOrdersClient.getOrders()
 
   return orders.map((p) => ({ id: p.id }))
 }

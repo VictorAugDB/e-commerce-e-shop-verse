@@ -47,6 +47,19 @@ export class MongoDBOrders extends MongoDB {
     }
   }
 
+  async getOrders(): Promise<OrderWithId[]> {
+    try {
+      const collection = await this.collectionObj
+      const res = collection.find<OrderMongoRes>({})
+
+      const orders = await res.toArray()
+
+      return orders.map((o) => formatOrder(o))
+    } catch (err) {
+      throw errorHandler(err)
+    }
+  }
+
   async getOrderById(id: string): Promise<OrderWithId | null> {
     try {
       const collection = await this.collectionObj
