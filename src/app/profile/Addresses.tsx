@@ -3,8 +3,6 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { Dispatch, SetStateAction, useState } from 'react'
 import { ChevronDown, ChevronRight } from 'react-feather'
 
-import { Address } from '@/lib/db/mongodb/addresses'
-
 import Button from '@/components/buttons/Button'
 import { zipCodeRegexp } from '@/components/RRFInput'
 
