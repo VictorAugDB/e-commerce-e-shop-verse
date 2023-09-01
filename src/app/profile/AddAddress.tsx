@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction } from 'react'
 
 import Button from '@/components/buttons/Button'
 
-import { ManageAddress } from '@/app/profile/ManageAddress'
+import { AddAddress as AddAddressComponent } from '@/app/profile/manage-address/AddAddress'
 import { CustomAddress } from '@/app/profile/page'
 
 type AddAddressProps = {
@@ -25,8 +25,7 @@ export function AddAddress({
   return (
     <>
       {isAdding ? (
-        <ManageAddress
-          action="add"
+        <AddAddressComponent
           setIsAdding={setIsAdding}
           setAddresses={setAddresses}
           userId={userId}

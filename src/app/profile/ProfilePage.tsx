@@ -33,23 +33,19 @@ export default function ProfilePage() {
     isLoading,
   }: SWRResponse<Address[]> = useSWR(`/api/addresses?${query}`, fetcher)
   const [addresses, setAddresses] = useState<CustomAddress[]>([])
-  const [defaultAddress, setDefaultAddress] = useState<CustomAddress | null>(
-    null,
-  )
+
   const { setLoading } = useLoading()
 
   useEffect(() => {
-    if (serverAddresses) {
+    if (serverAddresses && serverAddresses.length) {
       const defaultAddressId = session?.user.defaultAddressId
 
       const addrs: CustomAddress[] = serverAddresses.map((a) => ({
         ...a,
         isDefault: a.id === defaultAddressId,
       }))
-      setAddresses(addrs.filter((a) => a.id !== defaultAddressId))
-      const defAddr =
-        addrs && addrs.length > 0 && addrs.find((a) => a.isDefault)
-      setDefaultAddress(defAddr ? defAddr : null)
+      setAddresses(addrs)
+
       setLoading(false)
     } else {
       setLoading(true)
@@ -74,12 +70,8 @@ export default function ProfilePage() {
           <div className="space-y-4">
             <h4>Addresses</h4>
             <Addresses
-              addresses={addresses.filter(
-                (a) => defaultAddress && a.id !== defaultAddress.id,
-              )}
+              addressesWithDefault={addresses}
               setAddresses={setAddresses}
-              defaultAddress={defaultAddress}
-              setDefaultAddress={setDefaultAddress}
               userId={session ? session.user.id : ''}
             />
           </div>

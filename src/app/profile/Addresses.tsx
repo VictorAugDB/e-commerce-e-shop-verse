@@ -6,28 +6,31 @@ import { ChevronDown, ChevronRight } from 'react-feather'
 import { Address } from '@/lib/db/mongodb/addresses'
 
 import Button from '@/components/buttons/Button'
+import { zipCodeRegexp } from '@/components/RRFInput'
 
-import { ManageAddress } from '@/app/profile/ManageAddress'
+import { AddAddress } from '@/app/profile/manage-address/AddAddress'
+import { EditAddress } from '@/app/profile/manage-address/EditAddress'
 import { CustomAddress } from '@/app/profile/page'
 
 type AddressesProps = {
-  addresses: CustomAddress[]
+  addressesWithDefault: CustomAddress[]
   userId: string
   setAddresses: Dispatch<SetStateAction<CustomAddress[]>>
-  defaultAddress: Address | null
-  setDefaultAddress: Dispatch<SetStateAction<CustomAddress | null>>
 }
 
 export function Addresses({
-  addresses,
-  userId,
-  defaultAddress,
+  addressesWithDefault,
   setAddresses,
-  setDefaultAddress,
+  userId,
 }: AddressesProps) {
   const [showOtherAddresses, setShowOtherAddresses] = useState(false)
   const [isAdding, setIsAdding] = useState(false)
   const [openAddressId, setOpenAddressId] = useState<string | null>(null)
+  const defaultAddress = addressesWithDefault.find((a) => a.isDefault)
+
+  const addresses = defaultAddress
+    ? addressesWithDefault.filter((a) => a.id !== defaultAddress.id)
+    : addressesWithDefault
 
   function handleToggleOtherAddresses() {
     setShowOtherAddresses(!showOtherAddresses)
@@ -42,8 +45,11 @@ export function Addresses({
       }),
     }).then((res) => res.json())
 
-    setDefaultAddress(addresses.find((a) => a.id === id) ?? null)
-    setAddresses(addresses.filter((a) => a.id !== id))
+    setAddresses((state) =>
+      state
+        .map((a) => ({ ...a, isDefault: false }))
+        .map((a) => (a.id === id ? { ...a, isDefault: true } : a)),
+    )
   }
 
   function toogleIsAdding() {
@@ -55,12 +61,12 @@ export function Addresses({
       {defaultAddress ? (
         <div className="space-y-4">
           <p className="font-medium">Default Address</p>
-          <ManageAddress
+          <EditAddress
+            key={defaultAddress.id}
             setAddresses={setAddresses}
             userId={userId}
-            action="edit"
             newDefault={addresses[0] && addresses[0].id}
-            {...defaultAddress}
+            address={defaultAddress}
           />
           {addresses.length > 0 && (
             <p
@@ -121,9 +127,8 @@ export function Addresses({
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.2 }}
               >
-                <ManageAddress
+                <AddAddress
                   userId={userId}
-                  action="add"
                   setIsAdding={setIsAdding}
                   setAddresses={setAddresses}
                 />
@@ -166,9 +171,8 @@ export function Addresses({
           ) : (
             <>
               <p className="font-bold">Please add your first address.</p>
-              <ManageAddress
+              <AddAddress
                 userId={userId}
-                action="add"
                 setIsAdding={setIsAdding}
                 setAddresses={setAddresses}
               />
@@ -198,11 +202,10 @@ function Address({
   return (
     <>
       <p className="font-medium">Address {idx + 1}</p>
-      <ManageAddress
+      <EditAddress
         setAddresses={setAddresses}
         userId={userId}
-        action="edit"
-        {...address}
+        address={address}
       />
       <div className="flex flex-wrap items-center gap-2">
         <p>Set as default address?</p>
@@ -246,7 +249,7 @@ function CollapsibleAddress({
         <div className="flex items-center">
           <p>{!open ? <ChevronRight /> : <ChevronDown />}</p>
           <p>
-            {address.zipCode}, {address.city}, {address.street},{' '}
+            {zipCodeRegexp(address.zipCode)}, {address.city}, {address.street},{' '}
             {address.number}
           </p>
         </div>
