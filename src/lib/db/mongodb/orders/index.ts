@@ -5,29 +5,32 @@ import { errorHandler } from '@/lib/helpers/errorHandler'
 
 import { Order as OrderWithId } from '@/app/orders/page'
 
-type Order = Omit<OrderWithId, 'id' | 'products'> & {
+type OrderInput = Omit<OrderWithId, 'id'>
+
+type OrderQueryInput = Omit<OrderInput, 'productsIds'> & {
   products: ObjectId[]
 }
 
-type OrderMongoRes = Omit<Order, 'id'> & {
+type OrderMongoRes = Omit<OrderWithId, 'id' | 'productsIds'> & {
   _id: ObjectId
+  products: ObjectId[]
 }
 
-export class MongoDBOrders extends MongoDB {
-  private collectionObj: Promise<Collection<Order & Document>>
+export class MongoDBUncanceledOrders extends MongoDB {
+  private collectionObj: Promise<Collection<OrderQueryInput & Document>>
 
   constructor() {
     super('e-shopverse', 'orders')
-    this.collectionObj = this.init<Order>()
+    this.collectionObj = this.init<OrderQueryInput>()
   }
 
-  async insertOrder(order: Order): Promise<string> {
+  async insertOrder(order: OrderInput): Promise<string> {
     const collection = await this.collectionObj
-    const { products, ...restOrder } = order
+    const { productsIds, ...restOrder } = order
 
     const res = await collection.insertOne({
       ...restOrder,
-      products: products.map((p) => new ObjectId(p.id)),
+      products: productsIds.map((id) => new ObjectId(id)),
     })
     return res.insertedId.toString()
   }
@@ -73,14 +76,43 @@ export class MongoDBOrders extends MongoDB {
       throw errorHandler(err)
     }
   }
+
+  async deleteOrder(id: string): Promise<void> {
+    try {
+      const collection = await this.collectionObj
+      await collection.deleteOne({
+        _id: new ObjectId(id),
+      })
+    } catch (err) {
+      throw errorHandler(err)
+    }
+  }
+
+  async updateOrderStatus(
+    id: string,
+    status: OrderMongoRes['status'],
+  ): Promise<void> {
+    try {
+      const collection = await this.collectionObj
+      await collection.updateOne(
+        {
+          _id: new ObjectId(id),
+        },
+        {
+          $set: { status: status },
+        },
+      )
+    } catch (err) {
+      throw errorHandler(err)
+    }
+  }
 }
 
 function formatOrder(order: OrderMongoRes): OrderWithId {
   const { _id, products, ...rest } = order
-
   return {
     id: _id.toString(),
-    products: products.map((p) => p.toString()),
+    productsIds: products.map((p) => p.toString()),
     ...rest,
   }
 }

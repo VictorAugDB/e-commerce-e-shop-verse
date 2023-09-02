@@ -2,59 +2,32 @@
 
 import { NextResponse } from 'next/server'
 
-import { getProductsData } from '@/lib/data'
-
-import { Product } from '@/contexts/ProductsContext'
+import { MongoDBProducts, QueryOptions } from '@/lib/db/mongodb/products'
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url)
   const ids = searchParams.getAll('id[]')
-  const queryskip = searchParams.get('skip')
+  const skip = searchParams.get('skip')
   const limit = searchParams.get('limit')
-  const queryCategory = searchParams.get('category')
-  const _sort = searchParams.get('_sort')
-  const _order = searchParams.get('_order')
+  const category = searchParams.get('category')
+  const _sort = searchParams.getAll('_sort[]')
   const discountGte = searchParams.get('discount_gte')
 
-  let products: Product[] = await getProductsData()
+  const mongoDbProductsClient = new MongoDBProducts()
 
-  if (limit) {
-    const skip = Number(queryskip) ?? 0
-    products = products.slice(skip, skip + Number(limit))
-  }
-
-  const category = queryCategory
-
-  if (category && typeof category === 'string') {
-    products = products.filter(
-      (p) => p.category.toLowerCase() === category.toLowerCase(),
-    )
-  }
-
-  const sort = _sort
-  const order = _order ?? 'asc'
-
-  if (sort && typeof sort === 'string' && sort in products[0]) {
-    if (typeof products[0][sort as keyof Product] === 'number') {
-      products = products.sort((a, b) =>
-        order === 'asc'
-          ? (a[sort as keyof Product] as number) -
-            (b[sort as keyof Product] as number)
-          : (b[sort as keyof Product] as number) -
-            (a[sort as keyof Product] as number),
-      )
-    }
-  }
-
-  const discountGreaterThanOrEqual = Number(discountGte)
-
-  if (discountGreaterThanOrEqual >= 0) {
-    products = products.filter((p) => p.discount >= discountGreaterThanOrEqual)
+  const options: QueryOptions = {
+    category: category ?? undefined,
+    sort: _sort.map((s) => JSON.parse(s)),
+    discount: discountGte && JSON.parse(discountGte),
+    limit: limit ? Number(limit) : undefined,
+    skip: skip ? Number(skip) : undefined,
   }
 
   if (ids && ids.length > 0) {
-    return NextResponse.json(products.filter((p) => ids.includes(p.id)))
+    const products = await mongoDbProductsClient.getProductsByIds(ids, options)
+    return NextResponse.json(products)
   } else {
+    const products = await mongoDbProductsClient.getProducts(options)
     return NextResponse.json(products)
   }
 }

@@ -2,7 +2,7 @@
   "products": [
     {
       "id": "1",
-      "images": ["/images/monitor.png", "/images/monitor.png", "/images/monitor.png"],
+      "images": ["https://tinyurl.com/22upjryr", "https://tinyurl.com/22upjryr", "https://tinyurl.com/22upjryr"],
       "price": 650,
       "name": "Monitor LCD Gamer",
       "description": "Unleash gaming greatness with our HD Monitor! 144Hz refresh rate and FreeSync tech deliver seamless visuals and precision gameplay. Elevate your gaming experience now!",
@@ -16,7 +16,7 @@
     },
     {
       "id": "2",
-      "images": ["/images/bag.png", "/images/bag.png", "/images/bag.png"],
+      "images": ["https://tinyurl.com/4579cwfj", "https://tinyurl.com/4579cwfj", "https://tinyurl.com/4579cwfj"],
       "price": 50,
       "name": "Stylish Bag",
       "description": "A fashionable and functional bag for everyday use.",
@@ -30,7 +30,7 @@
     },
     {
       "id": "3",
-      "images": ["/images/book-shelf.png", "/images/book-shelf.png", "/images/book-shelf.png"],
+      "images": ["https://tinyurl.com/5n6pkzsb", "https://tinyurl.com/5n6pkzsb", "https://tinyurl.com/5n6pkzsb"],
       "price": 120,
       "name": "Wooden Book Shelf",
       "description": "An elegant wooden bookshelf to organize your books.",
@@ -44,7 +44,7 @@
     },
     {
       "id": "4",
-      "images": ["/images/coat.png", "/images/coat.png", "/images/coat.png"],
+      "images": ["https://tinyurl.com/42kt6d23", "https://tinyurl.com/42kt6d23", "https://tinyurl.com/42kt6d23"],
       "price": 80,
       "name": "Warm Winter Coat",
       "description": "Stay cozy and stylish with this warm winter coat.",
@@ -65,7 +65,7 @@
     },
     {
       "id": "5",
-      "images": ["/images/cooler.png", "/images/cooler.png", "/images/cooler.png"],
+      "images": ["https://tinyurl.com/mtet7juj", "https://tinyurl.com/mtet7juj", "https://tinyurl.com/mtet7juj"],
       "price": 35,
       "name": "Portable Cooler",
       "description": "Keep your beverages chilled with this portable cooler.",
@@ -79,7 +79,7 @@
     },
     {
       "id": "6",
-      "images": ["/images/keyboard.png", "/images/keyboard.png", "/images/keyboard.png"],
+      "images": ["https://tinyurl.com/5e9ps5yf", "https://tinyurl.com/5e9ps5yf", "https://tinyurl.com/5e9ps5yf"],
       "price": 90,
       "name": "Mechanical Gaming Keyboard",
       "description": "Experience precise and responsive typing with this mechanical gaming keyboard.",
@@ -93,7 +93,7 @@
     },
     {
       "id": "7",
-      "images": ["/images/chair.png", "/images/chair.png", "/images/chair.png"],
+      "images": ["https://tinyurl.com/38ky48dv", "https://tinyurl.com/38ky48dv", "https://tinyurl.com/38ky48dv"],
       "price": 150,
       "name": "Ergonomic Office Chair",
       "description": "Work in comfort with this ergonomic office chair.",
@@ -107,7 +107,7 @@
     },
     {
       "id": "8",
-      "images": ["/images/control.png", "/images/control.png", "/images/control.png"],
+      "images": ["https://tinyurl.com/2t2ft6zw", "https://tinyurl.com/2t2ft6zw", "https://tinyurl.com/2t2ft6zw"],
       "price": 40,
       "name": "Gaming Controller",
       "description": "Enhance your gaming experience with this advanced gaming controller.",

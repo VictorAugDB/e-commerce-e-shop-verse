@@ -94,18 +94,15 @@ export default function Checkout() {
       return
     }
 
+    const { zipCode, city, street, number } = selectedAddress
+
     // Order
     const order: Omit<Order, 'id'> = {
-      address: {
-        id: selectedAddress.id,
-        number: selectedAddress.number,
-        apartmentName: selectedAddress.apartmentName,
-        complement: selectedAddress.complement,
-      },
+      address: `${zipCode}, ${city}, ${street}, ${number}`,
       createdAt: new Date().toISOString(),
       status: 'Order Placed',
       discounts,
-      products: products.map((p) => p.id),
+      productsIds: products.map((p) => p.id),
       shipping,
       subtotal,
     }

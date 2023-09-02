@@ -67,11 +67,13 @@ export async function DELETE(req: Request) {
   const { userId, addressId, newDefault } = body
 
   const mongoDbUsersClient = new MongoDBUsers()
+  const mongoDbAddressesClient = new MongoDbAddresses()
 
   if (newDefault) {
     mongoDbUsersClient.setDefaultAddress(userId, newDefault)
   }
 
+  await mongoDbAddressesClient.deleteAddress(addressId)
   await mongoDbUsersClient.deleteAddress(userId, addressId)
 
   return NextResponse.json(null)

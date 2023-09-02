@@ -64,7 +64,11 @@ export default function Profile() {
           >
             <Option icon={User} title="Manage My Account" href="/profile" />
             <Option icon={ShoppingBag} title="My Orders" href="/orders" />
-            <Option icon={XCircle} title="My Cancellations" href="#" />
+            <Option
+              icon={XCircle}
+              title="My Cancellations"
+              href="/orders/cancellations"
+            />
             <Option icon={Star} title="My Reviews" href="#" />
             <Option icon={LogOut} title="Logout" href="#" />
           </motion.div>

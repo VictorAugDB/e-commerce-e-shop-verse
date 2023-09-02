@@ -16,6 +16,11 @@ export const authOptions: AuthOptions = {
       session.user.ordersIds = user.orders
         ? user.orders.map((o) => o.toString())
         : []
+
+      session.user.canceledOrdersIds = user.canceledOrders
+        ? user.canceledOrders.map((co) => co.toString())
+        : []
+
       session.user.addresses = user.addresses
         ? user.addresses.map((a) => a.toString())
         : []

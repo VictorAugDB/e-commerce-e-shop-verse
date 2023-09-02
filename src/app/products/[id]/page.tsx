@@ -1,7 +1,7 @@
 import { randomUUID } from 'crypto'
 import { twMerge } from 'tailwind-merge'
 
-import { getProductDataByid, getProductsData } from '@/lib/data'
+import { MongoDBProducts } from '@/lib/db/mongodb/products'
 
 import ImagesSwitch from '@/components/ImagesSwitch'
 import ListProducts from '@/components/lists/ListProducts'
@@ -10,13 +10,17 @@ import Steps from '@/components/Steps'
 import { Product as ProductPage } from '@/app/products/[id]/Product'
 
 export async function generateStaticParams() {
-  const products = await getProductsData()
+  const mongoDbProductsClient = new MongoDBProducts()
+  const products = await mongoDbProductsClient.getProducts({
+    limit: 10000,
+  })
 
   return products.map((p) => ({ id: p.id }))
 }
 
 export default async function Product({ params }: { params: { id: string } }) {
-  const product = await getProductDataByid(params.id)
+  const mongoDbProductsClient = new MongoDBProducts()
+  const product = await mongoDbProductsClient.getProductById(params.id)
 
   if (!product) {
     return
@@ -26,13 +30,12 @@ export default async function Product({ params }: { params: { id: string } }) {
     id: randomUUID(),
     image: pi,
   }))
-  let relatedProducts = await getProductsData({
-    category: product.category,
-  })
-
-  relatedProducts = relatedProducts
-    .filter((rp) => rp.id !== params.id)
-    .slice(0, 4)
+  const relatedProducts = (
+    await mongoDbProductsClient.getProducts({
+      category: product.category,
+      limit: 4,
+    })
+  ).filter((rp) => rp.id !== product.id)
 
   return (
     <div className="px-8 xl:px-[5.4375rem] 2xl:px-[8.4375rem]">

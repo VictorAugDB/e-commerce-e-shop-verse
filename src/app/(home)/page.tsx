@@ -6,7 +6,7 @@ import { HiOutlineDesktopComputer } from 'react-icons/hi'
 import { LuGamepad } from 'react-icons/lu'
 import { twMerge } from 'tailwind-merge'
 
-import { getProductsData } from '@/lib/data'
+import { MongoDBProducts } from '@/lib/db/mongodb/products'
 
 import BackgroundProduct from '@/components/BackgroundProduct'
 import Button from '@/components/buttons/Button'
@@ -34,39 +34,39 @@ export type Promotion = {
 }
 
 export default async function HomePage() {
-  const products = await getProductsData()
-  // TODO create this methods to fetch data from and external database in the data file
-  // const flashSales = await getProducts({ discount: 1, limit: 4 })
-  // const bestSellings = await getProducts({
-  //   bestSelling: true,
-  //   limit: 4,
-  //   revalidate: 3,
-  // })
-  // const products = await getProducts({ limit: 4, revalidate: 24 })
-  // let newArrival = await getProducts({ revalidate: 3 })
+  const mongoDbProductsClient = new MongoDBProducts()
+  const products = await mongoDbProductsClient.getProducts({
+    limit: 8,
+  })
 
-  // TODO Remove this when the methods are created
-  const flashSales = products.filter((p) => p.discount >= 1).slice(0, 4)
-  const bestSellings = products
-    .sort((a, b) => b.numberOfSales - a.numberOfSales)
-    .slice(0, 4)
+  // Replace this with a fetch to an API that consumes the db when it's available
+  const flashSales = await mongoDbProductsClient.getProducts({
+    discount: {
+      order: 'gte',
+      value: 1,
+    },
+    limit: 4,
+  })
 
-  // TODO Ref 1
-  // let newArrival = await getProducts({ revalidate: 3 })
-  // newArrival = newArrival
-  //   .sort(
-  //     (a, b) =>
-  //       new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-  //   )
-  //   .slice(0, 4)
+  const bestSellings = await mongoDbProductsClient.getProducts({
+    sort: [
+      {
+        fieldName: 'numberOfSales',
+        order: 'desc',
+      },
+    ],
+    limit: 4,
+  })
 
-  let newArrival = products
-  newArrival = newArrival
-    .sort(
-      (a, b) =>
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-    )
-    .slice(0, 4)
+  const newArrival = await mongoDbProductsClient.getProducts({
+    sort: [
+      {
+        fieldName: 'createdAt',
+        order: 'desc',
+      },
+    ],
+    limit: 4,
+  })
 
   const categories = [
     "Woman's fashion",

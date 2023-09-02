@@ -71,4 +71,12 @@ export class MongoDbAddresses extends MongoDB {
       },
     )
   }
+
+  async deleteAddress(id: string): Promise<void> {
+    const collection = await this.collectionObj
+
+    await collection.deleteOne({
+      _id: new ObjectId(id),
+    })
+  }
 }

@@ -119,18 +119,21 @@ export default function Checkout() {
       return
     }
 
-    const productId = (product && product.id) as string
+    const productId = product && product.id
+
+    if (!productId) {
+      alert('Something is wrong try again later')
+      return
+    }
+
+    const { zipCode, city, street, number } = selectedAddress
+
     const order: Omit<Order, 'id'> = {
-      address: {
-        id: selectedAddress.id,
-        number: selectedAddress.number,
-        apartmentName: selectedAddress.apartmentName,
-        complement: selectedAddress.complement,
-      },
+      address: `${zipCode}, ${city}, ${street}, ${number}`,
       createdAt: new Date().toISOString(),
       status: 'Order Placed',
       discounts,
-      products: [productId],
+      productsIds: [productId],
       shipping,
       subtotal,
     }

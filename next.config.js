@@ -12,6 +12,12 @@ const nextConfig = {
         port: '',
         pathname: '/a/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'tinyurl.com',
+        port: '',
+        pathname: '**',
+      },
     ],
   },
 

@@ -2,14 +2,15 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { getServerSession } from 'next-auth'
 
-import { MongoDBOrders } from '@/lib/db/mongodb/orders'
+import { MongoDBUncanceledOrders } from '@/lib/db/mongodb/orders'
 import { IntlHelper } from '@/lib/helpers/Intl'
 
-import { UserAddress } from '@/@types/next-auth'
+import CopyToClipboard from '@/components/CopyToClipboard'
+
 import { authOptions } from '@/app/api/auth/authOptions'
 
 export type Order = {
-  products: string[]
+  productsIds: string[]
   createdAt: string
   status:
     | 'Order Placed'
@@ -21,7 +22,7 @@ export type Order = {
   shipping: number
   discounts: number
   id: string
-  address: UserAddress & { id: string }
+  address: string
   shippingDate?: string
   shippingType?: string
   trackingNumber?: string
@@ -33,7 +34,7 @@ export default async function Orders() {
     redirect('/')
   }
 
-  const mongoDbOrdersClient = new MongoDBOrders()
+  const mongoDbOrdersClient = new MongoDBUncanceledOrders()
 
   const orders: Order[] = await mongoDbOrdersClient.getOrdersByIds(
     session.user.ordersIds,
@@ -42,12 +43,15 @@ export default async function Orders() {
   return (
     <div className="mt-20 space-y-4 px-2 md:px-8 lg:mt-6 2xl:px-[8.4375rem]">
       <h3 className="text-center">Orders</h3>
-      <div className="space-y-4 lg:grid lg:grid-cols-3 lg:gap-4 lg:space-y-0">
+      <div className="grid gap-4 sm:grid-cols-2 2xl:grid-cols-3">
         {orders.map((o) => (
           <Link key={o.id} href={`/orders/${o.id}`}>
-            <div className="cursor-pointer space-y-3 rounded border border-gray-400 bg-white p-4 transition-all hover:scale-105 hover:shadow-lg">
+            <div className="cursor-pointer space-y-3 rounded border border-gray-400 bg-white p-2 transition-all hover:scale-105 hover:shadow-lg sm:p-4">
               <div className="space-y-4">
-                <h4>{o.trackingNumber}</h4>
+                <div className="flex justify-between">
+                  <h4>{o.id}</h4>
+                  <CopyToClipboard text={o.id} />
+                </div>
                 <p className="text-gray-600">
                   Made in:{' '}
                   {IntlHelper.formatDateMonthLong(o.createdAt, 'en-US')}
@@ -61,7 +65,7 @@ export default async function Orders() {
                 </div>
                 <div className="flex items-center justify-between">
                   <p className="text-gray-600">Items</p>
-                  <p>{o.products.length}</p>
+                  <p>{o.productsIds.length}</p>
                 </div>
                 <div className="flex items-center justify-between">
                   <p className="text-gray-600">subtotal</p>

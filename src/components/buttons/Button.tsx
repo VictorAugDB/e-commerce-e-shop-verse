@@ -10,6 +10,7 @@ const ButtonVariant = [
   'primary',
   'outline',
   'ghost',
+  'red',
   'light',
   'dark',
   'green',
@@ -100,6 +101,10 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
             variant === 'green' && [
               'bg-green-700 text-white',
               'hover:bg-green-600 active:bg-green-600 disabled:bg-green-800',
+            ],
+            variant === 'red' && [
+              'bg-red-700 text-white',
+              'hover:bg-red-600 active:bg-red-600 disabled:bg-red-800',
             ],
           ],
           //#endregion  //*======== Variants ===========

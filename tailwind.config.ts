@@ -11,6 +11,7 @@ export default {
       height: {
         'error-screen': 'calc(100vh - 196px)',
         'payment-screen': 'calc(100vh - 196px)',
+        'content-screen': 'calc(100vh - 196px)',
       },
       colors: {
         bg: 'rgb(var(--tw-color-bg) / <alpha-value>)',

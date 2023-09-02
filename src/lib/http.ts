@@ -26,11 +26,29 @@ export const getProducts = async ({
   }
 
   if (discount !== undefined) {
-    query += `${query ? '&' : '?'}discount_gte=${discount}`
+    const disocuntCriteria: {
+      order: 'gte' | 'lte'
+      value: number
+    } = {
+      order: 'gte',
+      value: discount,
+    }
+
+    query += `${query ? '&' : '?'}discount_gte=${JSON.stringify(
+      disocuntCriteria,
+    )}`
   }
 
   if (bestSelling) {
-    query += `${query ? '&' : '?'}_sort=numberOfSales&_order=desc`
+    const sortingCriteria: {
+      fieldName: keyof Product
+      order: 'asc' | 'desc'
+    } = {
+      fieldName: 'numberOfSales',
+      order: 'desc',
+    }
+
+    query += `${query ? '&' : '?'}_sort[]=${JSON.stringify(sortingCriteria)}`
   }
 
   const res = await fetch('/api/products' + query, {

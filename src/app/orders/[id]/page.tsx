@@ -1,20 +1,21 @@
 import { redirect } from 'next/navigation'
 import { getServerSession } from 'next-auth'
 
-import { getProductsDataByIds } from '@/lib/data'
-import { MongoDBOrders } from '@/lib/db/mongodb/orders'
+import { MongoDBUncanceledOrders } from '@/lib/db/mongodb/orders'
+import { MongoDBProducts } from '@/lib/db/mongodb/products'
 import { IntlHelper } from '@/lib/helpers/Intl'
 
 import Divider from '@/components/Divider'
 import NextImage from '@/components/NextImage'
 
 import { authOptions } from '@/app/api/auth/authOptions'
+import { CancelOrder } from '@/app/orders/[id]/CancelOrder'
 import { DeliveryInfo } from '@/app/orders/[id]/DeliveryInfo'
 import { Detail } from '@/app/orders/[id]/Detail'
 import { Order } from '@/app/orders/page'
 
 export async function generateStaticParams() {
-  const mongoDbOrdersClient = new MongoDBOrders()
+  const mongoDbOrdersClient = new MongoDBUncanceledOrders()
 
   const orders: Order[] = await mongoDbOrdersClient.getOrders()
 
@@ -38,14 +39,17 @@ export default async function Order({ params }: { params: { id: string } }) {
     Delivered: 4,
   }
 
-  const mongoDbOrdersClient = new MongoDBOrders()
+  const mongoDbOrdersClient = new MongoDBUncanceledOrders()
   const order = await mongoDbOrdersClient.getOrderById(params.id)
 
   if (!order) {
     redirect('/orders')
   }
 
-  const products = await getProductsDataByIds(order.products)
+  const mongoDbProductsClient = new MongoDBProducts()
+  const products = await mongoDbProductsClient.getProductsByIds(
+    order.productsIds,
+  )
 
   return (
     <div className="mt-20 space-y-6 px-2 md:px-8 lg:mt-6 2xl:px-[8.4375rem]">
@@ -126,7 +130,7 @@ export default async function Order({ params }: { params: { id: string } }) {
             />
             <Detail title="Shipping Type" value={order.shippingType} />
             <Detail title="Tracking Number" value={order.trackingNumber} />
-            <Detail title="Address" value="TODO" />
+            <Detail title="Address" value={order.address} />
           </div>
         </div>
       )}
@@ -169,6 +173,7 @@ export default async function Order({ params }: { params: { id: string } }) {
           />
         </div>
       </div>
+      {order.status === 'Order Processed' && <CancelOrder order={order} />}
     </div>
   )
 }

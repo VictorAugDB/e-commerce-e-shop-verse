@@ -34,6 +34,26 @@ export class MongoDBUsers extends MongoDB {
     )
   }
 
+  async unlinkOrder(userId: string, orderId: string) {
+    const collection = await this.collectionObj
+    await collection.updateOne(
+      {
+        _id: new ObjectId(userId),
+      },
+      { $pull: { orders: new ObjectId(orderId) } },
+    )
+  }
+
+  async linkCanceledOrder(userId: string, orderId: string) {
+    const collection = await this.collectionObj
+    await collection.updateOne(
+      {
+        _id: new ObjectId(userId),
+      },
+      { $push: { canceledOrders: new ObjectId(orderId) } },
+    )
+  }
+
   async linkAddress(userId: string, addressId: ObjectId) {
     const collection = await this.collectionObj
     const user = await collection.findOne<MongoUser>(new ObjectId(userId))
