@@ -67,7 +67,7 @@ export function Cancellations() {
               <div className="h-px bg-gray-400"></div>
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <p className="text-gray-600">Repay Status</p>
+                  <p className="text-gray-600">Refund Status</p>
                   <p
                     data-repayd={o.repayStatus === 'completed'}
                     className="text-red-600 data-[repayd=true]:text-green-600"

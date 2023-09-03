@@ -13,6 +13,10 @@ export default {
         'payment-screen': 'calc(100vh - 196px)',
         'content-screen': 'calc(100vh - 196px)',
       },
+      maxWidth: {
+        'content-screen':
+          'calc(100vw - var(--global-px) - var(--scrollbar-width))',
+      },
       colors: {
         bg: 'rgb(var(--tw-color-bg) / <alpha-value>)',
         dark: '#222222',
@@ -29,6 +33,9 @@ export default {
           400: 'var(--gray-400)',
           600: 'var(--gray-600)',
           800: 'var(--gray-800)',
+        },
+        yellow: {
+          500: 'var(--yellow-500)',
         },
       },
       lineHeight: {

@@ -8,6 +8,7 @@ import ListProducts from '@/components/lists/ListProducts'
 import Steps from '@/components/Steps'
 
 import { Product as ProductPage } from '@/app/products/[id]/Product'
+import { Reviews } from '@/app/products/[id]/reviews'
 
 export async function generateStaticParams() {
   const mongoDbProductsClient = new MongoDBProducts()
@@ -38,7 +39,7 @@ export default async function Product({ params }: { params: { id: string } }) {
   ).filter((rp) => rp.id !== product.id)
 
   return (
-    <div className="px-8 xl:px-[5.4375rem] 2xl:px-[8.4375rem]">
+    <div className="px-2 sm:px-8 xl:px-[5.4375rem] 2xl:px-[8.4375rem]">
       <Steps
         flow="product"
         currentStep={2}
@@ -62,6 +63,7 @@ export default async function Product({ params }: { params: { id: string } }) {
       {relatedProducts.length > 0 && (
         <ListProducts products={relatedProducts} topic="Related Items" />
       )}
+      <Reviews className="mt-8" />
     </div>
   )
 }

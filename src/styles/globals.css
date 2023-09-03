@@ -47,7 +47,10 @@
   --gray-400: #d9d9d9;
   --gray-600: #bfbfbf;
   --gray-800: #5d5d5d;
+  --yellow-500: #FFB400;
   /* #endregion  /**======== Primary Color =========== */
+  --global-px: .5rem;
+  --scrollbar-width: 0px;
 }
 
 html,
@@ -55,6 +58,25 @@ body,
 #__next {
   @apply bg-bg flex h-full flex-1;
 }
+
+@media screen(sm) {
+  :root {
+    --global-px: 4rem;
+  }
+}
+
+@media screen(2xl) {
+  :root {
+    --global-px: 16.875rem;
+  }
+}
+
+@media screen(lg) {
+  :root {
+    --scrollbar-width: 1.0625rem;
+  }
+}
+
 
 @layer base {
   .cursor-newtab {
