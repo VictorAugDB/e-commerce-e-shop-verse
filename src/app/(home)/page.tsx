@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { IconType } from 'react-icons'
 import { AiOutlineCamera } from 'react-icons/ai'
 import { BsPhone, BsSmartwatch } from 'react-icons/bs'
@@ -112,22 +113,22 @@ export default async function HomePage() {
       imageLogoPath: '/images/promotion-logo.png',
       name: 'iPhone 14 Series',
       description: 'Up to 10% off Voucher',
-      imagePath: '/images/promotion-image.png',
-      id: '1',
+      imagePath: 'https://tinyurl.com/5n78959n',
+      id: '64f46537fa34cf68a6c63fc7',
     },
     {
       imageLogoPath: '/images/promotion-logo.png',
       name: 'iPhone 14 Series',
       description: 'Up to 11% off Voucher',
-      imagePath: '/images/promotion-image.png',
-      id: '2',
+      imagePath: 'https://tinyurl.com/5n78959n',
+      id: '64f46537fa34cf68a6c63fc7',
     },
     {
       imageLogoPath: '/images/promotion-logo.png',
       name: 'iPhone 14 Series',
       description: 'Up to 12% off Voucher',
-      imagePath: '/images/promotion-image.png',
-      id: '3',
+      imagePath: 'https://tinyurl.com/5n78959n',
+      id: '64f46537fa34cf68a6c63fc7',
     },
   ]
 
@@ -191,16 +192,18 @@ export default async function HomePage() {
               <p className="px-1 text-xs">Seconds</p>
             </div>
           </div>
-          <Button className="w-fit border border-white px-12 py-4 text-white hover:shadow-white">
-            Buy Now!
-          </Button>
+          <Link href="/products/64f45fedfa34cf68a6bdfab5">
+            <Button className="w-fit border border-white px-12 py-4 text-white hover:shadow-white">
+              Buy Now!
+            </Button>
+          </Link>
         </div>
         <div className="relative flex items-center justify-center rounded-full">
           <div className="absolute h-1 w-1 rounded-full shadow-[0_35px_200px_150px] shadow-gray-400"></div>
 
           <NextImage
             alt="product-image"
-            src="/images/jbl-radio.png"
+            src="https://tinyurl.com/5es94esd"
             sizes="100vw"
             fill
             style={{
