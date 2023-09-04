@@ -46,19 +46,7 @@ export type ReviewFormInputs = z.infer<typeof reviewFormSchema>
 
 export function Reviews({ className, ...props }: ReviewProps) {
   const { data: session } = useSession()
-  const [isWritingReview, setIsWritingReview] = useState(false)
-  const [reviewNumberOfStars, setReviewNumberOfStars] = useState(0)
   const [reviews, setReviews] = useState<Review[]>([])
-
-  const {
-    handleSubmit,
-    register,
-    formState: { isSubmitting, errors },
-    control,
-    reset,
-  } = useForm<ReviewFormInputs>({
-    resolver: zodResolver(reviewFormSchema),
-  })
 
   const evaluations = {
     5: 2000,
@@ -92,54 +80,6 @@ export function Reviews({ className, ...props }: ReviewProps) {
     }
     getReviews()
   }, [])
-
-  function toogleWriteReview() {
-    setIsWritingReview(!isWritingReview)
-  }
-
-  async function handleSubmitReview(data: ReviewFormInputs) {
-    if (!(session && session.user && session.user.name && session.user.id)) {
-      alert('Please login before send a review!')
-      reset()
-      return
-    }
-
-    const { comment, recommend, score, title } = data
-
-    const id = await fetch('/api/reviews', {
-      method: 'POST',
-      body: JSON.stringify({
-        comment,
-        recommend,
-        evalutaiton: score,
-        title,
-        userName: session.user.name,
-        userId: session.user.id,
-      }),
-    }).then((res) => res.json())
-
-    setReviews([
-      ...reviews,
-      {
-        id,
-        comment,
-        createdAt: IntlHelper.formatDateMonthLong(
-          new Date().toISOString(),
-          'en-US',
-        ),
-        evaluation: score,
-        helpfulQuantity: 0,
-        recommended: recommend,
-        title,
-        unhelpfulQuantity: 0,
-        userName: session.user.name,
-        userId: session.user.id,
-      },
-    ])
-    reset()
-    setIsWritingReview(false)
-    setReviewNumberOfStars(0)
-  }
 
   async function handleLoadMoreReviews() {
     // TODO call the API and set the result to the reviews
@@ -299,7 +239,6 @@ type CreateReviewProps = {
 
 function CreateReview({ setReviews, userId, userName }: CreateReviewProps) {
   const [isWritingReview, setIsWritingReview] = useState(false)
-  const [reviewNumberOfStars, setReviewNumberOfStars] = useState(0)
 
   const { handleSubmit, register, formState, control, reset } =
     useForm<ReviewFormInputs>({
@@ -351,7 +290,6 @@ function CreateReview({ setReviews, userId, userName }: CreateReviewProps) {
     ])
     reset()
     toogleWriteReview()
-    setReviewNumberOfStars(0)
   }
 
   return (
