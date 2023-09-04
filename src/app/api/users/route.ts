@@ -10,7 +10,7 @@ export async function PATCH(req: Request) {
 
     const mongoDbUsersClient = new MongoDBUsers()
     await mongoDbUsersClient.setDefaultAddress(userId, defaultAddressId)
-
-    return NextResponse.json(null)
   }
+
+  return NextResponse.json(null)
 }
