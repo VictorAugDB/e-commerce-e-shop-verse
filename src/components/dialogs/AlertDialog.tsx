@@ -22,7 +22,7 @@ export default function AlertDialog({ button, children }: DialogProps) {
           onClick={() => setOpen(false)}
           className="fixed inset-0 bg-[rgba(0,0,0,0.2)] data-[state=closed]:animate-contentOverlayCLose data-[state=open]:animate-overlayShow"
         />
-        <RadixAlertDialog.Content className="fixed left-[50%] top-[50%] max-h-[85vh] w-[90vw] max-w-[500px] translate-x-[-50%] translate-y-[-50%] rounded-[6px] bg-white p-[25px] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] focus:outline-none data-[state=closed]:animate-contentOverlayCLose data-[state=open]:animate-contentShow">
+        <RadixAlertDialog.Content className="fixed left-[50%] top-[50%] max-h-[85vh] w-[90vw] max-w-[500px] translate-x-[-50%] translate-y-[-50%] rounded-[6px] bg-white p-[25px] !font-sans shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] focus:outline-none data-[state=closed]:animate-contentOverlayCLose data-[state=open]:animate-contentShow">
           {children}
         </RadixAlertDialog.Content>
       </RadixAlertDialog.Portal>

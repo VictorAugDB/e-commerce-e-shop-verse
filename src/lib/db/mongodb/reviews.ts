@@ -10,29 +10,39 @@ export type Review = {
   evaluation: number
   userName: string
   recommended: boolean
-  helpfulQuantity: number
-  unhelpfulQuantity: number
+  helpfulEvaluationsUsersIds: string[]
+  unhelpfulEvaluationsUsersIds: string[]
   createdAt: string
   userId: string
 }
 
+type InsertReview = Omit<Review, 'id'> & { productId: ObjectId }
+
 type ReviewInput = Omit<
   Review,
-  'id' | 'createdAt' | 'helpfulQuantity' | 'unhelpfulQuantity'
->
+  | 'id'
+  | 'createdAt'
+  | 'helpfulEvaluationsUsersIds'
+  | 'unhelpfulEvaluationsUsersIds'
+> & {
+  productId: string
+}
 
-type ReviewMongoRes = Omit<Review, 'id'> & {
+export type ReviewMongoRes = Omit<Review, 'id'> & {
   _id: ObjectId
+  productId: ObjectId
+  helpfulEvaluationsUsersIds: ObjectId[]
+  unhelpfulEvaluationsUsersIds: ObjectId[]
 }
 
 type UpdateReview = Omit<ReviewInput, 'userId' | 'userName'> & { id: string }
 
 export class MongoDBReviews extends MongoDB {
-  private collectionObj: Promise<Collection<Omit<Review, 'id'> & Document>>
+  private collectionObj: Promise<Collection<InsertReview & Document>>
 
   constructor() {
     super('e-shopverse', 'reviews')
-    this.collectionObj = this.init<Omit<Review, 'id'>>()
+    this.collectionObj = this.init<InsertReview>()
   }
 
   async deleteReview(id: string) {
@@ -43,11 +53,12 @@ export class MongoDBReviews extends MongoDB {
   }
 
   async insertReview(data: ReviewInput) {
-    const review: Omit<Review, 'id'> = {
+    const review: InsertReview = {
       ...data,
       createdAt: new Date().toISOString(),
-      helpfulQuantity: 0,
-      unhelpfulQuantity: 0,
+      helpfulEvaluationsUsersIds: [],
+      unhelpfulEvaluationsUsersIds: [],
+      productId: new ObjectId(data.productId),
     }
 
     const collection = await this.collectionObj
@@ -87,10 +98,130 @@ export class MongoDBReviews extends MongoDB {
     )
   }
 
+  async toogleHelpfulUserId(
+    id: string,
+    userId: string,
+  ): Promise<'removed' | 'added'> {
+    const collection = await this.collectionObj
+
+    const review = await collection.findOne(new ObjectId(id))
+
+    if (
+      review &&
+      review.helpfulEvaluationsUsersIds.find((r) => r.toString() === userId)
+    ) {
+      await collection.updateOne(
+        {
+          _id: new ObjectId(id),
+        },
+        {
+          $pull: { helpfulEvaluationsUsersIds: new ObjectId(userId) },
+        },
+      )
+
+      return 'removed'
+    } else {
+      await collection.updateOne(
+        {
+          _id: new ObjectId(id),
+        },
+        {
+          $push: { helpfulEvaluationsUsersIds: new ObjectId(userId) },
+        },
+      )
+
+      // It's not allowed to have both helpful and unhelpful
+      if (
+        review &&
+        review.unhelpfulEvaluationsUsersIds.find((r) => r.toString() === userId)
+      ) {
+        await collection.updateOne(
+          {
+            _id: new ObjectId(id),
+          },
+          {
+            $pull: { unhelpfulEvaluationsUsersIds: new ObjectId(userId) },
+          },
+        )
+      }
+
+      return 'added'
+    }
+  }
+
+  async toogleUnhelpfulUserId(
+    id: string,
+    userId: string,
+  ): Promise<'removed' | 'added'> {
+    const collection = await this.collectionObj
+
+    const review = await collection.findOne(new ObjectId(id))
+
+    if (
+      review &&
+      review.unhelpfulEvaluationsUsersIds.find((r) => r.toString() === userId)
+    ) {
+      await collection.updateOne(
+        {
+          _id: new ObjectId(id),
+        },
+        {
+          $pull: { unhelpfulEvaluationsUsersIds: new ObjectId(userId) },
+        },
+      )
+
+      return 'removed'
+    } else {
+      await collection.updateOne(
+        {
+          _id: new ObjectId(id),
+        },
+        {
+          $push: { unhelpfulEvaluationsUsersIds: new ObjectId(userId) },
+        },
+      )
+
+      // It's not allowed to have both helpful and unhelpful
+      if (
+        review &&
+        review.helpfulEvaluationsUsersIds.find((r) => r.toString() === userId)
+      ) {
+        await collection.updateOne(
+          {
+            _id: new ObjectId(id),
+          },
+          {
+            $pull: { helpfulEvaluationsUsersIds: new ObjectId(userId) },
+          },
+        )
+      }
+
+      return 'added'
+    }
+  }
+
   async getReviews(skip = 0, limit = 10) {
     try {
       const collection = await this.collectionObj
       const res = collection.find<ReviewMongoRes>({}).skip(skip).limit(limit)
+
+      const reviews = await res.toArray()
+
+      return reviews.map((r) => formatReview(r))
+    } catch (err) {
+      throw errorHandler(err)
+    }
+  }
+
+  async getReviewsByProductId(productId: string, skip = 0, limit = 10) {
+    try {
+      const collection = await this.collectionObj
+      const res = collection
+        .find<ReviewMongoRes>({
+          productId: new ObjectId(productId),
+        })
+        .skip(skip)
+        .limit(limit)
 
       const reviews = await res.toArray()
 

@@ -36,32 +36,6 @@ export class MongoDBProducts extends MongoDB {
     this.collectionObj = this.init<Product>()
   }
 
-  async linkReview(productId: string, reviewId: ObjectId) {
-    const collection = await this.collectionObj
-
-    collection.updateOne(
-      {
-        _id: new ObjectId(productId),
-      },
-      {
-        $push: { reviews: reviewId },
-      },
-    )
-  }
-
-  async unlinkReview(productId: string, reviewId: ObjectId) {
-    const collection = await this.collectionObj
-
-    collection.updateOne(
-      {
-        _id: new ObjectId(productId),
-      },
-      {
-        $pull: { reviews: reviewId },
-      },
-    )
-  }
-
   async getProductById(id: string): Promise<Product | null> {
     try {
       const collection = await this.collectionObj

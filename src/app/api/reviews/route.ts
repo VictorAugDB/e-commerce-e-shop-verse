@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server'
 
-import { MongoDBProducts } from '@/lib/db/mongodb/products'
 import { MongoDBReviews, Review } from '@/lib/db/mongodb/reviews'
 
 export async function POST(req: Request) {
@@ -23,10 +22,8 @@ export async function POST(req: Request) {
     title,
     userId,
     userName,
+    productId,
   })
-
-  const mongoDbProductsClient = new MongoDBProducts()
-  await mongoDbProductsClient.linkReview(productId, id)
 
   return NextResponse.json(id)
 }
@@ -34,13 +31,19 @@ export async function POST(req: Request) {
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url)
 
-  const { skip, limit } = {
+  const { skip, limit, productId } = {
     skip: searchParams.get('skip'),
     limit: searchParams.get('limit'),
+    productId: searchParams.get('productId'),
+  }
+
+  if (!productId) {
+    throw new Error('Missing product!')
   }
 
   const mongoDbReviewsClient = new MongoDBReviews()
-  const reviews: Review[] = await mongoDbReviewsClient.getReviews(
+  const reviews: Review[] = await mongoDbReviewsClient.getReviewsByProductId(
+    productId,
     Number(skip),
     Number(limit),
   )
@@ -67,13 +70,10 @@ export async function PATCH(req: Request) {
 
 export async function DELETE(req: Request) {
   const data = await req.json()
-  const { id, productId } = data
+  const { id } = data
 
   const mongoDbReviewsClient = new MongoDBReviews()
   await mongoDbReviewsClient.deleteReview(id)
-
-  const mongoDbProductsClient = new MongoDBProducts()
-  await mongoDbProductsClient.unlinkReview(productId, id)
 
   return NextResponse.json(null)
 }

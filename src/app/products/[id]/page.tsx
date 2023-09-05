@@ -63,7 +63,7 @@ export default async function Product({ params }: { params: { id: string } }) {
       {relatedProducts.length > 0 && (
         <ListProducts products={relatedProducts} topic="Related Items" />
       )}
-      <Reviews className="mt-8" />
+      <Reviews className="mt-8" productId={params.id} />
     </div>
   )
 }

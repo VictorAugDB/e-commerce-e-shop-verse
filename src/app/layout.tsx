@@ -70,7 +70,7 @@ export default function RootLayout({
 }) {
   // Put Header or Footer Here
   return (
-    <html lang="en">
+    <html lang="en" className={poppins.variable}>
       <body>
         <SessionProvider>
           <ErrorProvider>
@@ -78,7 +78,6 @@ export default function RootLayout({
               <ProductsProvider>
                 <main
                   className={twMerge(
-                    poppins.variable,
                     'grid w-full grid-rows-[56px_1fr_1fr] font-sans',
                   )}
                 >

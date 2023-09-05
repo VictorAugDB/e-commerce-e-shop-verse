@@ -1,32 +1,27 @@
 'use client'
 
-import { zodResolver } from '@hookform/resolvers/zod'
-import * as Dialog from '@radix-ui/react-dialog'
-import { AnimatePresence, motion } from 'framer-motion'
 import { useSession } from 'next-auth/react'
-import {
-  cloneElement,
-  ComponentProps,
-  Dispatch,
-  ReactElement,
-  SetStateAction,
-  useEffect,
-  useState,
-} from 'react'
-import { Check, Edit, X } from 'react-feather'
-import { Controller, useForm, UseFormReturn } from 'react-hook-form'
+import { ComponentProps, Fragment, useEffect, useState } from 'react'
+import { Check, Trash2, X } from 'react-feather'
 import { twMerge } from 'tailwind-merge'
 import { z } from 'zod'
 
 import { Review } from '@/lib/db/mongodb/reviews'
-import { IntlHelper } from '@/lib/helpers/Intl'
 
 import Button from '@/components/buttons/Button'
+import { ConfirmationDialog } from '@/components/dialogs/ConfirmationDialog'
 import Divider from '@/components/Divider'
 import NextImage from '@/components/NextImage'
 import Stars from '@/components/Stars'
 
-type ReviewProps = ComponentProps<'div'>
+import { EvaluateRelevance } from '@/app/products/[id]/reviews/components/EvaluateRelevance'
+import { Progress } from '@/app/products/[id]/reviews/components/Progress'
+import { CreateReview } from '@/app/products/[id]/reviews/components/write-review/CreateReview'
+import { EditReview } from '@/app/products/[id]/reviews/components/write-review/EditReview'
+
+type ReviewProps = ComponentProps<'div'> & {
+  productId: string
+}
 
 export const reviewFormSchema = z.object({
   score: z
@@ -44,9 +39,13 @@ export const reviewFormSchema = z.object({
 
 export type ReviewFormInputs = z.infer<typeof reviewFormSchema>
 
-export function Reviews({ className, ...props }: ReviewProps) {
+export function Reviews({ className, productId, ...props }: ReviewProps) {
   const { data: session } = useSession()
   const [reviews, setReviews] = useState<Review[]>([])
+  const userId = session?.user.id
+  const [isRelevanceEvaluationLoading, setIsRelevanceEvaluationLoading] =
+    useState(false)
+  const [isLoadingMoreReviews, setIsLoadingMoreReviews] = useState(false)
 
   const evaluations = {
     5: 2000,
@@ -72,22 +71,128 @@ export function Reviews({ className, ...props }: ReviewProps) {
 
   useEffect(() => {
     async function getReviews() {
-      const res: Review[] = await fetch('/api/reviews?skip=0&limit=10').then(
-        (res) => res.json(),
-      )
+      const res: Review[] = await fetch(
+        `/api/reviews?skip=0&limit=10&productId=${productId}`,
+      ).then((res) => res.json())
 
       setReviews(res)
     }
     getReviews()
-  }, [])
+  }, [productId])
 
   async function handleLoadMoreReviews() {
-    // TODO call the API and set the result to the reviews
-    const res: Review[] = await fetch('/api/reviews?skip=0&limit=10').then(
-      (res) => res.json(),
-    )
+    setIsLoadingMoreReviews(true)
 
-    setReviews([...reviews, ...res])
+    const res: Review[] = await fetch(
+      `/api/reviews?skip=${reviews.length}&limit=10&productId=${productId}`,
+    ).then((res) => res.json())
+
+    if (res.length > 0) {
+      setReviews([...reviews, ...res])
+      setIsLoadingMoreReviews(false)
+    } else {
+      alert("There aren't more reviews!")
+    }
+  }
+
+  async function handleDeleteReview(id: string) {
+    await fetch('/api/reviews', {
+      method: 'DELETE',
+      body: JSON.stringify({
+        id,
+      }),
+    })
+
+    setReviews(reviews.filter((r) => r.id !== id))
+  }
+
+  async function toogleHelfulUsersIds(reviewId: string) {
+    const userId = session?.user.id
+
+    if (!userId) {
+      alert('Please login before evaluate if this review is helpful!')
+      return
+    }
+
+    await fetch('/api/reviews/helpful', {
+      method: 'PATCH',
+      body: JSON.stringify({ id: reviewId, userId }),
+    }).then((res) => res.json())
+
+    const updatedReview = reviews.map((r) => {
+      if (r.id === reviewId) {
+        const idx = r.helpfulEvaluationsUsersIds.findIndex(
+          (id) => id === userId,
+        )
+
+        return idx !== -1
+          ? {
+              ...r,
+              helpfulEvaluationsUsersIds: [
+                ...r.helpfulEvaluationsUsersIds.slice(0, idx),
+                ...r.helpfulEvaluationsUsersIds.slice(idx + 1),
+              ],
+            }
+          : {
+              ...r,
+              helpfulEvaluationsUsersIds: [
+                ...r.helpfulEvaluationsUsersIds,
+                userId,
+              ],
+              unhelpfulEvaluationsUsersIds:
+                r.unhelpfulEvaluationsUsersIds.filter(
+                  (heuid) => heuid !== userId,
+                ),
+            }
+      } else {
+        return r
+      }
+    })
+
+    setReviews(updatedReview)
+  }
+
+  async function toogleUnhelfulUsersIds(reviewId: string) {
+    if (!userId) {
+      alert('Please login before evaluate if this review is helpful!')
+      return
+    }
+
+    await fetch('/api/reviews/unhelpful', {
+      method: 'PATCH',
+      body: JSON.stringify({ id: reviewId, userId }),
+    }).then((res) => res.json())
+
+    setReviews(
+      reviews.map((r) => {
+        if (r.id === reviewId) {
+          const idx = r.unhelpfulEvaluationsUsersIds.findIndex(
+            (id) => id === userId,
+          )
+
+          return idx !== -1
+            ? {
+                ...r,
+                unhelpfulEvaluationsUsersIds: [
+                  ...r.unhelpfulEvaluationsUsersIds.slice(0, idx),
+                  ...r.unhelpfulEvaluationsUsersIds.slice(idx + 1),
+                ],
+              }
+            : {
+                ...r,
+                unhelpfulEvaluationsUsersIds: [
+                  ...r.unhelpfulEvaluationsUsersIds,
+                  userId,
+                ],
+                helpfulEvaluationsUsersIds: r.helpfulEvaluationsUsersIds.filter(
+                  (heuid) => heuid !== userId,
+                ),
+              }
+        } else {
+          return r
+        }
+      }),
+    )
   }
 
   return (
@@ -132,12 +237,13 @@ export function Reviews({ className, ...props }: ReviewProps) {
         setReviews={setReviews}
         userId={session?.user.id}
         userName={session?.user.name}
+        productId={productId}
       />
       <Divider />
       {reviews.length > 0 && (
         <div className="flex-1 space-y-4">
           {reviews.map((r) => (
-            <>
+            <Fragment key={r.id}>
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <p className="text-xs">{r.userName}</p>
@@ -151,12 +257,32 @@ export function Reviews({ className, ...props }: ReviewProps) {
                   <div className="flex items-center gap-4">
                     <p>Helpful?</p>
                     <div className="flex items-center">
-                      <p className="cursor-pointer border-r border-gray-400 px-2 py-1 transition-all hover:font-bold hover:tracking-tight">
-                        Yes ({r.helpfulQuantity})
-                      </p>
-                      <p className="cursor-pointer px-2 py-1 transition-all hover:font-bold">
-                        No ({r.unhelpfulQuantity})
-                      </p>
+                      <EvaluateRelevance
+                        handleEvaluate={toogleHelfulUsersIds}
+                        isEvaluated={
+                          !!r.helpfulEvaluationsUsersIds.find(
+                            (heuid) => heuid === userId,
+                          )
+                        }
+                        isLoading={isRelevanceEvaluationLoading}
+                        reviewId={r.id}
+                        setIsLoading={setIsRelevanceEvaluationLoading}
+                      >
+                        Yes ({r.helpfulEvaluationsUsersIds.length})
+                      </EvaluateRelevance>
+                      <EvaluateRelevance
+                        handleEvaluate={toogleUnhelfulUsersIds}
+                        isEvaluated={
+                          !!r.unhelpfulEvaluationsUsersIds.find(
+                            (heuid) => heuid === userId,
+                          )
+                        }
+                        isLoading={isRelevanceEvaluationLoading}
+                        reviewId={r.id}
+                        setIsLoading={setIsRelevanceEvaluationLoading}
+                      >
+                        No ({r.unhelpfulEvaluationsUsersIds.length})
+                      </EvaluateRelevance>
                     </div>
                   </div>
                   <p>{r.createdAt}</p>
@@ -173,403 +299,53 @@ export function Reviews({ className, ...props }: ReviewProps) {
                       Not recommended
                     </div>
                   )}
-                  <EditReview
-                    setReviews={setReviews}
-                    userId={session?.user.id}
-                    userName={session?.user.name}
-                    review={{
-                      comment: r.comment,
-                      recommend: r.recommended,
-                      score: r.evaluation,
-                      title: r.title,
-                      id: r.id,
-                    }}
+                  {userId === r.userId && (
+                    <EditReview
+                      setReviews={setReviews}
+                      userId={session?.user.id}
+                      userName={session?.user.name}
+                      review={{
+                        comment: r.comment,
+                        recommend: r.recommended,
+                        score: r.evaluation,
+                        title: r.title,
+                        id: r.id,
+                      }}
+                    />
+                  )}
+
+                  <ConfirmationDialog
+                    openButton={
+                      <div className="group flex cursor-pointer items-center gap-2 border-b border-transparent pb-px text-sm text-red-600 transition-all hover:border-red-600 hover:font-medium">
+                        <Trash2 className="h-4 w-4 group-hover:scale-105" />
+                        Delete
+                      </div>
+                    }
+                    actionButton={
+                      <Button
+                        variant="green"
+                        onClick={() => handleDeleteReview(r.id)}
+                      >
+                        Yes, Remove this review
+                      </Button>
+                    }
+                    description="Confirm that you really want to delete this review."
                   />
                 </div>
               </div>
               <Divider />
-            </>
+            </Fragment>
           ))}
           <Button
             onClick={handleLoadMoreReviews}
             variant="light"
-            className="mx-auto block px-12 py-3"
+            disabled={isLoadingMoreReviews}
+            className="mx-auto block px-12 py-3 disabled:cursor-not-allowed"
           >
             Load More
           </Button>
         </div>
       )}
     </div>
-  )
-}
-
-type ProgressProps = {
-  currentEvaluation: number
-  numberOfCurrentEvaluations: number
-  totalNumberOfEvaluations: number
-}
-
-function Progress({
-  currentEvaluation,
-  numberOfCurrentEvaluations,
-  totalNumberOfEvaluations,
-}: ProgressProps) {
-  return (
-    <div className="flex h-fit w-full items-center gap-2">
-      <p className="text-xs text-gray-600">{currentEvaluation}</p>
-      <div className="h-2 flex-1 overflow-hidden rounded bg-gray-400">
-        <span
-          className="block h-full bg-yellow-500"
-          style={{
-            width: `${
-              (numberOfCurrentEvaluations / totalNumberOfEvaluations) * 100
-            }%`,
-          }}
-        ></span>
-      </div>
-    </div>
-  )
-}
-
-type CreateReviewProps = {
-  setReviews: Dispatch<SetStateAction<Review[]>>
-  userId: string | undefined
-  userName: string | null | undefined
-}
-
-function CreateReview({ setReviews, userId, userName }: CreateReviewProps) {
-  const [isWritingReview, setIsWritingReview] = useState(false)
-
-  const { handleSubmit, register, formState, control, reset } =
-    useForm<ReviewFormInputs>({
-      resolver: zodResolver(reviewFormSchema),
-    })
-
-  function toogleWriteReview() {
-    setIsWritingReview(!isWritingReview)
-  }
-
-  async function handleSubmitReview(data: ReviewFormInputs) {
-    if (!(userName && userId)) {
-      alert('Please login before send a review!')
-      reset()
-      return
-    }
-
-    const { comment, recommend, score, title } = data
-
-    const id = await fetch('/api/reviews', {
-      method: 'POST',
-      body: JSON.stringify({
-        comment,
-        recommended: recommend,
-        evaluation: score,
-        title,
-        userName: userName,
-        userId: userId,
-      }),
-    }).then((res) => res.json())
-
-    setReviews((reviews) => [
-      ...reviews,
-      {
-        id,
-        comment,
-        createdAt: IntlHelper.formatDateMonthLong(
-          new Date().toISOString(),
-          'en-US',
-        ),
-        evaluation: score,
-        helpfulQuantity: 0,
-        recommended: recommend,
-        title,
-        unhelpfulQuantity: 0,
-        userName: userName,
-        userId: userId,
-      },
-    ])
-    reset()
-    toogleWriteReview()
-  }
-
-  return (
-    <>
-      <Button
-        onClick={toogleWriteReview}
-        variant="light"
-        className="block w-full max-w-[23.75rem] py-2"
-      >
-        <p className="text-center">Write a review</p>
-      </Button>
-      <AnimatePresence>
-        {isWritingReview && (
-          <motion.div
-            exit={{ opacity: 0 }}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.2 }}
-            className="flex justify-center"
-          >
-            <WriteReview
-              toogleWriteReview={toogleWriteReview}
-              handleSubmitChild={handleSubmitReview}
-              formReturn={{
-                control,
-                formState,
-                register,
-                handleSubmit,
-              }}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </>
-  )
-}
-
-type EditReviewProps = {
-  setReviews: Dispatch<SetStateAction<Review[]>>
-  userId: string | undefined
-  userName: string | null | undefined
-  review: ReviewFormInputs & { id: string }
-}
-
-function EditReview({ setReviews, userId, userName, review }: EditReviewProps) {
-  const [isWritingReview, setIsWritingReview] = useState(false)
-  const { comment, recommend, score, title } = review
-
-  const { handleSubmit, register, formState, control, reset } =
-    useForm<ReviewFormInputs>({
-      resolver: zodResolver(reviewFormSchema),
-      defaultValues: {
-        comment,
-        recommend,
-        score,
-        title,
-      },
-    })
-
-  function toogleWriteReview() {
-    setIsWritingReview(!isWritingReview)
-  }
-
-  async function handleSubmitReview(data: ReviewFormInputs) {
-    if (!(userName && userId)) {
-      alert('Please login before send a review!')
-      reset()
-      return
-    }
-
-    const { comment, recommend, score, title } = data
-
-    await fetch('/api/reviews', {
-      method: 'PATCH',
-      body: JSON.stringify({
-        comment,
-        recommended: recommend,
-        evaluation: score,
-        title,
-        id: review.id,
-      }),
-    }).then((res) => res.json())
-
-    setReviews((reviews) =>
-      reviews.map((r) =>
-        r.id !== review.id
-          ? r
-          : { ...r, comment, recommended: recommend, evaluation: score, title },
-      ),
-    )
-    reset()
-    toogleWriteReview()
-  }
-
-  return (
-    <Dialog.Root open={isWritingReview} onOpenChange={setIsWritingReview}>
-      <Dialog.Trigger asChild>
-        <div className="group flex cursor-pointer items-center gap-2 border-b border-transparent pb-px text-sm text-gray-600 transition-all hover:border-gray-600 hover:font-medium">
-          <Edit className="h-4 w-4 group-hover:scale-105" />
-          Edit
-        </div>
-      </Dialog.Trigger>
-      <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 bg-black data-[state=open]:animate-overlayShow" />
-        <Dialog.Content className="fixed left-[50%] top-[50%] max-h-[85vh] w-[95vw] translate-x-[-50%] translate-y-[-50%] overflow-auto rounded-[6px] bg-white p-[25px] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] focus:outline-none data-[state=open]:animate-contentShow sm:w-[90vw]">
-          <div className="flex justify-center">
-            <WriteReview
-              toogleWriteReview={toogleWriteReview}
-              modalClose={
-                <Dialog.Close asChild>
-                  <Button
-                    type="button"
-                    variant="light"
-                    className="mx-auto block w-full py-3"
-                  >
-                    Cancel
-                  </Button>
-                </Dialog.Close>
-              }
-              handleSubmitChild={handleSubmitReview}
-              formReturn={{
-                control,
-                formState,
-                register,
-                handleSubmit,
-              }}
-            />
-          </div>
-        </Dialog.Content>
-      </Dialog.Portal>
-    </Dialog.Root>
-  )
-}
-
-type WriteReviewProps = {
-  toogleWriteReview: () => void
-  modalClose?: ReactElement
-  handleSubmitChild: (data: ReviewFormInputs) => void
-  formReturn: Pick<
-    UseFormReturn<ReviewFormInputs>,
-    'control' | 'formState' | 'handleSubmit' | 'register'
-  >
-}
-
-function WriteReview({
-  toogleWriteReview,
-  modalClose,
-  handleSubmitChild,
-  formReturn,
-}: WriteReviewProps) {
-  const {
-    control,
-    formState: { isSubmitting, errors },
-    register,
-    handleSubmit,
-  } = formReturn
-
-  return (
-    <form
-      data-is-modal={modalClose !== undefined}
-      className="space-y-2 rounded border border-gray-400 p-4 data-[is-modal=true]:border-0 data-[is-modal=true]:p-0"
-      onSubmit={handleSubmit(handleSubmitChild)}
-    >
-      <h4 className="text-center">
-        Please fill the information below and send your review.
-      </h4>
-      <Controller
-        control={control}
-        name="score"
-        render={(props) => {
-          const {
-            fieldState: { error },
-            field,
-          } = props
-
-          return (
-            <>
-              <div className="flex items-center gap-2">
-                <p>Score:</p>
-                <Stars
-                  onStarClick={field.onChange}
-                  numberOfStars={field.value}
-                  setNumberOfStars={() => ''}
-                />
-                {error && (
-                  <span className="block text-red-700">{error.message}</span>
-                )}
-              </div>
-            </>
-          )
-        }}
-      />
-
-      <div>
-        <label htmlFor="title" className="block font-medium text-gray-600">
-          Title
-        </label>
-
-        <input
-          className="rounded p-2  text-sm outline-none ring-green-600 transition-all placeholder:text-gray-400 hover:ring-2 focus:ring-2"
-          placeholder="Best product ever!"
-          {...register('title')}
-        />
-        {errors.title && (
-          <span className="block text-red-700">{errors.title.message}</span>
-        )}
-      </div>
-      <div>
-        <label htmlFor="comment" className="block font-medium text-gray-600">
-          Your comment
-        </label>
-
-        <textarea
-          id="comment"
-          placeholder="Please share your thoughts about the product..."
-          className="h-[12.9375rem] w-full max-w-[33.75rem] resize-none rounded border-0 bg-white p-2 text-sm outline-none ring-green-600 transition-all placeholder:text-gray-400 hover:ring-2 focus:ring-2 focus:ring-green-600"
-          {...register('comment')}
-        />
-        {errors.comment && (
-          <span className="block text-red-700">{errors.comment.message}</span>
-        )}
-      </div>
-      <Controller
-        control={control}
-        name="recommend"
-        render={(props) => {
-          const {
-            fieldState: { error },
-            field,
-          } = props
-          return (
-            <>
-              <div className="flex items-center">
-                <p className="text-gray-600">Do you recommend this product?</p>
-                <p
-                  data-recommended={field.value}
-                  onClick={() => field.onChange(true)}
-                  className="cursor-pointer border-r border-gray-600 px-2 py-1 text-green-500 transition-all hover:font-bold data-[recommended=true]:font-bold"
-                >
-                  Yes
-                </p>
-                <p
-                  data-recommended={field.value}
-                  onClick={() => field.onChange(false)}
-                  className="cursor-pointer px-2 py-1 text-red-600 transition-all hover:font-bold data-[recommended=false]:font-bold"
-                >
-                  No
-                </p>
-              </div>
-              {error && (
-                <span className="block text-red-700">{error.message}</span>
-              )}
-            </>
-          )
-        }}
-      />
-
-      <div className="flex gap-2">
-        {!modalClose ? (
-          <Button
-            type="button"
-            variant="light"
-            onClick={toogleWriteReview}
-            disabled={isSubmitting}
-            className="mx-auto block w-full py-3"
-          >
-            Cancel
-          </Button>
-        ) : (
-          <>{cloneElement(modalClose, { disabled: isSubmitting })}</>
-        )}
-        <Button
-          type="submit"
-          variant="green"
-          disabled={isSubmitting}
-          className="mx-auto block w-full py-3"
-        >
-          Send
-        </Button>
-      </div>
-    </form>
   )
 }
