@@ -88,8 +88,6 @@ export default async function Product({ params }: { params: { id: string } }) {
     }),
   )
 
-  console.log(relatedProducts)
-
   relatedProducts = relatedProducts.filter((rp) => rp.id !== product.id)
 
   return (

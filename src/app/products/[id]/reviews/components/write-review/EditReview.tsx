@@ -69,7 +69,6 @@ export function EditReview({
           : { ...r, comment, recommended: recommend, evaluation: score, title },
       ),
     )
-    reset()
     toogleWriteReview()
   }
 
