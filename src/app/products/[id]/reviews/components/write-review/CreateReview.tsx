@@ -58,7 +58,6 @@ export function CreateReview({
     }).then((res) => res.json())
 
     setReviews((reviews) => [
-      ...reviews,
       {
         id,
         comment,
@@ -74,6 +73,7 @@ export function CreateReview({
         userName: userName,
         userId: userId,
       },
+      ...reviews,
     ])
     reset()
     toogleWriteReview()

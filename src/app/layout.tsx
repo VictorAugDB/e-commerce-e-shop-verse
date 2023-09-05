@@ -10,7 +10,7 @@ import '@/styles/globals.css'
 
 import Footer from '@/components/layout/Footer'
 import Header from '@/components/layout/Header'
-import Loading from '@/components/Loading'
+import Loading from '@/components/loading/Loading'
 
 import { ErrorProvider } from '@/contexts/ErrorProvider'
 import { LoadingProvider } from '@/contexts/LoadingProvider'

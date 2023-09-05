@@ -64,7 +64,7 @@ export default function Stars({
             ></NextImage>
           </motion.div>
         ))}
-        {numberOfEvaluations && (
+        {numberOfEvaluations !== undefined && (
           <p className="ml-2 font-semibold text-gray-500">
             ({numberOfEvaluations})
           </p>

@@ -1,12 +1,20 @@
 'use client'
 
 import { useSession } from 'next-auth/react'
-import { ComponentProps, Fragment, useEffect, useState } from 'react'
+import {
+  ComponentProps,
+  Fragment,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import { Check, Trash2, X } from 'react-feather'
 import { twMerge } from 'tailwind-merge'
 import { z } from 'zod'
 
 import { Review } from '@/lib/db/mongodb/reviews'
+import { getEvaluationsHash } from '@/lib/helpers/getEvaluationsHash'
 
 import Button from '@/components/buttons/Button'
 import { ConfirmationDialog } from '@/components/dialogs/ConfirmationDialog'
@@ -47,27 +55,59 @@ export function Reviews({ className, productId, ...props }: ReviewProps) {
     useState(false)
   const [isLoadingMoreReviews, setIsLoadingMoreReviews] = useState(false)
 
-  const evaluations = {
-    5: 2000,
-    4: 800,
-    3: 100,
-    2: 50,
-    1: 300,
-  }
+  const {
+    evaluations,
+    evaluationsAverage,
+    recommended,
+    totalNumberOfEvaluations,
+  } = useMemo(() => {
+    const evaluations = getEvaluationsHash(
+      reviews.map((r) => r.evaluation.toString()),
+    )
 
-  const totalNumberOfEvaluations = Object.values(evaluations).reduce(
-    (acc, curr) => acc + curr,
-    0,
-  )
-
-  const evaluationsAverage = (
-    Object.entries(evaluations).reduce(
-      (acc, [key, val]) => acc + Number(key) * val,
+    const numberOfRecommended = reviews.reduce(
+      (acc, curr) => (curr.recommended ? acc + 1 : acc),
       0,
-    ) / totalNumberOfEvaluations
-  ).toFixed(2)
+    )
 
-  const recommended = Math.round((3000 / totalNumberOfEvaluations) * 100)
+    const totalNumberOfEvaluations = Object.values(evaluations).reduce(
+      (acc, curr) => acc + curr,
+      0,
+    )
+
+    const evaluationsAverage = (
+      Object.entries(evaluations).reduce(
+        (acc, [key, val]) => acc + Number(key) * val,
+        0,
+      ) / totalNumberOfEvaluations
+    ).toFixed(2)
+
+    const recommended = Math.round(
+      (numberOfRecommended / totalNumberOfEvaluations) * 100,
+    )
+
+    return {
+      evaluations,
+      evaluationsAverage,
+      recommended,
+      totalNumberOfEvaluations,
+    }
+  }, [reviews])
+
+  const sortLoggedUserCommentsFirst = useCallback(
+    (reviewsToSort: Review[]) => {
+      return reviewsToSort.sort((a, b) => {
+        if (a.userId === userId && b.userId !== userId) {
+          return -1 // Comment 'a' comes before Comment 'b'
+        } else if (a.userId !== userId && b.userId === userId) {
+          return 1 // Comment 'b' comes before Comment 'a'
+        } else {
+          return 0 // Comments have the same userId or neither of them is put first
+        }
+      })
+    },
+    [userId],
+  )
 
   useEffect(() => {
     async function getReviews() {
@@ -75,10 +115,10 @@ export function Reviews({ className, productId, ...props }: ReviewProps) {
         `/api/reviews?skip=0&limit=10&productId=${productId}`,
       ).then((res) => res.json())
 
-      setReviews(res)
+      setReviews(sortLoggedUserCommentsFirst(res))
     }
     getReviews()
-  }, [productId])
+  }, [productId, sortLoggedUserCommentsFirst])
 
   async function handleLoadMoreReviews() {
     setIsLoadingMoreReviews(true)
@@ -88,7 +128,7 @@ export function Reviews({ className, productId, ...props }: ReviewProps) {
     ).then((res) => res.json())
 
     if (res.length > 0) {
-      setReviews([...reviews, ...res])
+      setReviews(sortLoggedUserCommentsFirst([...reviews, ...res]))
       setIsLoadingMoreReviews(false)
     } else {
       alert("There aren't more reviews!")
@@ -197,153 +237,171 @@ export function Reviews({ className, productId, ...props }: ReviewProps) {
 
   return (
     <div className="flex flex-col items-center justify-center gap-5">
-      <div className="w-full max-w-[23.75rem] space-y-5">
-        <div className={twMerge('flex h-full gap-6', className)} {...props}>
-          <div className="flex flex-1 flex-col-reverse justify-between gap-2">
-            {Object.entries(evaluations).map(([key, val]) => (
-              <Progress
-                key={key}
-                currentEvaluation={Number(key)}
-                numberOfCurrentEvaluations={val}
-                totalNumberOfEvaluations={totalNumberOfEvaluations}
-              />
-            ))}
-          </div>
-          <div className="space-y-5">
-            <div className="space-y-1">
-              <div className="flex items-center gap-2">
-                <h3>{evaluationsAverage}</h3>
-                <NextImage
-                  alt="star"
-                  src="/images/star.png"
-                  width={16}
-                  height={16}
-                  style={{ objectFit: 'contain' }}
-                />
+      {reviews && reviews.length > 0 ? (
+        <>
+          <div className="w-full max-w-[23.75rem] space-y-5">
+            <div className={twMerge('flex h-full gap-6', className)} {...props}>
+              <div className="flex flex-1 flex-col-reverse justify-between gap-2">
+                {Object.entries(evaluations).map(([key, val]) => (
+                  <Progress
+                    key={key}
+                    currentEvaluation={Number(key)}
+                    numberOfCurrentEvaluations={val}
+                    totalNumberOfEvaluations={totalNumberOfEvaluations}
+                  />
+                ))}
               </div>
-              <p className="text-xs text-gray-600">
-                {totalNumberOfEvaluations} Reviews
-              </p>
-            </div>
-            <div className="space-y-1">
-              <h3>{recommended}%</h3>
+              <div className="space-y-5">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <h3>{evaluationsAverage}</h3>
+                    <NextImage
+                      alt="star"
+                      src="/images/star.png"
+                      width={16}
+                      height={16}
+                      style={{ objectFit: 'contain' }}
+                    />
+                  </div>
+                  <p className="text-xs text-gray-600">
+                    {totalNumberOfEvaluations} Reviews
+                  </p>
+                </div>
+                <div className="space-y-1">
+                  <h3>{recommended}%</h3>
 
-              <p className="text-xs text-gray-600">Recommended</p>
+                  <p className="text-xs text-gray-600">Recommended</p>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
-      <CreateReview
-        setReviews={setReviews}
-        userId={session?.user.id}
-        userName={session?.user.name}
-        productId={productId}
-      />
-      <Divider />
-      {reviews.length > 0 && (
-        <div className="flex-1 space-y-4">
-          {reviews.map((r) => (
-            <Fragment key={r.id}>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <p className="text-xs">{r.userName}</p>
-                  <Stars numberOfStars={r.evaluation} starSize={12} />
-                </div>
-                <p className="max-w-content-screen break-words">{r.title}</p>
-                <p className="max-w-content-screen break-words text-xs line-clamp-5">
-                  {r.comment}
-                </p>
-                <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-gray-600 sm:gap-8 md:text-sm lg:justify-start">
-                  <div className="flex items-center gap-4">
-                    <p>Helpful?</p>
-                    <div className="flex items-center">
-                      <EvaluateRelevance
-                        handleEvaluate={toogleHelfulUsersIds}
-                        isEvaluated={
-                          !!r.helpfulEvaluationsUsersIds.find(
-                            (heuid) => heuid === userId,
-                          )
-                        }
-                        isLoading={isRelevanceEvaluationLoading}
-                        reviewId={r.id}
-                        setIsLoading={setIsRelevanceEvaluationLoading}
-                      >
-                        Yes ({r.helpfulEvaluationsUsersIds.length})
-                      </EvaluateRelevance>
-                      <EvaluateRelevance
-                        handleEvaluate={toogleUnhelfulUsersIds}
-                        isEvaluated={
-                          !!r.unhelpfulEvaluationsUsersIds.find(
-                            (heuid) => heuid === userId,
-                          )
-                        }
-                        isLoading={isRelevanceEvaluationLoading}
-                        reviewId={r.id}
-                        setIsLoading={setIsRelevanceEvaluationLoading}
-                      >
-                        No ({r.unhelpfulEvaluationsUsersIds.length})
-                      </EvaluateRelevance>
+          <CreateReview
+            setReviews={setReviews}
+            userId={session?.user.id}
+            userName={session?.user.name}
+            productId={productId}
+          />
+          <Divider />
+          {reviews.length > 0 && (
+            <div className="flex-1 space-y-4">
+              {reviews.map((r) => (
+                <Fragment key={r.id}>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <p className="text-xs">{r.userName}</p>
+                      <Stars numberOfStars={r.evaluation} starSize={12} />
+                    </div>
+                    <p className="max-w-content-screen break-words">
+                      {r.title}
+                    </p>
+                    <p className="max-w-content-screen break-words text-xs line-clamp-5">
+                      {r.comment}
+                    </p>
+                    <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-gray-600 sm:gap-8 md:text-sm lg:justify-start">
+                      <div className="flex items-center gap-4">
+                        <p>Helpful?</p>
+                        <div className="flex items-center">
+                          <EvaluateRelevance
+                            handleEvaluate={toogleHelfulUsersIds}
+                            isEvaluated={
+                              !!r.helpfulEvaluationsUsersIds.find(
+                                (heuid) => heuid === userId,
+                              )
+                            }
+                            isLoading={isRelevanceEvaluationLoading}
+                            reviewId={r.id}
+                            setIsLoading={setIsRelevanceEvaluationLoading}
+                          >
+                            Yes ({r.helpfulEvaluationsUsersIds.length})
+                          </EvaluateRelevance>
+                          <EvaluateRelevance
+                            handleEvaluate={toogleUnhelfulUsersIds}
+                            isEvaluated={
+                              !!r.unhelpfulEvaluationsUsersIds.find(
+                                (heuid) => heuid === userId,
+                              )
+                            }
+                            isLoading={isRelevanceEvaluationLoading}
+                            reviewId={r.id}
+                            setIsLoading={setIsRelevanceEvaluationLoading}
+                          >
+                            No ({r.unhelpfulEvaluationsUsersIds.length})
+                          </EvaluateRelevance>
+                        </div>
+                      </div>
+                      <p>{r.createdAt}</p>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      {r.recommended ? (
+                        <div className="flex items-center gap-2 text-sm text-green-500">
+                          <Check className="h-3 w-3" />
+                          Recommended
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2 text-sm text-red-600">
+                          <X className="h-3 w-3" />
+                          Not recommended
+                        </div>
+                      )}
+                      {userId === r.userId && (
+                        <>
+                          <EditReview
+                            setReviews={setReviews}
+                            userId={session?.user.id}
+                            userName={session?.user.name}
+                            review={{
+                              comment: r.comment,
+                              recommend: r.recommended,
+                              score: r.evaluation,
+                              title: r.title,
+                              id: r.id,
+                            }}
+                          />
+
+                          <ConfirmationDialog
+                            openButton={
+                              <div className="group flex cursor-pointer items-center gap-2 border-b border-transparent pb-px text-sm text-red-600 transition-all hover:border-red-600 hover:font-medium">
+                                <Trash2 className="h-4 w-4 group-hover:scale-105" />
+                                Delete
+                              </div>
+                            }
+                            actionButton={
+                              <Button
+                                variant="green"
+                                onClick={() => handleDeleteReview(r.id)}
+                              >
+                                Yes, Remove this review
+                              </Button>
+                            }
+                            description="Confirm that you really want to delete this review."
+                          />
+                        </>
+                      )}
                     </div>
                   </div>
-                  <p>{r.createdAt}</p>
-                </div>
-                <div className="flex items-center gap-4">
-                  {r.recommended ? (
-                    <div className="flex items-center gap-2 text-sm text-green-500">
-                      <Check className="h-3 w-3" />
-                      Recommended
-                    </div>
-                  ) : (
-                    <div className="flex items-center gap-2 text-sm text-red-600">
-                      <X className="h-3 w-3" />
-                      Not recommended
-                    </div>
-                  )}
-                  {userId === r.userId && (
-                    <EditReview
-                      setReviews={setReviews}
-                      userId={session?.user.id}
-                      userName={session?.user.name}
-                      review={{
-                        comment: r.comment,
-                        recommend: r.recommended,
-                        score: r.evaluation,
-                        title: r.title,
-                        id: r.id,
-                      }}
-                    />
-                  )}
-
-                  <ConfirmationDialog
-                    openButton={
-                      <div className="group flex cursor-pointer items-center gap-2 border-b border-transparent pb-px text-sm text-red-600 transition-all hover:border-red-600 hover:font-medium">
-                        <Trash2 className="h-4 w-4 group-hover:scale-105" />
-                        Delete
-                      </div>
-                    }
-                    actionButton={
-                      <Button
-                        variant="green"
-                        onClick={() => handleDeleteReview(r.id)}
-                      >
-                        Yes, Remove this review
-                      </Button>
-                    }
-                    description="Confirm that you really want to delete this review."
-                  />
-                </div>
-              </div>
-              <Divider />
-            </Fragment>
-          ))}
-          <Button
-            onClick={handleLoadMoreReviews}
-            variant="light"
-            disabled={isLoadingMoreReviews}
-            className="mx-auto block px-12 py-3 disabled:cursor-not-allowed"
-          >
-            Load More
-          </Button>
+                  <Divider />
+                </Fragment>
+              ))}
+              <Button
+                onClick={handleLoadMoreReviews}
+                variant="light"
+                disabled={isLoadingMoreReviews}
+                className="mx-auto block px-12 py-3 disabled:cursor-not-allowed"
+              >
+                Load More
+              </Button>
+            </div>
+          )}
+        </>
+      ) : (
+        <div className="mt-3 flex flex-col items-center justify-center">
+          <h4>There aren't any evaluations, be the first to write one!</h4>
+          <CreateReview
+            setReviews={setReviews}
+            userId={session?.user.id}
+            userName={session?.user.name}
+            productId={productId}
+          />
         </div>
       )}
     </div>

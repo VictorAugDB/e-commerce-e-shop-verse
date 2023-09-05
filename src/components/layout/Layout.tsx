@@ -4,7 +4,7 @@ import { twMerge } from 'tailwind-merge'
 
 import Footer from '@/components/layout/Footer'
 import Header from '@/components/layout/Header'
-import Loading from '@/components/Loading'
+import Loading from '@/components/loading/Loading'
 
 import { LoadingContext } from '@/contexts/LoadingProvider'
 

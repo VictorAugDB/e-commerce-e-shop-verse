@@ -22,10 +22,14 @@ export type ImageType = {
 type ProductProps = {
   product: Product
   key: string
+  evaluationsAverage: number
+  totalNumberOfEvaluations: number
 }
 
 export function Product({
   product,
+  evaluationsAverage,
+  totalNumberOfEvaluations,
 }: InferGetStaticPropsType<GetStaticProps<ProductProps>>) {
   const [quantity, setQuantity] = useState(1)
   const [wishClicked, setWishClicked] = useState(false)
@@ -114,8 +118,8 @@ export function Product({
         <div className="flex flex-col gap-4">
           <h3 className="hidden xl:block">{product.name}</h3>
           <Stars
-            numberOfEvaluations={product.evaluations}
-            numberOfStars={product.stars}
+            numberOfEvaluations={totalNumberOfEvaluations}
+            numberOfStars={evaluationsAverage}
           />
           <p className="text-sm">{product.description}</p>
         </div>
