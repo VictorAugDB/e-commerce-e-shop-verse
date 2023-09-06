@@ -2,9 +2,18 @@
 
 import { GetStaticProps, InferGetStaticPropsType } from 'next'
 import { useRouter } from 'next/navigation'
-import { MouseEvent as ReactMouseEvent, useEffect, useState } from 'react'
+import {
+  MouseEvent as ReactMouseEvent,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import { Heart, RefreshCcw } from 'react-feather'
 import { TbTruckDelivery } from 'react-icons/tb'
+import useSWR, { SWRResponse } from 'swr'
+
+import { Review } from '@/lib/db/mongodb/reviews'
+import { getEvaluationsHash } from '@/lib/helpers/getEvaluationsHash'
 
 import Button from '@/components/buttons/Button'
 import { ProductColors } from '@/components/ProductColors'
@@ -22,18 +31,56 @@ export type ImageType = {
 type ProductProps = {
   product: Product
   key: string
-  evaluationsAverage: number
-  totalNumberOfEvaluations: number
 }
+
+const fetcher = (args: string) =>
+  fetch(args).then((res) => {
+    if (res.status !== 200) {
+      return undefined
+    }
+    return res.json()
+  })
 
 export function Product({
   product,
-  evaluationsAverage,
-  totalNumberOfEvaluations,
 }: InferGetStaticPropsType<GetStaticProps<ProductProps>>) {
   const [quantity, setQuantity] = useState(1)
   const [wishClicked, setWishClicked] = useState(false)
   const [selectedSize, setSelectedSize] = useState<null | string>(null)
+  const { data: reviews }: SWRResponse<Review[]> = useSWR(
+    `/api/reviews?skip=0&limit=10&productId=${product.id}`,
+    fetcher,
+  )
+
+  const { totalNumberOfEvaluations, evaluationsAverage } = useMemo(() => {
+    if (!reviews) {
+      return {
+        totalNumberOfEvaluations: 0,
+        evaluationsAverage: 0,
+      }
+    }
+
+    const evaluations = getEvaluationsHash(
+      reviews.map((r) => r.evaluation.toString()),
+    )
+
+    const totalNumberOfEvaluations = Object.values(evaluations).reduce(
+      (acc, curr) => acc + curr,
+      0,
+    )
+
+    const evaluationsAverage = (
+      Object.entries(evaluations).reduce(
+        (acc, [key, val]) => acc + Number(key) * val,
+        0,
+      ) / totalNumberOfEvaluations
+    ).toFixed(2)
+
+    return {
+      totalNumberOfEvaluations,
+      evaluationsAverage: Number(evaluationsAverage),
+    }
+  }, [reviews])
 
   const router = useRouter()
 

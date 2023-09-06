@@ -89,8 +89,6 @@ export default function ListProducts({
             price={p.price}
             hasButton={hasCartButton}
             discount={p.discount}
-            numberOfStars={p.stars}
-            numberOfEvaluations={p.evaluations}
             name={p.name}
             isWishList={isWishList}
             handleRemoveFromWishList={handleRemoveFromWishList}

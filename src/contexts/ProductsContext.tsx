@@ -33,11 +33,9 @@ export type Product = {
   name: string
   sizes?: ProductSize
   description: string
-  evaluations: number
   numberOfSales: number
   category: string
   discount: number
-  stars: number
   createdAt: string
 }
 

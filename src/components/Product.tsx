@@ -4,9 +4,14 @@ import {
   MouseEvent as ReactMouseEvent,
   useContext,
   useEffect,
+  useMemo,
   useState,
 } from 'react'
 import { Heart, Trash } from 'react-feather'
+import useSWR, { SWRResponse } from 'swr'
+
+import { Review } from '@/lib/db/mongodb/reviews'
+import { getEvaluationsHash } from '@/lib/helpers/getEvaluationsHash'
 
 import Button from '@/components/buttons/Button'
 import NextImage from '@/components/NextImage'
@@ -20,8 +25,6 @@ type ProductProps = {
   imagePath: string
   discount: number
   price: number
-  numberOfStars: number
-  numberOfEvaluations: number
   wished: boolean
   name: string
   id: string
@@ -32,14 +35,20 @@ type ProductProps = {
   ) => void
 }
 
+const fetcher = (args: string) =>
+  fetch(args).then((res) => {
+    if (res.status !== 200) {
+      return undefined
+    }
+    return res.json()
+  })
+
 export default function Product({
   imagePath,
   hasButton = false,
   discount,
   price,
   id,
-  numberOfStars,
-  numberOfEvaluations,
   wished,
   name,
   isWishList,
@@ -47,6 +56,39 @@ export default function Product({
 }: ProductProps) {
   const { handleAddToCart } = useContext(ProductsContext)
   const [wishClicked, setWishClicked] = useState(false)
+  const { data: reviews }: SWRResponse<Review[]> = useSWR(
+    `/api/reviews?skip=0&limit=10&productId=${id}`,
+    fetcher,
+  )
+  const { totalNumberOfEvaluations, evaluationsAverage } = useMemo(() => {
+    if (!reviews) {
+      return {
+        totalNumberOfEvaluations: 0,
+        evaluationsAverage: 0,
+      }
+    }
+
+    const evaluations = getEvaluationsHash(
+      reviews.map((r) => r.evaluation.toString()),
+    )
+
+    const totalNumberOfEvaluations = Object.values(evaluations).reduce(
+      (acc, curr) => acc + curr,
+      0,
+    )
+
+    const evaluationsAverage = (
+      Object.entries(evaluations).reduce(
+        (acc, [key, val]) => acc + Number(key) * val,
+        0,
+      ) / totalNumberOfEvaluations
+    ).toFixed(2)
+
+    return {
+      totalNumberOfEvaluations,
+      evaluationsAverage: Number(evaluationsAverage),
+    }
+  }, [reviews])
 
   useEffect(() => {
     setWishClicked(wished)
@@ -173,8 +215,8 @@ export default function Product({
             )}
           </div>
           <Stars
-            numberOfEvaluations={numberOfEvaluations}
-            numberOfStars={numberOfStars}
+            numberOfEvaluations={totalNumberOfEvaluations}
+            numberOfStars={evaluationsAverage}
           />
         </div>
       </div>

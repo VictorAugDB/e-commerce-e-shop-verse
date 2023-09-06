@@ -2,8 +2,6 @@ import { randomUUID } from 'crypto'
 import { twMerge } from 'tailwind-merge'
 
 import { MongoDBProducts } from '@/lib/db/mongodb/products'
-import { MongoDBReviews } from '@/lib/db/mongodb/reviews'
-import { getEvaluationsHash } from '@/lib/helpers/getEvaluationsHash'
 
 import ImagesSwitch from '@/components/ImagesSwitch'
 import ListProducts from '@/components/lists/ListProducts'
@@ -25,25 +23,6 @@ export default async function Product({ params }: { params: { id: string } }) {
   const mongoDbProductsClient = new MongoDBProducts()
   const product = await mongoDbProductsClient.getProductById(params.id)
 
-  const mongoDbReviewsClient = new MongoDBReviews()
-  const reviews = await mongoDbReviewsClient.getReviewsByProductId(params.id)
-
-  const evaluations = getEvaluationsHash(
-    reviews.map((r) => r.evaluation.toString()),
-  )
-
-  const totalNumberOfEvaluations = Object.values(evaluations).reduce(
-    (acc, curr) => acc + curr,
-    0,
-  )
-
-  const evaluationsAverage = (
-    Object.entries(evaluations).reduce(
-      (acc, [key, val]) => acc + Number(key) * val,
-      0,
-    ) / totalNumberOfEvaluations
-  ).toFixed(2)
-
   if (!product) {
     return
   }
@@ -52,43 +31,12 @@ export default async function Product({ params }: { params: { id: string } }) {
     id: randomUUID(),
     image: pi,
   }))
-  const res = await mongoDbProductsClient.getProducts({
-    category: product.category,
-    limit: 4,
-  })
-
-  let relatedProducts = await Promise.all(
-    res.map(async (rp) => {
-      const mongoDbReviewsClient = new MongoDBReviews()
-      const rpReviews = await mongoDbReviewsClient.getReviewsByProductId(rp.id)
-      const rpEvaluations = getEvaluationsHash(
-        rpReviews.map((r) => r.evaluation.toString()),
-      )
-      const rpTotalNumberOfEvaluations = Object.values(rpEvaluations).reduce(
-        (acc, curr) => acc + curr,
-        0,
-      )
-
-      const rpEvaluationsAverage = (
-        Object.entries(rpEvaluations).reduce(
-          (acc, [key, val]) => acc + Number(key) * val,
-          0,
-        ) / rpTotalNumberOfEvaluations
-      ).toFixed(2)
-
-      return {
-        ...rp,
-        stars: isNaN(Number(rpEvaluationsAverage))
-          ? 0
-          : Number(rpEvaluationsAverage),
-        evaluations: isNaN(rpTotalNumberOfEvaluations)
-          ? rpTotalNumberOfEvaluations
-          : rpTotalNumberOfEvaluations,
-      }
-    }),
-  )
-
-  relatedProducts = relatedProducts.filter((rp) => rp.id !== product.id)
+  const relatedProducts = (
+    await mongoDbProductsClient.getProducts({
+      category: product.category,
+      limit: 4,
+    })
+  ).filter((rp) => rp.id !== product.id)
 
   return (
     <div className="px-2 sm:px-8 xl:px-[5.4375rem] 2xl:px-[8.4375rem]">
@@ -111,14 +59,15 @@ export default async function Product({ params }: { params: { id: string } }) {
         </div>
 
         <ProductPage
-          product={product}
+          product={JSON.parse(JSON.stringify(product))}
           key={params.id}
-          evaluationsAverage={Number(evaluationsAverage)}
-          totalNumberOfEvaluations={totalNumberOfEvaluations}
         />
       </div>
       {relatedProducts.length > 0 && (
-        <ListProducts products={relatedProducts} topic="Related Items" />
+        <ListProducts
+          products={JSON.parse(JSON.stringify(relatedProducts))}
+          topic="Related Items"
+        />
       )}
       <div className="mt-3 space-y-3">
         <h4 className="text-center">Reviews</h4>

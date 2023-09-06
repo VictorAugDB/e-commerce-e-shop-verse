@@ -10,7 +10,7 @@ export default async function Products() {
 
   return (
     <div className="space-y-4  pt-20 sm:px-8 2xl:px-[8.4375rem]">
-      <ListProducts products={products} />
+      <ListProducts products={JSON.parse(JSON.stringify(products))} />
     </div>
   )
 }
