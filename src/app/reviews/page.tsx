@@ -15,7 +15,8 @@ export default async function Reviews() {
 
   const mongoDbReviewsClient = new MongoDBReviews()
 
-  const reviews = await mongoDbReviewsClient.getReviewsByUserId(session.user.id)
+  // TODO declare a variable to get this value
+  await mongoDbReviewsClient.getReviewsByUserId(session.user.id)
 
   return (
     <div className="px-global">

@@ -30,8 +30,6 @@ const product: TestProdcut = {
   sizes: {} as ProductSize,
   name: 'Monitor',
   description: '',
-  evaluations: 150,
-  stars: 4,
 }
 
 const coupon = {
