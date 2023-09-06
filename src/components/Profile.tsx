@@ -69,7 +69,7 @@ export default function Profile() {
               title="My Cancellations"
               href="/orders/cancellations"
             />
-            <Option icon={Star} title="My Reviews" href="#" />
+            <Option icon={Star} title="My Reviews" href="/reviews" />
             <Option icon={LogOut} title="Logout" href="#" />
           </motion.div>
         )}

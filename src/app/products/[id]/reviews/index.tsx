@@ -302,7 +302,7 @@ export function Reviews({ className, productId, ...props }: ReviewProps) {
                     <p className="max-w-content-screen break-words">
                       {r.title}
                     </p>
-                    <p className="max-w-content-screen break-words text-xs line-clamp-5">
+                    <p className="max-w-content-screen break-words text-xs">
                       {r.comment}
                     </p>
                     <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-gray-600 sm:gap-8 md:text-sm lg:justify-start">

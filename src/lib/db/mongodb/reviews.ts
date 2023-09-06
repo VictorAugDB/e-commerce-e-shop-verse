@@ -16,7 +16,10 @@ export type Review = {
   userId: string
 }
 
-type InsertReview = Omit<Review, 'id'> & { productId: ObjectId }
+type InsertReview = Omit<Review, 'id' | 'userId'> & {
+  productId: ObjectId
+  userId: ObjectId
+}
 
 type ReviewInput = Omit<
   Review,
@@ -59,6 +62,7 @@ export class MongoDBReviews extends MongoDB {
       helpfulEvaluationsUsersIds: [],
       unhelpfulEvaluationsUsersIds: [],
       productId: new ObjectId(data.productId),
+      userId: new ObjectId(data.userId),
     }
 
     const collection = await this.collectionObj
@@ -204,6 +208,24 @@ export class MongoDBReviews extends MongoDB {
     try {
       const collection = await this.collectionObj
       const res = collection.find<ReviewMongoRes>({}).skip(skip).limit(limit)
+
+      const reviews = await res.toArray()
+
+      return reviews.map((r) => formatReview(r))
+    } catch (err) {
+      throw errorHandler(err)
+    }
+  }
+
+  async getReviewsByUserId(userId: string, skip = 0, limit = 10) {
+    try {
+      const collection = await this.collectionObj
+      const res = collection
+        .find<ReviewMongoRes>({
+          userId: new ObjectId(userId),
+        })
+        .skip(skip)
+        .limit(limit)
 
       const reviews = await res.toArray()
 

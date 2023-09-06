@@ -13,9 +13,12 @@ export default {
         'payment-screen': 'calc(100vh - 196px)',
         'content-screen': 'calc(100vh - 196px)',
       },
+      padding: {
+        global: 'var(--global-px)',
+      },
       maxWidth: {
         'content-screen':
-          'calc(100vw - var(--global-px) - var(--scrollbar-width))',
+          'calc(100vw - var(--global-px) * 2 - var(--scrollbar-width))',
       },
       colors: {
         bg: 'rgb(var(--tw-color-bg) / <alpha-value>)',
