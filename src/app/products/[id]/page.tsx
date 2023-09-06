@@ -120,7 +120,10 @@ export default async function Product({ params }: { params: { id: string } }) {
       {relatedProducts.length > 0 && (
         <ListProducts products={relatedProducts} topic="Related Items" />
       )}
-      <Reviews className="mt-8" productId={params.id} />
+      <div className="mt-3 space-y-3">
+        <h4 className="text-center">Reviews</h4>
+        <Reviews className="mt-8" productId={params.id} />
+      </div>
     </div>
   )
 }

@@ -10,6 +10,7 @@ import {
   useState,
 } from 'react'
 import { Check, Trash2, X } from 'react-feather'
+import useSWR, { SWRResponse } from 'swr'
 import { twMerge } from 'tailwind-merge'
 import { z } from 'zod'
 
@@ -47,8 +48,20 @@ export const reviewFormSchema = z.object({
 
 export type ReviewFormInputs = z.infer<typeof reviewFormSchema>
 
+const fetcher = (args: string) =>
+  fetch(args).then((res) => {
+    if (res.status !== 200) {
+      return undefined
+    }
+    return res.json()
+  })
+
 export function Reviews({ className, productId, ...props }: ReviewProps) {
   const { data: session } = useSession()
+  const { data: reviewRes }: SWRResponse<Review[]> = useSWR(
+    `/api/reviews?skip=0&limit=10&productId=${productId}`,
+    fetcher,
+  )
   const [reviews, setReviews] = useState<Review[]>([])
   const userId = session?.user.id
   const [isRelevanceEvaluationLoading, setIsRelevanceEvaluationLoading] =
@@ -110,15 +123,10 @@ export function Reviews({ className, productId, ...props }: ReviewProps) {
   )
 
   useEffect(() => {
-    async function getReviews() {
-      const res: Review[] = await fetch(
-        `/api/reviews?skip=0&limit=10&productId=${productId}`,
-      ).then((res) => res.json())
-
-      setReviews(sortLoggedUserCommentsFirst(res))
+    if (reviewRes) {
+      setReviews(sortLoggedUserCommentsFirst(reviewRes))
     }
-    getReviews()
-  }, [productId, sortLoggedUserCommentsFirst])
+  }, [sortLoggedUserCommentsFirst, reviewRes])
 
   async function handleLoadMoreReviews() {
     setIsLoadingMoreReviews(true)
@@ -395,7 +403,7 @@ export function Reviews({ className, productId, ...props }: ReviewProps) {
         </>
       ) : (
         <div className="mt-3 flex flex-col items-center justify-center">
-          <h4>There aren't any evaluations, be the first to write one!</h4>
+          <h4>There aren't any reviews, be the first to write one!</h4>
           <CreateReview
             setReviews={setReviews}
             userId={session?.user.id}
