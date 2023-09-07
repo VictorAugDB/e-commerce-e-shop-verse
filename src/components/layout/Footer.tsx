@@ -60,7 +60,7 @@ export default function Footer() {
               <div className="h-20 w-20 bg-brown-300">QR Code Here!</div>
               <div className="flex flex-col gap-2">
                 <NextImage
-                  alt="product-image"
+                  alt="google play button"
                   src="/images/google-play_button.png"
                   width={104}
                   height={30}
@@ -69,7 +69,7 @@ export default function Footer() {
                   }}
                 ></NextImage>
                 <NextImage
-                  alt="product-image"
+                  alt="app store button"
                   src="/images/apple_button.png"
                   sizes="100vw"
                   width={104}

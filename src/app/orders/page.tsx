@@ -30,7 +30,7 @@ export type Order = {
 
 export default async function Orders() {
   const session = await getServerSession(authOptions)
-  if (!(session && session.user && session.user.email)) {
+  if (!(session && session.user && session.user.ordersIds)) {
     redirect('/')
   }
 

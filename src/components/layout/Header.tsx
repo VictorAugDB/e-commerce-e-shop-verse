@@ -119,7 +119,7 @@ export default function Header() {
             <div className="flex items-center gap-2">
               <div className="overflow-hidden rounded">
                 <NextImage
-                  alt="logo"
+                  alt="e-shopverse logo"
                   width={32}
                   height={32}
                   src="/images/logo.png"

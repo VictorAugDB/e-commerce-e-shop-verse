@@ -11,7 +11,7 @@ export function GoogleButton() {
       variant="ghost"
       className="flex w-full justify-center gap-4 rounded border border-gray-600 py-4"
     >
-      <img src="/images/google-icon.png" alt="" />
+      <img src="/images/google-icon.png" alt="google-logo" />
       Sign in with Google
     </Button>
   )

@@ -18,7 +18,7 @@ export default async function SignIn() {
       <div className="hidden h-[48.8125rem] bg-green-50 xl:block">
         <div className="relative h-screen">
           <NextImage
-            alt="product-image"
+            alt="A giant phone inside a shopping cart"
             src="/images/cart-cellphone.png"
             fill
           ></NextImage>
