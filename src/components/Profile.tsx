@@ -2,8 +2,8 @@
 
 import { AnimatePresence, motion } from 'framer-motion'
 import Link from 'next/link'
-import { useSession } from 'next-auth/react'
-import { useEffect, useState } from 'react'
+import { signOut, useSession } from 'next-auth/react'
+import { ComponentProps, useEffect, useState } from 'react'
 import {
   Icon as FeatherIcon,
   LogOut,
@@ -70,7 +70,12 @@ export default function Profile() {
               href="/orders/cancellations"
             />
             <Option icon={Star} title="My Reviews" href="/reviews" />
-            <Option icon={LogOut} title="Logout" href="#" />
+            <Option
+              onClick={() => signOut()}
+              href="#"
+              icon={LogOut}
+              title="Logout"
+            />
           </motion.div>
         )}
       </AnimatePresence>
@@ -120,15 +125,15 @@ function Picture({
   )
 }
 
-type OptionProps = {
+type OptionProps = ComponentProps<typeof Link> & {
   icon: FeatherIcon
   title: string
   href: string
 }
 
-function Option({ icon: Icon, title, href }: OptionProps) {
+function Option({ icon: Icon, title, ...props }: OptionProps) {
   return (
-    <Link href={href}>
+    <Link {...props}>
       <div
         onMouseDown={(e) => {
           e.stopPropagation()
