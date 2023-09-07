@@ -9,8 +9,6 @@ import {
   useMemo,
   useState,
 } from 'react'
-import { Check, Trash2, X } from 'react-feather'
-import useSWR, { SWRResponse } from 'swr'
 import { twMerge } from 'tailwind-merge'
 import { z } from 'zod'
 
@@ -18,17 +16,15 @@ import { Review } from '@/lib/db/mongodb/reviews'
 import { getEvaluationsHash } from '@/lib/helpers/getEvaluationsHash'
 
 import Button from '@/components/buttons/Button'
-import { ConfirmationDialog } from '@/components/dialogs/ConfirmationDialog'
 import Divider from '@/components/Divider'
 import NextImage from '@/components/NextImage'
-import Stars from '@/components/Stars'
+import { ManageReview } from '@/components/Review'
 
-import { EvaluateRelevance } from '@/app/products/[id]/reviews/components/EvaluateRelevance'
 import { Progress } from '@/app/products/[id]/reviews/components/Progress'
 import { CreateReview } from '@/app/products/[id]/reviews/components/write-review/CreateReview'
-import { EditReview } from '@/app/products/[id]/reviews/components/write-review/EditReview'
 
 type ReviewProps = ComponentProps<'div'> & {
+  reviews: Review[]
   productId: string
 }
 
@@ -48,24 +44,17 @@ export const reviewFormSchema = z.object({
 
 export type ReviewFormInputs = z.infer<typeof reviewFormSchema>
 
-const fetcher = (args: string) =>
-  fetch(args).then((res) => {
-    if (res.status !== 200) {
-      return undefined
-    }
-    return res.json()
-  })
-
-export function Reviews({ className, productId, ...props }: ReviewProps) {
+export function Reviews({
+  className,
+  reviews: initialReviews,
+  productId,
+  ...props
+}: ReviewProps) {
   const { data: session } = useSession()
-  const { data: reviewRes }: SWRResponse<Review[]> = useSWR(
-    `/api/reviews?skip=0&limit=10&productId=${productId}`,
-    fetcher,
-  )
+
   const [reviews, setReviews] = useState<Review[]>([])
   const userId = session?.user.id
-  const [isRelevanceEvaluationLoading, setIsRelevanceEvaluationLoading] =
-    useState(false)
+
   const [isLoadingMoreReviews, setIsLoadingMoreReviews] = useState(false)
 
   const {
@@ -123,10 +112,10 @@ export function Reviews({ className, productId, ...props }: ReviewProps) {
   )
 
   useEffect(() => {
-    if (reviewRes) {
-      setReviews(sortLoggedUserCommentsFirst(reviewRes))
+    if (initialReviews) {
+      setReviews(sortLoggedUserCommentsFirst(initialReviews))
     }
-  }, [sortLoggedUserCommentsFirst, reviewRes])
+  }, [sortLoggedUserCommentsFirst, initialReviews])
 
   async function handleLoadMoreReviews() {
     setIsLoadingMoreReviews(true)
@@ -141,106 +130,6 @@ export function Reviews({ className, productId, ...props }: ReviewProps) {
     } else {
       alert("There aren't more reviews!")
     }
-  }
-
-  async function handleDeleteReview(id: string) {
-    await fetch('/api/reviews', {
-      method: 'DELETE',
-      body: JSON.stringify({
-        id,
-      }),
-    })
-
-    setReviews(reviews.filter((r) => r.id !== id))
-  }
-
-  async function toogleHelfulUsersIds(reviewId: string) {
-    const userId = session?.user.id
-
-    if (!userId) {
-      alert('Please login before evaluate if this review is helpful!')
-      return
-    }
-
-    await fetch('/api/reviews/helpful', {
-      method: 'PATCH',
-      body: JSON.stringify({ id: reviewId, userId }),
-    }).then((res) => res.json())
-
-    const updatedReview = reviews.map((r) => {
-      if (r.id === reviewId) {
-        const idx = r.helpfulEvaluationsUsersIds.findIndex(
-          (id) => id === userId,
-        )
-
-        return idx !== -1
-          ? {
-              ...r,
-              helpfulEvaluationsUsersIds: [
-                ...r.helpfulEvaluationsUsersIds.slice(0, idx),
-                ...r.helpfulEvaluationsUsersIds.slice(idx + 1),
-              ],
-            }
-          : {
-              ...r,
-              helpfulEvaluationsUsersIds: [
-                ...r.helpfulEvaluationsUsersIds,
-                userId,
-              ],
-              unhelpfulEvaluationsUsersIds:
-                r.unhelpfulEvaluationsUsersIds.filter(
-                  (heuid) => heuid !== userId,
-                ),
-            }
-      } else {
-        return r
-      }
-    })
-
-    setReviews(updatedReview)
-  }
-
-  async function toogleUnhelfulUsersIds(reviewId: string) {
-    if (!userId) {
-      alert('Please login before evaluate if this review is helpful!')
-      return
-    }
-
-    await fetch('/api/reviews/unhelpful', {
-      method: 'PATCH',
-      body: JSON.stringify({ id: reviewId, userId }),
-    }).then((res) => res.json())
-
-    setReviews(
-      reviews.map((r) => {
-        if (r.id === reviewId) {
-          const idx = r.unhelpfulEvaluationsUsersIds.findIndex(
-            (id) => id === userId,
-          )
-
-          return idx !== -1
-            ? {
-                ...r,
-                unhelpfulEvaluationsUsersIds: [
-                  ...r.unhelpfulEvaluationsUsersIds.slice(0, idx),
-                  ...r.unhelpfulEvaluationsUsersIds.slice(idx + 1),
-                ],
-              }
-            : {
-                ...r,
-                unhelpfulEvaluationsUsersIds: [
-                  ...r.unhelpfulEvaluationsUsersIds,
-                  userId,
-                ],
-                helpfulEvaluationsUsersIds: r.helpfulEvaluationsUsersIds.filter(
-                  (heuid) => heuid !== userId,
-                ),
-              }
-        } else {
-          return r
-        }
-      }),
-    )
   }
 
   return (
@@ -293,103 +182,15 @@ export function Reviews({ className, productId, ...props }: ReviewProps) {
           {reviews.length > 0 && (
             <div className="flex-1 space-y-4">
               {reviews.map((r) => (
-                <Fragment key={r.id}>
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <p className="text-xs">{r.userName}</p>
-                      <Stars numberOfStars={r.evaluation} starSize={12} />
-                    </div>
-                    <p className="max-w-content-screen break-words">
-                      {r.title}
-                    </p>
-                    <p className="max-w-content-screen break-words text-xs">
-                      {r.comment}
-                    </p>
-                    <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-gray-600 sm:gap-8 md:text-sm lg:justify-start">
-                      <div className="flex items-center gap-4">
-                        <p>Helpful?</p>
-                        <div className="flex items-center">
-                          <EvaluateRelevance
-                            handleEvaluate={toogleHelfulUsersIds}
-                            isEvaluated={
-                              !!r.helpfulEvaluationsUsersIds.find(
-                                (heuid) => heuid === userId,
-                              )
-                            }
-                            isLoading={isRelevanceEvaluationLoading}
-                            reviewId={r.id}
-                            setIsLoading={setIsRelevanceEvaluationLoading}
-                          >
-                            Yes ({r.helpfulEvaluationsUsersIds.length})
-                          </EvaluateRelevance>
-                          <EvaluateRelevance
-                            handleEvaluate={toogleUnhelfulUsersIds}
-                            isEvaluated={
-                              !!r.unhelpfulEvaluationsUsersIds.find(
-                                (heuid) => heuid === userId,
-                              )
-                            }
-                            isLoading={isRelevanceEvaluationLoading}
-                            reviewId={r.id}
-                            setIsLoading={setIsRelevanceEvaluationLoading}
-                          >
-                            No ({r.unhelpfulEvaluationsUsersIds.length})
-                          </EvaluateRelevance>
-                        </div>
-                      </div>
-                      <p>{r.createdAt}</p>
-                    </div>
-                    <div className="flex items-center gap-4">
-                      {r.recommended ? (
-                        <div className="flex items-center gap-2 text-sm text-green-500">
-                          <Check className="h-3 w-3" />
-                          Recommended
-                        </div>
-                      ) : (
-                        <div className="flex items-center gap-2 text-sm text-red-600">
-                          <X className="h-3 w-3" />
-                          Not recommended
-                        </div>
-                      )}
-                      {userId === r.userId && (
-                        <>
-                          <EditReview
-                            setReviews={setReviews}
-                            userId={session?.user.id}
-                            userName={session?.user.name}
-                            review={{
-                              comment: r.comment,
-                              recommend: r.recommended,
-                              score: r.evaluation,
-                              title: r.title,
-                              id: r.id,
-                            }}
-                          />
-
-                          <ConfirmationDialog
-                            openButton={
-                              <div className="group flex cursor-pointer items-center gap-2 border-b border-transparent pb-px text-sm text-red-600 transition-all hover:border-red-600 hover:font-medium">
-                                <Trash2 className="h-4 w-4 group-hover:scale-105" />
-                                Delete
-                              </div>
-                            }
-                            actionButton={
-                              <Button
-                                variant="green"
-                                onClick={() => handleDeleteReview(r.id)}
-                              >
-                                Yes, Remove this review
-                              </Button>
-                            }
-                            description="Confirm that you really want to delete this review."
-                          />
-                        </>
-                      )}
-                    </div>
-                  </div>
-                  <Divider />
-                </Fragment>
+                <ManageReview
+                  key={r.id}
+                  review={r}
+                  userId={userId}
+                  userName={session?.user.name}
+                  setReviews={setReviews}
+                />
               ))}
+
               <Button
                 onClick={handleLoadMoreReviews}
                 variant="light"

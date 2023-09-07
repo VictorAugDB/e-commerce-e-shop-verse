@@ -2,6 +2,7 @@ import { randomUUID } from 'crypto'
 import { twMerge } from 'tailwind-merge'
 
 import { MongoDBProducts } from '@/lib/db/mongodb/products'
+import { MongoDBReviews, Review } from '@/lib/db/mongodb/reviews'
 
 import ImagesSwitch from '@/components/ImagesSwitch'
 import ListProducts from '@/components/lists/ListProducts'
@@ -22,6 +23,13 @@ export async function generateStaticParams() {
 export default async function Product({ params }: { params: { id: string } }) {
   const mongoDbProductsClient = new MongoDBProducts()
   const product = await mongoDbProductsClient.getProductById(params.id)
+
+  const mongoDbReviewsClient = new MongoDBReviews()
+  const reviews: Review[] = await mongoDbReviewsClient.getReviewsByProductId(
+    params.id,
+    0,
+    10,
+  )
 
   if (!product) {
     return
@@ -71,7 +79,11 @@ export default async function Product({ params }: { params: { id: string } }) {
       )}
       <div className="mt-3 space-y-3">
         <h4 className="text-center">Reviews</h4>
-        <Reviews className="mt-8" productId={params.id} />
+        <Reviews
+          className="mt-8"
+          reviews={JSON.parse(JSON.stringify(reviews))}
+          productId={params.id}
+        />
       </div>
     </div>
   )
