@@ -1,4 +1,6 @@
-import { Coupon, Product } from '@/contexts/ProductsContext'
+import { Coupon } from '@/lib/db/mongodb/coupons'
+
+import { Product } from '@/contexts/ProductsContext'
 
 type GetProducts = {
   limit?: number

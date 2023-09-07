@@ -72,6 +72,7 @@ export function CreateReview({
         title,
         userName: userName,
         userId: userId,
+        productId,
       },
       ...reviews,
     ])

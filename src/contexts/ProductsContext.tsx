@@ -12,7 +12,7 @@ import {
 } from 'react'
 
 import { Coupon } from '@/lib/db/mongodb/coupons'
-import { getProductById } from '@/lib/http'
+import { getCoupons, getProductById } from '@/lib/http'
 
 import { LocalStorage, LSCart } from '@/models/localStorage'
 
@@ -83,7 +83,7 @@ export function ProductsProvider({ children }: ProductsContextProps) {
     } else {
       return 0
     }
-  }, [currentCoupon, subtotal])
+  }, [currentCoupon, subtotal, shipping])
 
   function calculateShipping(): void {
     // get user cep and call the API of the shipping service
@@ -131,9 +131,7 @@ export function ProductsProvider({ children }: ProductsContextProps) {
 
     const coupon = couponRef.current.value
     // call the api to check the coupons
-    const availableCoupons: Coupon[] = await fetch('/api/coupons').then((res) =>
-      res.json(),
-    )
+    const availableCoupons: Coupon[] = await getCoupons()
 
     const couponInfo = availableCoupons.find(
       (ac) => ac.name.toLowerCase() === coupon,

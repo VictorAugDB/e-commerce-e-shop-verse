@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { ReactNode } from 'react'
 import '@/__tests__/__mocks__/matchMedia'
 
+import { Coupon } from '@/lib/db/mongodb/coupons'
 import * as httpUtils from '@/lib/http'
 
 import Cart from '@/app/cart/page'
@@ -32,12 +33,15 @@ const product: TestProdcut = {
   description: '',
 }
 
-const coupon = {
+const coupon: Coupon = {
   name: 'shopverse10',
   minVal: 500,
   percentage: 10,
   limit: 200,
   quantity: 10,
+  createdAt: '2023-09-07T23:08:31.105Z',
+  expirationDate: '2030-09-07T23:08:31.105Z',
+  id: '1',
 }
 
 jest.mock('@/lib/http')
