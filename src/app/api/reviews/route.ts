@@ -31,24 +31,35 @@ export async function POST(req: Request) {
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url)
 
-  const { skip, limit, productId } = {
+  const { skip, limit, productId, userId } = {
     skip: searchParams.get('skip'),
     limit: searchParams.get('limit'),
     productId: searchParams.get('productId'),
+    userId: searchParams.get('userId'),
   }
 
-  if (!productId) {
-    throw new Error('Missing product!')
+  if (!productId && !userId) {
+    throw new Error('Missing userId or productId!')
   }
 
   const mongoDbReviewsClient = new MongoDBReviews()
-  const reviews: Review[] = await mongoDbReviewsClient.getReviewsByProductId(
-    productId,
-    Number(skip),
-    Number(limit),
-  )
+  if (productId) {
+    const reviews: Review[] = await mongoDbReviewsClient.getReviewsByProductId(
+      productId,
+      Number(skip),
+      Number(limit),
+    )
+    return NextResponse.json(reviews)
+  } else if (userId) {
+    const reviews: Review[] = await mongoDbReviewsClient.getReviewsByUserId(
+      userId,
+      Number(skip),
+      Number(limit),
+    )
+    return NextResponse.json(reviews)
+  }
 
-  return NextResponse.json(reviews)
+  return NextResponse.json(null)
 }
 
 export async function PATCH(req: Request) {

@@ -14,9 +14,10 @@ export type Review = {
   unhelpfulEvaluationsUsersIds: string[]
   createdAt: string
   userId: string
+  productId: string
 }
 
-type InsertReview = Omit<Review, 'id' | 'userId'> & {
+type InsertReview = Omit<Review, 'id' | 'userId' | 'productId'> & {
   productId: ObjectId
   userId: ObjectId
 }
@@ -76,8 +77,7 @@ export class MongoDBReviews extends MongoDB {
     const collection = await this.collectionObj
 
     // Remove props with undefined
-    const updatePayload = { ...data }
-    Object.entries(updatePayload).reduce(
+    const { id: _, ...updatePayload } = Object.entries(data).reduce(
       (
         acc: Record<keyof UpdateReview, unknown>,
         [key, val]: [string, unknown],
