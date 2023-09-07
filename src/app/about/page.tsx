@@ -60,27 +60,98 @@ export default function About() {
       <div>
         <Steps flow="about" currentStep={1} />
         <div className="flex flex-wrap justify-center gap-[4.6875rem]">
-          <div className="max-w-[33.4375rem] space-y-10">
-            <h1 className="text-[3.5rem] leading-none">Our Story</h1>
+          <div className="max-w-[33.4375rem] space-y-4">
+            <h4>
+              Introducing e-Shopverse: Your Personal Open-Source Shopping Haven
+            </h4>
             <p>
-              In the digital realm, e-shopverse emerged. Beginning humbly, it
-              swiftly expanded into a dynamic e-commerce platform. With diverse
-              products, seamless transactions, and user-centric design, it
-              garnered a devoted following. Innovative features like
-              "ShopSpheres" revolutionized shopping, while challenges like data
-              security shaped its resilience. Now a global presence, e-shopverse
-              thrives as a symbol of convenience, choice, and evolving online
-              retail.
+              Welcome to e-Shopverse, the unique online shopping experience
+              crafted solely by me. This open-source project reflects my
+              unwavering dedication to providing a user-centric shopping
+              environment.
+            </p>
+            <p>
+              <strong>Important Note:</strong> Please be aware that e-Shopverse
+              is not a production-ready product and may contain bugs and
+              security issues. Your feedback and contributions are invaluable in
+              enhancing its reliability and functionality.
+            </p>
+            <p>
+              e-Shopverse is the embodiment of my dedication to creating an
+              enjoyable, secure, and non-commercialized online shopping
+              platform. Dive into this unique open-source project and experience
+              the shopping haven I've meticulously crafted. Your contributions
+              to this community are deeply valued. Explore e-Shopverse today!
             </p>
           </div>
           <div className="relative h-[38.0625rem] min-w-[15.625rem] max-w-[44.0625rem] flex-1 overflow-hidden rounded">
             <NextImage
-              alt="product-image"
+              alt="two people sitting in a table talking about work"
               src="/images/about.png"
               fill
               className="max-h-[38.0625rem] max-w-[44.0625rem]"
             ></NextImage>
           </div>
+        </div>
+        <div className="mx-auto mt-4 max-w-[45.25rem] space-y-4">
+          <div className="text-center">
+            <h4>Why e-Shopverse?</h4>
+            <p>
+              The Work Behind It: e-Shopverse stands as a testament to my
+              passion and commitment to creating an exceptional shopping
+              platform, meticulously designed and developed to prioritize your
+              needs. Endless Shopping Options: Immerse yourself in a world of
+              diverse products, from fashion and electronics to home decor,
+              without any commercial influences. Simplified Shopping: The
+              user-friendly interface I've designed ensures effortless product
+              discovery and cart management, making the shopping process
+              straightforward and enjoyable.
+            </p>
+          </div>
+          <h4>Key Features of e-Shopverse:</h4>
+          <ol className="list-inside list-decimal space-y-2">
+            <li>
+              <strong>Add Orders:</strong> Explore products and add them to your
+              cart, simplifying the purchase process.
+            </li>
+
+            <li>
+              <strong>Add Reviews:</strong> Share your insights on products,
+              providing valuable guidance to fellow shoppers.
+            </li>
+
+            <li>
+              <strong>Sign In:</strong> Create an account for access to
+              personalized features, including order tracking and preferences
+              management.
+            </li>
+
+            <li>
+              <strong>Address Management:</strong> Streamline shopping with
+              efficient address management tools.
+            </li>
+
+            <li>
+              <strong>Product Discovery:</strong> Discover new items tailored to
+              your preferences.
+            </li>
+
+            <li>
+              <strong>Order History:</strong> Easily keep track of past orders
+              and reorder favorite items.
+            </li>
+
+            <li>
+              <strong>Cart Management:</strong> Add or remove items from the
+              cart as needed.
+            </li>
+
+            <li>
+              <strong> Cancel Orders & Reviews:</strong> Maintain complete
+              control over the shopping experience, with the ability to cancel
+              orders or reviews when necessary.
+            </li>
+          </ol>
         </div>
       </div>
       <div className="flex flex-wrap items-center justify-center gap-[1.875rem]">
