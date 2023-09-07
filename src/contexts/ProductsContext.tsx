@@ -11,7 +11,7 @@ import {
   useState,
 } from 'react'
 
-import { getCouponsData } from '@/lib/data'
+import { Coupon } from '@/lib/db/mongodb/coupons'
 import { getProductById } from '@/lib/http'
 
 import { LocalStorage, LSCart } from '@/models/localStorage'
@@ -37,14 +37,6 @@ export type Product = {
   category: string
   discount: number
   createdAt: string
-}
-
-export type Coupon = {
-  name: string
-  minVal: number
-  percentage: number
-  limit: number
-  quantity: number
 }
 
 interface ProductsContextType {
@@ -83,7 +75,7 @@ export function ProductsProvider({ children }: ProductsContextProps) {
   }, [products])
 
   const discounts = useMemo(() => {
-    if (currentCoupon) {
+    if (currentCoupon && currentCoupon.minVal <= subtotal + shipping) {
       return Math.min(
         currentCoupon.limit,
         (subtotal * currentCoupon.percentage) / 100,
@@ -139,7 +131,9 @@ export function ProductsProvider({ children }: ProductsContextProps) {
 
     const coupon = couponRef.current.value
     // call the api to check the coupons
-    const availableCoupons = await getCouponsData()
+    const availableCoupons: Coupon[] = await fetch('/api/coupons').then((res) =>
+      res.json(),
+    )
 
     const couponInfo = availableCoupons.find(
       (ac) => ac.name.toLowerCase() === coupon,
