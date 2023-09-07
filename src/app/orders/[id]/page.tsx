@@ -24,7 +24,7 @@ export async function generateStaticParams() {
 export default async function Order({ params }: { params: { id: string } }) {
   const session = await getServerSession(authOptions)
   if (!(session && session.user && session.user.email)) {
-    redirect('/')
+    redirect('/sign-in')
   }
 
   if (!session.user.ordersIds.find((o: string) => o === params.id)) {

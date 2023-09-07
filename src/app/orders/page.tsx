@@ -31,7 +31,7 @@ export type Order = {
 export default async function Orders() {
   const session = await getServerSession(authOptions)
   if (!(session && session.user && session.user.ordersIds)) {
-    redirect('/')
+    redirect('/sign-in')
   }
 
   const mongoDbOrdersClient = new MongoDBUncanceledOrders()
