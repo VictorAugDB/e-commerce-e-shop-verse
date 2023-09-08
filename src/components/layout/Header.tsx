@@ -31,7 +31,7 @@ export default function Header() {
   const [isNavVisible, setIsNavVisible] = useState(false)
   const [isSmallScreen, setIsSmallScreen] = useState(false)
   const menuRef = useRef<null | HTMLDivElement>(null)
-  const { cartQuantity } = useContext(ProductsContext)
+  const { numberOfProductsInCart } = useContext(ProductsContext)
   const inputRef = useRef<HTMLInputElement>(null)
   const { data: session, status } = useSession()
 
@@ -187,7 +187,7 @@ export default function Header() {
           <div onClick={() => handleChangeTab('cart')} className="relative">
             <Link href="/cart">
               <ShoppingCart
-                data-quantity={cartQuantity > 0}
+                data-quantity={numberOfProductsInCart > 0}
                 className="
                   h-5 w-5 transition hover:stroke-gray-600
                   sm:h-6 sm:w-6
@@ -197,10 +197,12 @@ export default function Header() {
               <div
                 className={twMerge(
                   'absolute -top-3 flex h-4 w-fit min-w-[1rem] items-center justify-center rounded-full bg-green-700 p-1 text-xs text-white',
-                  cartQuantity < 100 ? '-right-3' : '-right-6',
+                  numberOfProductsInCart < 100 ? '-right-3' : '-right-6',
                 )}
               >
-                {cartQuantity < 100 ? cartQuantity : `${99}+`}
+                {numberOfProductsInCart < 100
+                  ? numberOfProductsInCart
+                  : `${99}+`}
               </div>
             </Link>
             {currentTab === 'cart' && (

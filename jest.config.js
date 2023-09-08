@@ -16,6 +16,8 @@ const customJestConfig = {
 
   testEnvironment: 'jest-environment-jsdom',
 
+  testMatch: ['**/*.test.*'],
+
   /**
    * Absolute imports and Module Path Aliases
    */

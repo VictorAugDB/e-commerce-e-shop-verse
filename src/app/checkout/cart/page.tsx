@@ -78,7 +78,7 @@ export default function Checkout() {
     discounts,
     products,
     shipping,
-    setCartQuantity,
+    setNumberOfProductsInCart,
     calculateShipping,
   } = useContext(ProductsContext)
 
@@ -113,7 +113,7 @@ export default function Checkout() {
 
     setorderId(id)
     localStorage.removeItem(LocalStorage.CART)
-    setCartQuantity(0)
+    setNumberOfProductsInCart(0)
 
     // TODO If currenCoupon decrement the quantity
   }

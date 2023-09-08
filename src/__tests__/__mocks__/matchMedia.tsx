@@ -11,9 +11,3 @@ export default Object.defineProperty(window, 'matchMedia', {
     dispatchEvent: jest.fn(),
   })),
 })
-
-describe('mocks', () => {
-  it('mock', () => {
-    expect(1).toBe(1)
-  })
-})

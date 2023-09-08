@@ -25,7 +25,9 @@ export default function Cart() {
     setProducts,
     shipping,
     subtotal,
-    setCartQuantity,
+    setNumberOfProductsInCart,
+    productsQuantity,
+    setProductsQuantity,
   } = useContext(ProductsContext)
   const [isMobileSize, setIsMobileSize] = useState(false)
   const { setLoading } = useContext(LoadingContext)
@@ -52,7 +54,6 @@ export default function Cart() {
         const cartProducts: LSCart[] = JSON.parse(
           localStorage.getItem(LocalStorage.CART) ?? '[]',
         )
-        const map = new Map(cartProducts.map((cp) => [cp.id, cp.quantity]))
 
         if (!cartProducts) {
           return { props: { products: [] } }
@@ -64,17 +65,16 @@ export default function Cart() {
 
         setLoading(false)
 
-        setProducts(
-          apiProducts.map((p) => ({
-            ...p,
-            cartQuantity: map.get(p.id),
-          })),
+        setProducts(apiProducts)
+
+        setProductsQuantity(
+          new Map(cartProducts.map((cp) => [cp.id, cp.quantity])),
         )
       }
 
       catchAsyncFunction(loadProducts)
     }
-  }, [setProducts, setLoading, catchAsyncFunction])
+  }, [setProducts, setLoading, catchAsyncFunction, setProductsQuantity])
 
   function handleRemoveProduct(id: string) {
     setProducts(products.filter((p) => p.id !== id))
@@ -93,7 +93,7 @@ export default function Cart() {
       )
     }
 
-    setCartQuantity((state) => state - 1)
+    setNumberOfProductsInCart((state) => state - 1)
   }
 
   useEffect(() => {
@@ -155,16 +155,18 @@ export default function Cart() {
                         <td className="py-10 text-center ">${product.price}</td>
                         <td className="py-10">
                           <QuantityInput
-                            defaultValue={product.cartQuantity ?? 1}
+                            defaultValue={productsQuantity.get(product.id) ?? 1}
                             productId={product.id}
-                            productsQuantity={product.quantity}
+                            maxQuantity={product.quantity}
                           />
                         </td>
                         <td
                           className="rounded py-10 text-center"
                           data-testid="product-subtotal-val"
                         >
-                          ${product.price * (product.cartQuantity ?? 1)}
+                          $
+                          {product.price *
+                            (productsQuantity.get(product.id) ?? 1)}
                         </td>
                         <td className="py-10 pr-10 text-center align-middle">
                           <ConfirmationDialog
@@ -193,6 +195,7 @@ export default function Cart() {
               <MobileCartProducts
                 products={products}
                 handleRemoveProduct={handleRemoveProduct}
+                productsQuantity={productsQuantity}
               />
             )}
 
@@ -267,11 +270,13 @@ export default function Cart() {
 type MobileCartProductsProps = {
   products: Product[]
   handleRemoveProduct: (id: string) => void
+  productsQuantity: Map<string, number>
 }
 
 function MobileCartProducts({
   products,
   handleRemoveProduct,
+  productsQuantity,
 }: MobileCartProductsProps) {
   return (
     <div className="w-full">
@@ -296,13 +301,14 @@ function MobileCartProducts({
               <p className="">{product.name}</p>
               <span className="block">Price: ${product.price}</span>
               <QuantityInput
-                defaultValue={product.cartQuantity ?? 1}
+                defaultValue={productsQuantity.get(product.id) ?? 1}
                 productId={product.id}
-                productsQuantity={product.quantity}
+                maxQuantity={product.quantity}
               />
 
               <div data-testid="product-subtotal-val" className="text-center">
-                Subtotal: ${product.price * (product.cartQuantity ?? 1)}
+                Subtotal: $
+                {product.price * (productsQuantity.get(product.id) ?? 1)}
               </div>
             </div>
 
@@ -332,15 +338,15 @@ function MobileCartProducts({
 type QuantityInputProps = {
   defaultValue: number
   productId: string
-  productsQuantity: number
+  maxQuantity: number
 }
 
 function QuantityInput({
   defaultValue,
   productId,
-  productsQuantity,
+  maxQuantity,
 }: QuantityInputProps) {
-  const { setProducts } = useContext(ProductsContext)
+  const { productsQuantity, setProductsQuantity } = useContext(ProductsContext)
 
   const ref = useRef<HTMLInputElement>(null)
 
@@ -371,12 +377,11 @@ function QuantityInput({
         currentRef.value = '1'
         quantity = Number(currentRef.value)
       }
-      return
     }
 
-    if (productsQuantity < quantity) {
+    if (maxQuantity < quantity) {
       if (currentRef) {
-        currentRef.value = productsQuantity.toString()
+        currentRef.value = maxQuantity.toString()
         quantity = Number(currentRef.value)
       }
     }
@@ -390,8 +395,8 @@ function QuantityInput({
     cartProducts[productIdx].quantity = quantity
     localStorage.setItem(LocalStorage.CART, JSON.stringify(cartProducts))
 
-    setProducts((products) =>
-      products.map((p) => (p.id === id ? { ...p, cartQuantity: quantity } : p)),
+    setProductsQuantity(
+      new Map([...Array.from(productsQuantity.entries()), [id, quantity]]),
     )
   }
 
@@ -413,7 +418,7 @@ function QuantityInput({
       <div>
         <button
           onClick={() => handleIncreaseQuantity(productId)}
-          disabled={productsQuantity === Number(ref.current?.value)}
+          disabled={maxQuantity === Number(ref.current?.value)}
           className="block cursor-pointer rounded transition hover:bg-gray-400 disabled:cursor-not-allowed disabled:hover:bg-transparent"
           data-testid="increase-quantity"
         >

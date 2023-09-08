@@ -29,7 +29,6 @@ export type Product = {
   images: string[]
   price: number
   quantity: number
-  cartQuantity?: number
   name: string
   sizes?: ProductSize
   description: string
@@ -52,9 +51,11 @@ interface ProductsContextType {
   discounts: number
   setProducts: Dispatch<SetStateAction<Product[]>>
   handleAddToCart: (id: string) => Promise<void>
-  cartQuantity: number
-  setCartQuantity: Dispatch<SetStateAction<number>>
+  numberOfProductsInCart: number
+  setNumberOfProductsInCart: Dispatch<SetStateAction<number>>
   currentCoupon: Coupon | null
+  productsQuantity: Map<string, number>
+  setProductsQuantity: Dispatch<SetStateAction<Map<string, number>>>
 }
 
 type ProductsContextProps = {
@@ -68,11 +69,17 @@ export function ProductsProvider({ children }: ProductsContextProps) {
   const [products, setProducts] = useState<Product[]>([])
   // TODO add set state shipping when create the shipping calc
   const [shipping, setShipping] = useState(0)
-  const [cartQuantity, setCartQuantity] = useState(0)
+  const [numberOfProductsInCart, setNumberOfProductsInCart] = useState(0)
+  const [productsQuantity, setProductsQuantity] = useState<Map<string, number>>(
+    new Map(),
+  )
 
   const subtotal = useMemo(() => {
-    return products.reduce((acc, p) => acc + p.price * (p.cartQuantity || 1), 0)
-  }, [products])
+    return products.reduce(
+      (acc, p) => acc + p.price * (productsQuantity.get(p.id) || 1),
+      0,
+    )
+  }, [products, productsQuantity])
 
   const discounts = useMemo(() => {
     if (currentCoupon && currentCoupon.minVal <= subtotal + shipping) {
@@ -95,7 +102,7 @@ export function ProductsProvider({ children }: ProductsContextProps) {
       localStorage.getItem(LocalStorage.CART) ?? '[]',
     )
 
-    setCartQuantity(cartProducts.length)
+    setNumberOfProductsInCart(cartProducts.length)
   }, [])
 
   async function handleAddToCart(id: string): Promise<void> {
@@ -108,7 +115,7 @@ export function ProductsProvider({ children }: ProductsContextProps) {
         id,
         quantity: 1,
       })
-      setCartQuantity((state) => state + 1)
+      setNumberOfProductsInCart((state) => state + 1)
     } else {
       const product = await getProductById(id)
       if (product.quantity > cartProducts[productIdx].quantity) {
@@ -172,9 +179,11 @@ export function ProductsProvider({ children }: ProductsContextProps) {
         subtotal,
         discounts,
         handleAddToCart,
-        cartQuantity,
-        setCartQuantity,
+        numberOfProductsInCart,
+        setNumberOfProductsInCart,
         currentCoupon,
+        productsQuantity,
+        setProductsQuantity,
       }}
     >
       {children}
