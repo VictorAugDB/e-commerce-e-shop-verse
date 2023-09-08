@@ -28,6 +28,7 @@ const ORDER = {
   desc: -1,
 }
 
+type UpdateProduct = Omit<Product, 'createdAt' | 'numberOfSales'>
 export class MongoDBProducts extends MongoDB {
   private collectionObj: Promise<Collection<Product & Document>>
 
@@ -80,6 +81,51 @@ export class MongoDBProducts extends MongoDB {
     } catch (err) {
       throw errorHandler(err)
     }
+  }
+
+  async decreaseQuantityIncreaseSales(id: string, quantity: number) {
+    const collection = await this.collectionObj
+
+    await collection.updateOne(
+      {
+        _id: new ObjectId(id),
+      },
+      {
+        $inc: {
+          quantity: -quantity,
+          numberOfSales: quantity,
+        },
+      },
+    )
+  }
+
+  async updateProduct(data: Partial<UpdateProduct>) {
+    const collection = await this.collectionObj
+
+    // Remove props with undefined
+    const { id: _, ...updatePayload } = Object.entries(data).reduce(
+      (
+        acc: Record<keyof UpdateProduct, unknown>,
+        [key, val]: [string, unknown],
+      ) => {
+        if (!val) {
+          return acc
+        }
+
+        acc[key as keyof UpdateProduct] = val
+        return acc
+      },
+      {} as Record<keyof UpdateProduct, unknown>,
+    )
+
+    await collection.updateOne(
+      {
+        _id: new ObjectId(data.id),
+      },
+      {
+        $set: updatePayload,
+      },
+    )
   }
 
   private async createFindQuery(

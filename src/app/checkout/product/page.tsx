@@ -92,7 +92,7 @@ export default function Checkout() {
 
   const quantity = Number(searchParams && searchParams.get('quantity'))
 
-  const { currentCoupon, calculateShipping, shipping } =
+  const { currentCoupon, setCurrentCoupon, calculateShipping, shipping } =
     useContext(ProductsContext)
 
   useEffect(() => {
@@ -141,6 +141,25 @@ export default function Checkout() {
       method: 'POST',
       body: JSON.stringify(order),
     }).then((res) => res.json())
+
+    await fetch('/api/products/buy', {
+      method: 'PATCH',
+      body: JSON.stringify({
+        id: product.id,
+        quantity: 1,
+      }),
+    })
+
+    if (currentCoupon) {
+      await fetch('/api/coupons', {
+        method: 'PATCH',
+        body: JSON.stringify({
+          id: currentCoupon.id,
+          quantity: currentCoupon.quantity - 1,
+        }),
+      })
+      setCurrentCoupon(null)
+    }
 
     setOrderId(id)
   }

@@ -54,6 +54,7 @@ interface ProductsContextType {
   numberOfProductsInCart: number
   setNumberOfProductsInCart: Dispatch<SetStateAction<number>>
   currentCoupon: Coupon | null
+  setCurrentCoupon: (coupon: Coupon | null) => void
   productsQuantity: Map<string, number>
   setProductsQuantity: Dispatch<SetStateAction<Map<string, number>>>
 }
@@ -182,6 +183,7 @@ export function ProductsProvider({ children }: ProductsContextProps) {
         numberOfProductsInCart,
         setNumberOfProductsInCart,
         currentCoupon,
+        setCurrentCoupon,
         productsQuantity,
         setProductsQuantity,
       }}

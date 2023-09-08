@@ -20,7 +20,9 @@ export type CouponMongoRes = Omit<Coupon, 'id'> & {
   _id: ObjectId
 }
 
-type UpdateCoupon = Omit<CouponInput, 'userId' | 'userName'> & { id: string }
+type UpdateCoupon = Omit<CouponInput, 'expirationDate'> & {
+  id: string
+}
 
 export class MongoDBCoupons extends MongoDB {
   private collectionObj: Promise<Collection<CouponInput & Document>>

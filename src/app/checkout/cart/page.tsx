@@ -71,15 +71,19 @@ export default function Checkout() {
     defaultAddressId,
   ])
 
-  const [orderId, setorderId] = useState<string | null>(null)
+  const [orderId, setOrderId] = useState<string | null>(null)
 
   const {
     subtotal,
     discounts,
     products,
     shipping,
+    currentCoupon,
+    productsQuantity,
+    setProducts,
     setNumberOfProductsInCart,
     calculateShipping,
+    setCurrentCoupon,
   } = useContext(ProductsContext)
 
   useEffect(() => {
@@ -111,11 +115,35 @@ export default function Checkout() {
       body: JSON.stringify(order),
     }).then((res) => res.json())
 
-    setorderId(id)
+    setOrderId(id)
+
+    await Promise.all(
+      products.map(async (p) => {
+        await fetch('/api/products/buy', {
+          method: 'PATCH',
+          body: JSON.stringify({
+            id: p.id,
+            quantity: productsQuantity.get(p.id) ?? 0,
+          }),
+        })
+      }),
+    )
+
+    setProducts([])
+
     localStorage.removeItem(LocalStorage.CART)
     setNumberOfProductsInCart(0)
 
-    // TODO If currenCoupon decrement the quantity
+    if (currentCoupon) {
+      await fetch('/api/coupons', {
+        method: 'PATCH',
+        body: JSON.stringify({
+          id: currentCoupon.id,
+          quantity: currentCoupon.quantity - 1,
+        }),
+      })
+      setCurrentCoupon(null)
+    }
   }
 
   return (
