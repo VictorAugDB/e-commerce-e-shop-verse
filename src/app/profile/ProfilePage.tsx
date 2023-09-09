@@ -11,10 +11,6 @@ import Steps from '@/components/Steps'
 import { Addresses } from '@/app/profile/Addresses'
 import { useLoading } from '@/contexts/LoadingProvider'
 
-export type CustomAddress = Address & {
-  isDefault: boolean
-}
-
 const fetcher = (args: string) =>
   fetch(args).then((res) => {
     if (res.status !== 200) {
@@ -32,7 +28,8 @@ export default function ProfilePage() {
     error: _,
     isLoading,
   }: SWRResponse<Address[]> = useSWR(`/api/addresses?${query}`, fetcher)
-  const [addresses, setAddresses] = useState<CustomAddress[]>([])
+  const [addresses, setAddresses] = useState<Address[]>([])
+  const [defaultAddress, setDefaultAddress] = useState<Address | undefined>()
 
   const { setLoading } = useLoading()
 
@@ -40,11 +37,8 @@ export default function ProfilePage() {
     if (serverAddresses && serverAddresses.length) {
       const defaultAddressId = session?.user.defaultAddressId
 
-      const addrs: CustomAddress[] = serverAddresses.map((a) => ({
-        ...a,
-        isDefault: a.id === defaultAddressId,
-      }))
-      setAddresses(addrs)
+      setAddresses(serverAddresses.filter((a) => a.id !== defaultAddressId))
+      setDefaultAddress(serverAddresses.find((a) => a.id === defaultAddressId))
 
       setLoading(false)
     } else {
@@ -70,9 +64,11 @@ export default function ProfilePage() {
           <div className="space-y-4">
             <h4>Addresses</h4>
             <Addresses
-              addressesWithDefault={addresses}
+              addresses={addresses}
               setAddresses={setAddresses}
               userId={session ? session.user.id : ''}
+              defaultAddress={defaultAddress}
+              setDefaultAddress={setDefaultAddress}
             />
           </div>
         </div>

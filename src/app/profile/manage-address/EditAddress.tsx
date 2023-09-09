@@ -3,6 +3,8 @@ import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { Trash2 } from 'react-feather'
 import { useForm } from 'react-hook-form'
 
+import { Address } from '@/lib/db/mongodb/addresses'
+
 import Button from '@/components/buttons/Button'
 import { zipCodeRegexp } from '@/components/RRFInput'
 
@@ -11,14 +13,18 @@ import {
   AddressFormInputs,
   addressFormSchema,
 } from '@/app/profile/manage-address'
-import { CustomAddress } from '@/app/profile/page'
 import { useLoading } from '@/contexts/LoadingProvider'
 
 type ManageAddressProps = {
-  setAddresses: Dispatch<SetStateAction<CustomAddress[]>>
-  newDefault?: string
-  address: CustomAddress
+  setAddresses: Dispatch<SetStateAction<Address[]>>
+  newDefault?: Address
+  address: Address
   userId: string
+  isDefault: boolean
+  handleSetDefaultAddress: (
+    address: Address,
+    isCurrentDefault?: boolean,
+  ) => void
 }
 
 export function EditAddress({
@@ -26,6 +32,7 @@ export function EditAddress({
   newDefault,
   address,
   userId,
+  handleSetDefaultAddress,
 }: ManageAddressProps) {
   const { city, id, number, street, zipCode, apartmentName, complement } =
     address
@@ -72,7 +79,7 @@ export function EditAddress({
     })
 
     if (hasEditedFields) {
-      const addressId: string | null = await fetch('/api/addresses', {
+      await fetch('/api/addresses', {
         method: 'PUT',
         body: JSON.stringify({
           ...data,
@@ -84,12 +91,9 @@ export function EditAddress({
         }),
       )
 
-      const prevAddressId = address.id as string
-
-      const newAddress: CustomAddress = {
+      const newAddress: Address = {
         ...data,
-        id: addressId ? addressId : prevAddressId,
-        isDefault: address.isDefault ?? false,
+        id: address.id,
       }
 
       setAddresses((addresses) =>
@@ -109,11 +113,15 @@ export function EditAddress({
       body: JSON.stringify({
         userId,
         addressId: address.id,
-        newDefault: address.isDefault ? newDefault : undefined,
+        newDefault: newDefault?.id,
       }),
     }).then((res) => res.json())
 
-    setAddresses((addresses) => addresses.filter((a) => a.id !== address.id))
+    if (newDefault) {
+      handleSetDefaultAddress(newDefault, true)
+    } else {
+      setAddresses((addresses) => addresses.filter((a) => a.id !== address.id))
+    }
 
     setLoading(false)
   }

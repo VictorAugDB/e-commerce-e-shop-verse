@@ -3,15 +3,16 @@ import { Dispatch, SetStateAction } from 'react'
 import { useForm } from 'react-hook-form'
 import * as z from 'zod'
 
+import { Address } from '@/lib/db/mongodb/addresses'
+
 import Button from '@/components/buttons/Button'
 
 import { AddressForm } from '@/app/profile/manage-address'
-import { CustomAddress } from '@/app/profile/page'
 import { useLoading } from '@/contexts/LoadingProvider'
 
 type AddAddressProps = {
   setIsAdding: (isAdding: boolean) => void
-  setAddresses: Dispatch<SetStateAction<CustomAddress[]>>
+  setAddresses: Dispatch<SetStateAction<Address[]>>
   userId: string
 }
 
@@ -54,7 +55,7 @@ export function AddAddress({
   async function handleAddAddress(data: AddAddressFormInputs) {
     try {
       setLoading(true)
-      const addressId = await fetch('/api/addresses', {
+      const { id: addressId } = await fetch('/api/addresses', {
         method: 'POST',
         body: JSON.stringify({ ...data, userId }),
       }).then(async (res) => {
@@ -66,10 +67,9 @@ export function AddAddress({
         return res.json()
       })
 
-      const newAddress: CustomAddress = {
+      const newAddress: Address = {
         ...data,
         id: addressId,
-        isDefault: false,
       }
 
       setAddresses((state) => [...state, newAddress])

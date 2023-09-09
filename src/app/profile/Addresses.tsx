@@ -3,51 +3,62 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { Dispatch, SetStateAction, useState } from 'react'
 import { ChevronDown, ChevronRight } from 'react-feather'
 
+import { Address } from '@/lib/db/mongodb/addresses'
+
 import Button from '@/components/buttons/Button'
 import { zipCodeRegexp } from '@/components/RRFInput'
 
 import { AddAddress } from '@/app/profile/manage-address/AddAddress'
 import { EditAddress } from '@/app/profile/manage-address/EditAddress'
-import { CustomAddress } from '@/app/profile/page'
 
 type AddressesProps = {
-  addressesWithDefault: CustomAddress[]
+  addresses: Address[]
   userId: string
-  setAddresses: Dispatch<SetStateAction<CustomAddress[]>>
+  setAddresses: Dispatch<SetStateAction<Address[]>>
+  defaultAddress: Address | undefined
+  setDefaultAddress: (address: Address | undefined) => void
 }
 
 export function Addresses({
-  addressesWithDefault,
+  addresses,
   setAddresses,
   userId,
+  defaultAddress,
+  setDefaultAddress,
 }: AddressesProps) {
   const [showOtherAddresses, setShowOtherAddresses] = useState(false)
   const [isAdding, setIsAdding] = useState(false)
   const [openAddressId, setOpenAddressId] = useState<string | null>(null)
-  const defaultAddress = addressesWithDefault.find((a) => a.isDefault)
-
-  const addresses = defaultAddress
-    ? addressesWithDefault.filter((a) => a.id !== defaultAddress.id)
-    : addressesWithDefault
 
   function handleToggleOtherAddresses() {
     setShowOtherAddresses(!showOtherAddresses)
   }
 
-  async function handleSetDefaultAddress(id: string) {
+  async function handleSetDefaultAddress(
+    address: Address,
+    isCurrentDefault = false,
+  ) {
     await fetch('/api/users', {
       method: 'PATCH',
       body: JSON.stringify({
         userId,
-        defaultAddressId: id,
+        defaultAddressId: address.id,
       }),
     }).then((res) => res.json())
 
-    setAddresses((state) =>
-      state
-        .map((a) => ({ ...a, isDefault: false }))
-        .map((a) => (a.id === id ? { ...a, isDefault: true } : a)),
-    )
+    setDefaultAddress(address)
+
+    if (defaultAddress) {
+      if (!isCurrentDefault) {
+        setAddresses(
+          addresses.map((a) => (a.id === address.id ? defaultAddress : a)),
+        )
+      } else {
+        setAddresses(addresses.filter((a) => a.id !== address.id))
+      }
+    } else {
+      setAddresses(addresses.filter((a) => a.id !== address.id))
+    }
   }
 
   function toogleIsAdding() {
@@ -63,8 +74,10 @@ export function Addresses({
             key={defaultAddress.id}
             setAddresses={setAddresses}
             userId={userId}
-            newDefault={addresses[0] && addresses[0].id}
+            newDefault={addresses[0]}
+            handleSetDefaultAddress={handleSetDefaultAddress}
             address={defaultAddress}
+            isDefault={true}
           />
           {addresses.length > 0 && (
             <p
@@ -107,7 +120,7 @@ export function Addresses({
                         address={a}
                         idx={idx}
                         handleSetDefaultAddress={() =>
-                          handleSetDefaultAddress(a.id)
+                          handleSetDefaultAddress(a)
                         }
                         userId={userId}
                       />
@@ -156,12 +169,12 @@ export function Addresses({
                 set one
               </p>
               {addresses.map((a, idx) => (
-                <Address
+                <AddressComponent
                   setAddresses={setAddresses}
                   key={a.id}
                   address={a}
                   idx={idx}
-                  handleSetDefaultAddress={() => handleSetDefaultAddress(a.id)}
+                  handleSetDefaultAddress={() => handleSetDefaultAddress(a)}
                   userId={userId}
                 />
               ))}
@@ -183,14 +196,17 @@ export function Addresses({
 }
 
 type AddressProps = {
-  address: CustomAddress
+  address: Address
   idx: number
-  handleSetDefaultAddress: (id: string) => void
+  handleSetDefaultAddress: (
+    address: Address,
+    isCurrentDefault?: boolean,
+  ) => void
   userId: string
-  setAddresses: Dispatch<SetStateAction<CustomAddress[]>>
+  setAddresses: Dispatch<SetStateAction<Address[]>>
 }
 
-function Address({
+function AddressComponent({
   address,
   idx,
   userId,
@@ -202,13 +218,15 @@ function Address({
       <p className="font-medium">Address {idx + 1}</p>
       <EditAddress
         setAddresses={setAddresses}
+        handleSetDefaultAddress={handleSetDefaultAddress}
         userId={userId}
         address={address}
+        isDefault={false}
       />
       <div className="flex flex-wrap items-center gap-2">
         <p>Set as default address?</p>
         <Button
-          onClick={() => handleSetDefaultAddress(address.id)}
+          onClick={() => handleSetDefaultAddress(address)}
           variant="green"
         >
           Yes
@@ -219,13 +237,13 @@ function Address({
 }
 
 type CollapsibleAddressProps = {
-  address: CustomAddress
+  address: Address
   idx: number
-  handleSetDefaultAddress: (id: string) => void
+  handleSetDefaultAddress: (address: Address) => void
   open: boolean
   setOpen: (id: string | null) => void
   userId: string
-  setAddresses: Dispatch<SetStateAction<CustomAddress[]>>
+  setAddresses: Dispatch<SetStateAction<Address[]>>
 }
 
 function CollapsibleAddress({
@@ -253,7 +271,7 @@ function CollapsibleAddress({
         </div>
       </Collapsible.Trigger>
       <Collapsible.Content className="space-y-2 overflow-hidden data-[state='closed']:animate-collapsibleSlideUp data-[state='open']:animate-collapsibleSlideDown">
-        <Address
+        <AddressComponent
           setAddresses={setAddresses}
           address={address}
           userId={userId}
