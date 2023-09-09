@@ -70,15 +70,38 @@ export default async function HomePage() {
   })
 
   const categories = [
-    "Woman's fashion",
-    "Men's Fashion",
-    'Electronics',
-    'Home & Lifestyle',
-    'Medicine',
-    'Sports & Outdoor',
-    "Baby's & Toys",
-    'Groceries & Pets',
-    'Health & Beauty',
+    {
+      exibitionText: "Woman's fashion",
+      href: '/products?category=woman-fashion',
+    },
+    {
+      exibitionText: "Men's Fashion",
+      href: '/products?category=men-fashion',
+    },
+    {
+      exibitionText: 'Electronics',
+      href: '/products?category=electronics',
+    },
+    {
+      exibitionText: 'Home & Lifestyle',
+      href: '/products?category=home-lifestyle',
+    },
+    {
+      exibitionText: 'Sports & Outdoor',
+      href: '/products?category=sports-outdoor',
+    },
+    {
+      exibitionText: "Baby's & Toys",
+      href: '/products?category=baby-toys',
+    },
+    {
+      exibitionText: 'Groceries & Pets',
+      href: '/products?category=groceries-pets',
+    },
+    {
+      exibitionText: 'Health & Beauty',
+      href: '/products?category=health-beauty',
+    },
   ]
 
   const categoriesWithIcons: CategoriesWithIcons[] = [
@@ -144,7 +167,9 @@ export default async function HomePage() {
           2xl:flex"
         >
           {categories.map((c) => (
-            <p key={c}>{c}</p>
+            <Link href={c.href} key={c.href} className="hover:underline">
+              {c.exibitionText}
+            </Link>
           ))}
         </nav>
 
