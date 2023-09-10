@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { NextResponse } from 'next/server'
 import type { Stripe } from 'stripe'
 
@@ -22,7 +23,7 @@ export async function POST(req: Request) {
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : 'Unknown error'
     // On error, log and return the error message.
-    if (err! instanceof Error) console.log(err)
+    if (err instanceof Error) console.log(err)
     console.log(`❌ Error message: ${errorMessage}`)
     return NextResponse.json(
       { message: `Webhook Error: ${errorMessage}` },

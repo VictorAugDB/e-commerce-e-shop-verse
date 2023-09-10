@@ -1,15 +1,16 @@
 import { Dispatch, SetStateAction } from 'react'
 
+import { Address } from '@/lib/db/mongodb/addresses'
+
 import Button from '@/components/buttons/Button'
 
 import { AddAddress as AddAddressComponent } from '@/app/profile/manage-address/AddAddress'
-import { CustomAddress } from '@/app/profile/page'
 
 type AddAddressProps = {
   userId: string
   isAdding: boolean
   setIsAdding: (isAdding: boolean) => void
-  setAddresses: Dispatch<SetStateAction<CustomAddress[]>>
+  setAddresses: Dispatch<SetStateAction<Address[]>>
 }
 
 export function AddAddress({

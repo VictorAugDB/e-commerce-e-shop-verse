@@ -10,7 +10,6 @@ import { IntlHelper } from '@/lib/helpers/Intl'
 import Divider from '@/components/Divider'
 import NextImage from '@/components/NextImage'
 
-import { createCheckoutSession } from '@/app/actions'
 import { authOptions } from '@/app/api/auth/authOptions'
 import { CancelOrder } from '@/app/orders/[id]/CancelOrder'
 import { DeliveryInfo } from '@/app/orders/[id]/DeliveryInfo'
@@ -57,21 +56,6 @@ export default async function Order({ params }: { params: { id: string } }) {
   const productsQuantity = new Map(
     order.products.map((p) => [p.id, p.quantity]),
   )
-
-  async function handleGoToPayment() {
-    createCheckoutSession({
-      checkoutProducts: products.map((p) => ({
-        boughtQuantity: productsQuantity.get(p.id) ?? 1,
-        category: p.category,
-        description: p.description,
-        images: p.images,
-        price: p.price,
-        productId: p.id,
-        productName: p.name,
-      })),
-      orderId: order?.id as string,
-    })
-  }
 
   return (
     <div className="mt-20 space-y-6 px-2 md:px-8 lg:mt-6 2xl:px-[8.4375rem]">

@@ -1,6 +1,5 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
 import { ComponentPropsWithRef } from 'react'
 import { twMerge } from 'tailwind-merge'
 
@@ -18,8 +17,6 @@ export default function PaymentButton({
   className,
   ...props
 }: PaymentButtonProps) {
-  const router = useRouter()
-
   async function handleGoToPayment() {
     const response = await fetch('/api/create-checkout-session', {
       method: 'POST',
@@ -31,8 +28,6 @@ export default function PaymentButton({
     stripe?.redirectToCheckout({
       sessionId: response.id,
     })
-
-    console.log(response)
   }
 
   return (
