@@ -11,10 +11,11 @@ import { Address } from '@/lib/db/mongodb/addresses'
 
 import ApplyCoupon from '@/components/ApplyCoupon'
 import Button from '@/components/buttons/Button'
+import FinishOrderFeedback from '@/components/FinishOrderFeedback'
 import NextImage from '@/components/NextImage'
-import PaymentSuccess from '@/components/PaymentSuccess'
 import Steps from '@/components/Steps'
 
+import { CheckoutData, generateCheckoutProductPayload } from '@/app/actions'
 import { Order } from '@/app/orders/page'
 import { useLoading } from '@/contexts/LoadingProvider'
 import { ProductsContext } from '@/contexts/ProductsContext'
@@ -45,6 +46,7 @@ export default function Checkout() {
   }: SWRResponse<Address[]> = useSWR(`/api/addresses?${query}`, fetcher)
   const [addresses, setAddresses] = useState<Address[]>([])
   const { setLoading } = useLoading()
+  const [checkoutData, setCheckoutData] = useState<CheckoutData | null>(null)
 
   useEffect(() => {
     setLoading(isAddressesLoading)
@@ -71,8 +73,6 @@ export default function Checkout() {
     defaultAddressId,
   ])
 
-  const [orderId, setOrderId] = useState<string | null>(null)
-
   const {
     subtotal,
     discounts,
@@ -80,11 +80,20 @@ export default function Checkout() {
     shipping,
     currentCoupon,
     productsQuantity,
+    setProductsQuantity,
     setProducts,
     setNumberOfProductsInCart,
     calculateShipping,
     setCurrentCoupon,
   } = useContext(ProductsContext)
+
+  function cleanup() {
+    setProducts([])
+    localStorage.removeItem(LocalStorage.CART)
+    setNumberOfProductsInCart(0)
+    setProductsQuantity(new Map())
+    setCurrentCoupon(null)
+  }
 
   useEffect(() => {
     calculateShipping()
@@ -106,7 +115,10 @@ export default function Checkout() {
       createdAt: new Date().toISOString(),
       status: 'Order Placed',
       discounts,
-      productsIds: products.map((p) => p.id),
+      products: products.map((p) => ({
+        id: p.id,
+        quantity: productsQuantity.get(p.id) ?? 1,
+      })),
       shipping,
       subtotal,
     }
@@ -115,24 +127,14 @@ export default function Checkout() {
       body: JSON.stringify(order),
     }).then((res) => res.json())
 
-    setOrderId(id)
-
-    await Promise.all(
-      products.map(async (p) => {
-        await fetch('/api/products/buy', {
-          method: 'PATCH',
-          body: JSON.stringify({
-            id: p.id,
-            quantity: productsQuantity.get(p.id) ?? 0,
-          }),
-        })
-      }),
-    )
-
-    setProducts([])
-
-    localStorage.removeItem(LocalStorage.CART)
-    setNumberOfProductsInCart(0)
+    setCheckoutData({
+      orderId: id,
+      checkoutProducts: await Promise.all(
+        products.map((p) =>
+          generateCheckoutProductPayload(p, productsQuantity.get(p.id) ?? 1),
+        ),
+      ),
+    })
 
     if (currentCoupon) {
       await fetch('/api/coupons', {
@@ -142,14 +144,15 @@ export default function Checkout() {
           quantity: currentCoupon.quantity - 1,
         }),
       })
-      setCurrentCoupon(null)
     }
+
+    cleanup()
   }
 
   return (
     <>
-      {orderId ? (
-        <PaymentSuccess id={orderId} />
+      {checkoutData ? (
+        <FinishOrderFeedback checkoutData={checkoutData} />
       ) : (
         <div className="px-2 sm:px-8 2xl:px-[8.4375rem]">
           <Steps

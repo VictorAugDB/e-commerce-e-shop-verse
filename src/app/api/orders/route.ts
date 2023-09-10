@@ -25,10 +25,6 @@ export async function POST(req: Request) {
   const mongoDbUsersClient = new MongoDBUsers()
   await mongoDbUsersClient.linkOrder(userId, id)
 
-  // TODO remove this and add asynchrous job that update the status of the order
-  // or add an Observable that listen to events and update the status
-  await mongoDbOrdersClient.updateOrderStatus(id, 'Order Processed')
-
   return NextResponse.json({ id })
 }
 
@@ -40,7 +36,7 @@ export async function DELETE(req: Request) {
     throw new Error('Internal Server Error')
   }
 
-  const { id, discounts, productsIds, shipping, subtotal }: Order =
+  const { id, discounts, products, shipping, subtotal }: Order =
     await req.json()
 
   const mongoDbOrdersClient = new MongoDBUncanceledOrders()
@@ -54,7 +50,10 @@ export async function DELETE(req: Request) {
     id,
     createdAt: new Date().toISOString(),
     discounts,
-    products: productsIds.map((p) => new ObjectId(p)),
+    products: products.map((p) => ({
+      id: new ObjectId(p.id),
+      quantity: p.quantity,
+    })),
     repayStatus: 'uncompleted',
     shipping,
     subtotal,

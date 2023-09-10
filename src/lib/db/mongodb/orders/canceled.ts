@@ -6,7 +6,10 @@ import { errorHandler } from '@/lib/helpers/errorHandler'
 import { CanceledOrder } from '@/app/orders/cancellations/Cancellations'
 
 type Order = Omit<CanceledOrder, 'id' | 'products'> & {
-  products: ObjectId[]
+  products: Array<{
+    id: ObjectId
+    quantity: number
+  }>
 }
 
 type OrderMongoRes = Omit<Order, 'id'> & {
@@ -28,7 +31,10 @@ export class MongoDBCanceledOrders extends MongoDB {
     const res = await collection.insertOne({
       ...restOrder,
       _id: new ObjectId(restOrder.id),
-      products: products.map((p) => new ObjectId(p)),
+      products: products.map((p) => ({
+        id: new ObjectId(p.id),
+        quantity: p.quantity,
+      })),
     })
     return res.insertedId.toString()
   }

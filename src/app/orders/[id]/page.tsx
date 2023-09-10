@@ -1,3 +1,5 @@
+'use server'
+
 import { redirect } from 'next/navigation'
 import { getServerSession } from 'next-auth'
 
@@ -8,10 +10,12 @@ import { IntlHelper } from '@/lib/helpers/Intl'
 import Divider from '@/components/Divider'
 import NextImage from '@/components/NextImage'
 
+import { createCheckoutSession } from '@/app/actions'
 import { authOptions } from '@/app/api/auth/authOptions'
 import { CancelOrder } from '@/app/orders/[id]/CancelOrder'
 import { DeliveryInfo } from '@/app/orders/[id]/DeliveryInfo'
 import { Detail } from '@/app/orders/[id]/Detail'
+import PaymentButton from '@/app/orders/[id]/PaymentButton'
 import { Order } from '@/app/orders/page'
 
 export async function generateStaticParams() {
@@ -48,8 +52,26 @@ export default async function Order({ params }: { params: { id: string } }) {
 
   const mongoDbProductsClient = new MongoDBProducts()
   const products = await mongoDbProductsClient.getProductsByIds(
-    order.productsIds,
+    order.products.map((p) => p.id),
   )
+  const productsQuantity = new Map(
+    order.products.map((p) => [p.id, p.quantity]),
+  )
+
+  async function handleGoToPayment() {
+    createCheckoutSession({
+      checkoutProducts: products.map((p) => ({
+        boughtQuantity: productsQuantity.get(p.id) ?? 1,
+        category: p.category,
+        description: p.description,
+        images: p.images,
+        price: p.price,
+        productId: p.id,
+        productName: p.name,
+      })),
+      orderId: order?.id as string,
+    })
+  }
 
   return (
     <div className="mt-20 space-y-6 px-2 md:px-8 lg:mt-6 2xl:px-[8.4375rem]">
@@ -110,7 +132,11 @@ export default async function Order({ params }: { params: { id: string } }) {
               <div className="flex flex-col justify-between">
                 <p className="font-bold">{p.name}</p>
                 <p className="font-bold text-green-700">
-                  {IntlHelper.formatNumberCurrency(p.price, 'en-US', 'USD')}
+                  {IntlHelper.formatNumberCurrency(
+                    p.price * (productsQuantity.get(p.id) ?? 1),
+                    'en-US',
+                    'USD',
+                  )}
                 </p>
               </div>
             </div>
@@ -173,7 +199,26 @@ export default async function Order({ params }: { params: { id: string } }) {
           />
         </div>
       </div>
-      {order.status === 'Order Processed' && <CancelOrder order={order} />}
+      {['Order Processed', 'Payment Confirmed'].includes(order.status) && (
+        <CancelOrder order={order} />
+      )}
+      {order.status === 'Order Placed' && (
+        <PaymentButton
+          className="mx-auto block"
+          checkoutData={{
+            checkoutProducts: products.map((p) => ({
+              boughtQuantity: productsQuantity.get(p.id) ?? 1,
+              category: p.category,
+              description: p.description,
+              images: p.images,
+              price: p.price,
+              productId: p.id,
+              productName: p.name,
+            })),
+            orderId: order?.id as string,
+          }}
+        />
+      )}
     </div>
   )
 }

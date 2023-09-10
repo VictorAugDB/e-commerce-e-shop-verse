@@ -4,6 +4,10 @@ const nextConfig = {
     dirs: ['src'],
   },
 
+  experimental: {
+    serverActions: true,
+  },
+
   images: {
     remotePatterns: [
       {

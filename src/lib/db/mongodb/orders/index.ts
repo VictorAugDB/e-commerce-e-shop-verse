@@ -7,13 +7,19 @@ import { Order as OrderWithId } from '@/app/orders/page'
 
 type OrderInput = Omit<OrderWithId, 'id'>
 
-type OrderQueryInput = Omit<OrderInput, 'productsIds'> & {
-  products: ObjectId[]
+type OrderQueryInput = Omit<OrderInput, 'products'> & {
+  products: Array<{
+    id: ObjectId
+    quantity: number
+  }>
 }
 
-type OrderMongoRes = Omit<OrderWithId, 'id' | 'productsIds'> & {
+type OrderMongoRes = Omit<OrderWithId, 'id' | 'products'> & {
   _id: ObjectId
-  products: ObjectId[]
+  products: Array<{
+    id: ObjectId
+    quantity: number
+  }>
 }
 
 export class MongoDBUncanceledOrders extends MongoDB {
@@ -26,11 +32,14 @@ export class MongoDBUncanceledOrders extends MongoDB {
 
   async insertOrder(order: OrderInput): Promise<string> {
     const collection = await this.collectionObj
-    const { productsIds, ...restOrder } = order
+    const { products, ...restOrder } = order
 
     const res = await collection.insertOne({
       ...restOrder,
-      products: productsIds.map((id) => new ObjectId(id)),
+      products: products.map((p) => ({
+        id: new ObjectId(p.id),
+        quantity: p.quantity,
+      })),
     })
     return res.insertedId.toString()
   }
@@ -38,6 +47,7 @@ export class MongoDBUncanceledOrders extends MongoDB {
   async getOrdersByIds(ids: string[]): Promise<OrderWithId[]> {
     try {
       const collection = await this.collectionObj
+
       const res = collection.find<OrderMongoRes>({
         _id: { $in: ids.map((id) => new ObjectId(id)) },
       })
@@ -53,6 +63,7 @@ export class MongoDBUncanceledOrders extends MongoDB {
   async getOrders(): Promise<OrderWithId[]> {
     try {
       const collection = await this.collectionObj
+
       const res = collection.find<OrderMongoRes>({})
 
       const orders = await res.toArray()
@@ -110,9 +121,13 @@ export class MongoDBUncanceledOrders extends MongoDB {
 
 function formatOrder(order: OrderMongoRes): OrderWithId {
   const { _id, products, ...rest } = order
+
   return {
     id: _id.toString(),
-    productsIds: products.map((p) => p.toString()),
+    products: products.map((p) => ({
+      id: p.id.toString(),
+      quantity: p.quantity,
+    })),
     ...rest,
   }
 }

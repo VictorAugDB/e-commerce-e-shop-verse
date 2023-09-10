@@ -10,10 +10,11 @@ import { Address } from '@/lib/db/mongodb/addresses'
 
 import ApplyCoupon from '@/components/ApplyCoupon'
 import Button from '@/components/buttons/Button'
+import FinishOrderFeedback from '@/components/FinishOrderFeedback'
 import NextImage from '@/components/NextImage'
-import PaymentSuccess from '@/components/PaymentSuccess'
 import Steps from '@/components/Steps'
 
+import { CheckoutData, generateCheckoutProductPayload } from '@/app/actions'
 import { Order } from '@/app/orders/page'
 import { useLoading } from '@/contexts/LoadingProvider'
 import { Product, ProductsContext } from '@/contexts/ProductsContext'
@@ -40,6 +41,7 @@ export default function Checkout() {
   const defaultAddressId =
     session && session.user && session.user.defaultAddressId
   const [selectedAddress, setSelectedAddress] = useState<Address | null>(null)
+  const [checkoutData, setCheckoutData] = useState<CheckoutData | null>(null)
 
   const query =
     session &&
@@ -55,8 +57,6 @@ export default function Checkout() {
   const [addresses, setAddresses] = useState<Address[]>([])
 
   const { setLoading } = useLoading()
-
-  const [orderId, setOrderId] = useState<string | null>(null)
 
   useEffect(() => {
     setLoading(!product || isAddressesLoading)
@@ -110,6 +110,10 @@ export default function Checkout() {
 
   const currTotal = subtotal + shipping - discounts
 
+  function cleanup() {
+    setCurrentCoupon(null)
+  }
+
   async function handleFinishOrder() {
     // TODO payment provider calls
 
@@ -133,7 +137,7 @@ export default function Checkout() {
       createdAt: new Date().toISOString(),
       status: 'Order Placed',
       discounts,
-      productsIds: [productId],
+      products: [{ id: productId, quantity: 1 }],
       shipping,
       subtotal,
     }
@@ -142,34 +146,20 @@ export default function Checkout() {
       body: JSON.stringify(order),
     }).then((res) => res.json())
 
-    await fetch('/api/products/buy', {
-      method: 'PATCH',
-      body: JSON.stringify({
-        id: product.id,
-        quantity: 1,
-      }),
+    setCheckoutData({
+      orderId: id,
+      checkoutProducts: [await generateCheckoutProductPayload(product, 1)],
     })
 
-    if (currentCoupon) {
-      await fetch('/api/coupons', {
-        method: 'PATCH',
-        body: JSON.stringify({
-          id: currentCoupon.id,
-          quantity: currentCoupon.quantity - 1,
-        }),
-      })
-      setCurrentCoupon(null)
-    }
-
-    setOrderId(id)
+    cleanup()
   }
 
   return (
     <>
       {!product ? null : (
         <>
-          {orderId ? (
-            <PaymentSuccess id={orderId} />
+          {checkoutData ? (
+            <FinishOrderFeedback checkoutData={checkoutData} />
           ) : (
             <div className="px-2 sm:px-8 2xl:px-[8.4375rem]">
               <Steps

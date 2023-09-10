@@ -10,7 +10,10 @@ import CopyToClipboard from '@/components/CopyToClipboard'
 import { authOptions } from '@/app/api/auth/authOptions'
 
 export type Order = {
-  productsIds: string[]
+  products: Array<{
+    id: string
+    quantity: number
+  }>
   createdAt: string
   status:
     | 'Order Placed'
@@ -65,7 +68,7 @@ export default async function Orders() {
                 </div>
                 <div className="flex items-center justify-between">
                   <p className="text-gray-600">Items</p>
-                  <p>{o.productsIds.length}</p>
+                  <p>{o.products.length}</p>
                 </div>
                 <div className="flex items-center justify-between">
                   <p className="text-gray-600">subtotal</p>
