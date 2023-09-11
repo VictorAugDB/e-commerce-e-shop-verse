@@ -71,7 +71,8 @@ export function Promotions({ promotions }: PromotionProps) {
       </div>
       <div className="flex items-center gap-3">
         {promotions.map((p) => (
-          <Fragment key={p.id}>
+          // TODO use only the id when there're real promotions
+          <Fragment key={p.name + p.id}>
             <div className="h-3 w-3 rounded-full bg-gray-600">
               {currentPromotion.id === p.id ? (
                 <motion.div

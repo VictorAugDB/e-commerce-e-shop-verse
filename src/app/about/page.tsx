@@ -1,3 +1,5 @@
+import Link from 'next/link'
+import { GitHub } from 'react-feather'
 import { IconBase } from 'react-icons'
 import { BiDollarCircle, BiMoney, BiShoppingBag, BiStore } from 'react-icons/bi'
 
@@ -83,6 +85,23 @@ export default function About() {
               the shopping haven I've meticulously crafted. Your contributions
               to this community are deeply valued. Explore e-Shopverse today!
             </p>
+            <div className="flex flex-col gap-2">
+              <p className="font-medium">
+                If you want to collaborate with the project, please access the
+                project repository and read the README file, your feedback and
+                contribution will be very welcome. If the project were usefull
+                for you, please don't forget to give a star.
+              </p>
+              <Link
+                href="https://github.com/VictorAugDB/e-commerce-e-shop-verse"
+                target="_blank"
+              >
+                <div className="flex w-fit items-center gap-2 rounded bg-slate-700 p-2 text-white transition-all hover:bg-slate-800">
+                  <GitHub />
+                  Access the repository
+                </div>
+              </Link>
+            </div>
           </div>
           <div className="relative h-[38.0625rem] min-w-[15.625rem] max-w-[44.0625rem] flex-1 overflow-hidden rounded">
             <NextImage

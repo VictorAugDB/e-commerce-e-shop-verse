@@ -20,7 +20,7 @@ export function SendMessage() {
 
   async function handleSendMessage() {
     const f = async () => {
-      throw new Error('An Error Ocurred')
+      throw new Error('Not implemented yet.')
     }
 
     catchAsyncFunction(f)

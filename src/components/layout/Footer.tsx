@@ -1,9 +1,16 @@
+'use client'
+
+import Link from 'next/link'
 import { Facebook, Instagram, Linkedin, Twitter } from 'react-feather'
 import { MdSend } from 'react-icons/md'
 
 import NextImage from '@/components/NextImage'
 
 export default function Footer() {
+  function handleSubscribeToNewsletter() {
+    alert('Not implemented yet.')
+  }
+
   return (
     <div className="row-start-3 mt-[8.75rem] bg-black px-2 pb-6 pt-20 text-white sm:px-8">
       <div className="flex flex-col items-center justify-center gap-4 divide-y md:flex-row md:flex-wrap md:items-start md:justify-between md:divide-y-0 2xl:gap-[5.4375rem]">
@@ -19,7 +26,10 @@ export default function Footer() {
               placeholder="Enter your e-mail"
               type="text"
             />
-            <MdSend className="h-5 w-5 cursor-pointer transition hover:fill-gray-600 sm:h-6 sm:w-6" />
+            <MdSend
+              onClick={handleSubscribeToNewsletter}
+              className="h-5 w-5 cursor-pointer transition hover:fill-gray-600 sm:h-6 sm:w-6"
+            />
           </div>
         </div>
         <div className="flex w-full max-w-[17.5rem] flex-col gap-6 pt-4 md:w-auto md:max-w-max">
@@ -34,22 +44,36 @@ export default function Footer() {
           </div>
         </div>
         <div className="flex w-full max-w-[17.5rem] flex-col gap-6 pt-4 md:w-auto md:max-w-max">
-          <h4 className="font-medium">Account</h4>
-          <div className="flex flex-col gap-4">
-            <p>My Account</p>
-            <p>Login / Register</p>
-            <p>Cart</p>
-            <p>Wishlist</p>
-            <p>Shop</p>
-          </div>
-        </div>
-        <div className="flex w-full max-w-[17.5rem] flex-col gap-6 pt-4 md:w-auto md:max-w-max">
           <h4 className="font-medium">Quick Link</h4>
           <div className="flex flex-col gap-4">
-            <p>Privacy Policy</p>
-            <p>Terms Of Use</p>
-            <p>FAQ</p>
-            <p>Contact</p>
+            <Link
+              scroll={false}
+              href="#"
+              className="border-b border-b-transparent transition-all hover:border-b-white"
+            >
+              Privacy Policy
+            </Link>
+            <Link
+              scroll={false}
+              href="#"
+              className="border-b border-b-transparent transition-all hover:border-b-white"
+            >
+              Terms Of Use
+            </Link>
+            <Link
+              scroll={false}
+              href="#"
+              className="border-b border-b-transparent transition-all hover:border-b-white"
+            >
+              FAQ
+            </Link>
+            <Link
+              scroll={false}
+              href="#"
+              className="border-b border-b-transparent transition-all hover:border-b-white"
+            >
+              Contact
+            </Link>
           </div>
         </div>
         <div className="flex w-full max-w-[17.5rem] flex-col items-center  gap-6 pt-4 md:w-auto md:max-w-max ">

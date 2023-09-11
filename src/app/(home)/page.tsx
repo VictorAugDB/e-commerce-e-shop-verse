@@ -141,14 +141,14 @@ export default async function HomePage() {
     },
     {
       imageLogoPath: '/images/promotion-logo.png',
-      name: 'iPhone 14 Series',
+      name: 'iPhone 14 Series Premmium',
       description: 'Up to 11% off Voucher',
       imagePath: 'https://tinyurl.com/5n78959n',
       id: '64f46537fa34cf68a6c63fc7',
     },
     {
       imageLogoPath: '/images/promotion-logo.png',
-      name: 'iPhone 14 Series',
+      name: 'iPhone 14 Series Pro',
       description: 'Up to 12% off Voucher',
       imagePath: 'https://tinyurl.com/5n78959n',
       id: '64f46537fa34cf68a6c63fc7',
