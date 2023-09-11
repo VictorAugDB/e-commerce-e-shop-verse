@@ -171,7 +171,7 @@ export function ManageReview({
             </div>
             <p>{review.createdAt}</p>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center gap-4">
             {review.recommended ? (
               <div className="flex items-center gap-2 text-sm text-green-500">
                 <Check className="h-3 w-3" />
@@ -184,7 +184,7 @@ export function ManageReview({
               </div>
             )}
             {userId === review.userId && (
-              <>
+              <div className="flex items-center gap-4">
                 <EditReview
                   setReviews={setReviews}
                   userId={userId}
@@ -209,13 +209,14 @@ export function ManageReview({
                     <Button
                       variant="green"
                       onClick={() => handleDeleteReview(review.id)}
+                      className="block text-center"
                     >
                       Yes, Remove this review
                     </Button>
                   }
                   description="Confirm that you really want to delete this review."
                 />
-              </>
+              </div>
             )}
           </div>
         </div>

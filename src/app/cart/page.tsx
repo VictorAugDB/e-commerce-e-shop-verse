@@ -171,7 +171,10 @@ export default function Cart() {
                         <td className="py-10 pr-10 text-center align-middle">
                           <ConfirmationDialog
                             openButton={
-                              <Button variant="ghost" className="text-red-400">
+                              <Button
+                                variant="ghost"
+                                className="block text-center text-red-400"
+                              >
                                 <Trash className="mx-auto" />
                               </Button>
                             }
@@ -322,6 +325,7 @@ function MobileCartProducts({
                 <Button
                   variant="green"
                   onClick={() => handleRemoveProduct(product.id)}
+                  className="block text-center"
                 >
                   Yes, Remove from the cart
                 </Button>

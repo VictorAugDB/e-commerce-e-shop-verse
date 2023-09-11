@@ -46,7 +46,7 @@ export function Cancellations() {
   }, [orders, isOrdersLoading, setLoading])
 
   return (
-    <div className="mt-8 h-content-screen px-2 sm:px-8 xl:px-[8.4375rem]">
+    <div className="mt-8 px-2 sm:px-8 xl:px-[8.4375rem]">
       {orders && orders.length > 0 ? (
         <div className="grid gap-4 md:grid-cols-2 2xl:grid-cols-3">
           {orders.map((o) => (
@@ -55,7 +55,7 @@ export function Cancellations() {
               className="space-y-3 rounded border border-gray-400 bg-white p-2 sm:p-4"
             >
               <div className="space-y-4">
-                <div className="flex justify-between">
+                <div className="flex flex-wrap justify-between gap-2">
                   <h4>{o.id}</h4>
                   <CopyToClipboard text={o.id} />
                 </div>

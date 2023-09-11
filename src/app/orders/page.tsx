@@ -51,7 +51,7 @@ export default async function Orders() {
           <Link key={o.id} href={`/orders/${o.id}`}>
             <div className="cursor-pointer space-y-3 rounded border border-gray-400 bg-white p-2 transition-all hover:scale-105 hover:shadow-lg sm:p-4">
               <div className="space-y-4">
-                <div className="flex justify-between">
+                <div className="flex flex-wrap justify-between gap-2">
                   <h4>{o.id}</h4>
                   <CopyToClipboard text={o.id} />
                 </div>

@@ -17,18 +17,24 @@ export function ConfirmationDialog({
 }: ConfirmationDialogProps) {
   return (
     <AlertDialog button={openButton}>
-      <div className="space-y-6">
+      <div className="space-y-6 text-center">
         <RadixAlertDialog.Title className="text-xl">
           Are you absolutely sure?
         </RadixAlertDialog.Title>
         <RadixAlertDialog.Description className="font-medium">
           {description}
         </RadixAlertDialog.Description>
-        <div className="flex flex-wrap justify-center gap-4">
-          <RadixAlertDialog.Cancel asChild>
-            <Button variant="light">Cancel</Button>
+        <div className="flex flex-col-reverse flex-wrap justify-center gap-4 sm:flex-row">
+          <RadixAlertDialog.Cancel className="h-12 flex-1" asChild>
+            <Button variant="light" className="block">
+              Cancel
+            </Button>
           </RadixAlertDialog.Cancel>
-          <RadixAlertDialog.Action data-testid="action-button" asChild>
+          <RadixAlertDialog.Action
+            className="h-12 flex-1"
+            data-testid="action-button"
+            asChild
+          >
             {actionButton}
           </RadixAlertDialog.Action>
         </div>

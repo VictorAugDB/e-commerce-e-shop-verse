@@ -26,7 +26,7 @@ export default function ImagesSwitch({ productImages }: ImagesSwitchProps) {
   }
 
   return (
-    <div className="grid w-screen grid-cols-1 gap-8 md:max-h-[37.5rem] md:max-w-[43.875rem] md:grid-cols-[minmax(0,10.625rem)_minmax(0,31.25rem)]">
+    <div className="grid grid-cols-1 gap-8 md:max-h-[37.5rem] md:max-w-[43.875rem] md:grid-cols-[minmax(0,10.625rem)_minmax(0,31.25rem)]">
       <div className="order-2 flex flex-wrap justify-center gap-4 md:order-1 md:flex-col md:flex-nowrap">
         {images.slice(0, images.length - 1).map((i, idx) => (
           <motion.div
