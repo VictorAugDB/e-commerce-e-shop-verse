@@ -34,18 +34,23 @@ export default function FinishOrderFeedback({
             </p>
           </div>
         </div>
-        <div className="flex flex-wrap items-center justify-center gap-8">
-          <Link href="/products">
-            <Button variant="light" className="px-4 py-3">
-              Go back shopping
-            </Button>
-          </Link>
-          <PaymentButton checkoutData={checkoutData} />
-          <Link href={`/orders/${checkoutData.orderId}`}>
-            <Button variant="green" className="px-12 py-3">
-              Track order
-            </Button>
-          </Link>
+        <div className="w-full space-y-4">
+          <PaymentButton checkoutData={checkoutData} className="block w-full" />
+          <div className="flex w-full flex-col items-center gap-4 sm:flex-row">
+            <Link href="/products" className="w-full flex-1">
+              <Button variant="light" className="block h-12 w-full text-center">
+                Go back shopping
+              </Button>
+            </Link>
+            <Link
+              href={`/orders/${checkoutData.orderId}`}
+              className="w-full flex-1"
+            >
+              <Button variant="green" className="block h-12 w-full text-center">
+                Track order
+              </Button>
+            </Link>
+          </div>
         </div>
       </div>
     </div>

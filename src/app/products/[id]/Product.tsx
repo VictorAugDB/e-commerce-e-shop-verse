@@ -155,7 +155,7 @@ export function Product({
     }
 
     router.push(
-      `/checkout/product?id=${product.id}&size=${selectedSize}&quantity=${quantity}`,
+      `/checkout?productId=${product.id}&size=${selectedSize}&quantity=${quantity}`,
     )
   }
 

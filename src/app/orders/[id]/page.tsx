@@ -116,11 +116,8 @@ export default async function Order({ params }: { params: { id: string } }) {
               <div className="flex flex-col justify-between">
                 <p className="font-bold">{p.name}</p>
                 <p className="font-bold text-green-700">
-                  {IntlHelper.formatNumberCurrency(
-                    p.price * (productsQuantity.get(p.id) ?? 1),
-                    'en-US',
-                    'USD',
-                  )}
+                  {IntlHelper.formatNumberCurrency(p.price, 'en-US', 'USD')} X{' '}
+                  {productsQuantity.get(p.id) ?? 1}
                 </p>
               </div>
             </div>

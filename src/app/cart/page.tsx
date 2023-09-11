@@ -114,7 +114,7 @@ export default function Cart() {
   }, [])
 
   function redirectToCheckout() {
-    router.push('/checkout/cart')
+    router.push('/checkout')
   }
 
   return (

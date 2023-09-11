@@ -147,9 +147,14 @@ export default function About() {
             </li>
 
             <li>
-              <strong> Cancel Orders & Reviews:</strong> Maintain complete
+              <strong>Cancel Orders & Reviews:</strong> Maintain complete
               control over the shopping experience, with the ability to cancel
               orders or reviews when necessary.
+            </li>
+            <li>
+              <strong>Payment with Stripe:</strong> Securely process payments
+              using the Stripe payment gateway, ensuring a seamless and reliable
+              transaction experience for customers.
             </li>
           </ol>
         </div>

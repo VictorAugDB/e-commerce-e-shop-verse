@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server'
 // This function can be marked `async` if using `await` inside
 export function middleware(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams
-  if (!searchParams.get('from') && !searchParams.get('from')) {
+  if (searchParams.get('productId') && !searchParams.get('quantity')) {
     return NextResponse.redirect(new URL('/', request.url))
   } else {
     return NextResponse.next()

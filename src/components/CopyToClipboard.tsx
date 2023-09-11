@@ -12,6 +12,7 @@ export default function CopyToClipboard({ text }: CopyToClipboardProps) {
     e.preventDefault()
     e.stopPropagation()
     navigator.clipboard.writeText(text)
+    alert('Copied!')
   }
 
   return (
