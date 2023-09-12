@@ -50,16 +50,25 @@ export function ClientSideCheckout({
 
   return (
     <>
+      <Steps
+        flow={product ? 'product-checkout' : 'buy'}
+        currentStep={
+          product && !checkoutData
+            ? 3
+            : product && checkoutData
+            ? 4
+            : !product && !checkoutData
+            ? 1
+            : 2
+        }
+        category={product?.category ?? ''}
+        productName={product?.name ?? ''}
+        className="px-global"
+      />
       {checkoutData ? (
         <FinishOrderFeedback checkoutData={checkoutData} />
       ) : (
-        <div className="px-2 sm:px-8 2xl:px-[8.4375rem]">
-          <Steps
-            flow="product-checkout"
-            currentStep={3}
-            category=""
-            productName=""
-          />
+        <div className="px-global">
           <div className="mt-10 grid w-full grid-cols-1 gap-4 md:grid-cols-2">
             <ListUserAddresses
               addresses={addresses}

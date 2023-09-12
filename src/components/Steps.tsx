@@ -1,6 +1,9 @@
 import React from 'react'
+import { twMerge } from 'tailwind-merge'
 
-type StepsProps =
+type StepsProps = {
+  className?: string
+} & (
   | {
       flow: 'buy' | 'contact' | 'about' | 'profile'
       currentStep: number
@@ -11,12 +14,13 @@ type StepsProps =
       category: string
       productName: string
     }
+)
 
 export default function Steps(props: StepsProps) {
   function getSteps() {
     switch (props.flow) {
       case 'buy':
-        return ['Cart', 'Checkout', 'Pay', 'Finished Order']
+        return ['Cart', 'Checkout', 'Finish Order']
       case 'contact':
         return ['Home', 'Contact']
       case 'about':
@@ -31,8 +35,7 @@ export default function Steps(props: StepsProps) {
           props.category,
           props.productName,
           'Checkout',
-          'Pay',
-          'Finished Order',
+          'Finish Order',
         ]
     }
   }
@@ -40,7 +43,12 @@ export default function Steps(props: StepsProps) {
   const steps = getSteps()
 
   return (
-    <div className="flex flex-wrap items-center gap-3 py-20">
+    <div
+      className={twMerge(
+        'flex flex-wrap items-center gap-3 py-20',
+        props.className,
+      )}
+    >
       {steps.map((step, idx) => (
         <React.Fragment key={step}>
           <p

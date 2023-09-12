@@ -176,7 +176,7 @@ export default async function HomePage() {
         <Promotions promotions={promotions}></Promotions>
       </div>
       <ListProducts
-        products={flashSales}
+        products={JSON.parse(JSON.stringify(flashSales))}
         topic="Today's"
         title="Flash Sales"
         filter="flash-sales"
@@ -188,7 +188,7 @@ export default async function HomePage() {
       <Categories categories={categoriesWithIcons} />
       <Divider />
       <ListProducts
-        products={bestSellings}
+        products={JSON.parse(JSON.stringify(bestSellings))}
         filter="best-sellings"
         topic="This Month"
         title="Best Selling Products"
@@ -239,7 +239,7 @@ export default async function HomePage() {
         </div>
       </div>
       <ListProducts
-        products={products}
+        products={JSON.parse(JSON.stringify(products))}
         topic="Our Products"
         title="Explore Our Products"
         hasViewAllButton

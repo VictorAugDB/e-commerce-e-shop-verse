@@ -19,21 +19,29 @@ import { SessionProvider } from '@/contexts/SessionProvider'
 
 export async function generateMetadata(): Promise<Metadata> {
   const headersList = headers()
-  const activePath = headersList.get('x-invoke-path')
+  const activePath = headersList.get('x-pathname')
   const routes = [
     '/',
     '/contact',
     '/about',
     '/products',
+    '/product',
     '/cart',
     '/wishlist',
     '/sign-in',
     '/sign-up',
+    '/profile',
+    '/orders',
+    '/orders/cancellations',
+    '/reviews',
+    '/checkout',
   ]
 
   function currentPage() {
+    const productPattern = /^\/products|orders\/[a-zA-Z0-9]+$/
+
     if (activePath && routes.includes(activePath)) {
-      const currPath = activePath.slice(1).split('-')
+      const currPath = activePath.slice(1).split(/[-/]/g)
 
       if (currPath[0] === '') {
         return 'Home'
@@ -41,6 +49,14 @@ export async function generateMetadata(): Promise<Metadata> {
         return currPath
           .map((cp) => `${cp.slice(0, 1).toUpperCase()}${cp.slice(1)}`)
           .join(' ')
+      }
+    } else if (productPattern.test(activePath ?? '')) {
+      const currPath = activePath?.slice(1).split('/') ?? []
+      if (currPath.length) {
+        return (
+          currPath[0].slice(0, 1).toUpperCase() +
+          currPath[0].slice(1, currPath[0].length - 1)
+        )
       }
     } else {
       return 'Not found'
