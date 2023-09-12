@@ -80,7 +80,7 @@ export default function Cart() {
 
   useEffect(() => {
     setShipping(calculateShipping())
-  }, [])
+  }, [setShipping])
 
   function handleRemoveProduct(id: string) {
     setProducts(products.filter((p) => p.id !== id))
