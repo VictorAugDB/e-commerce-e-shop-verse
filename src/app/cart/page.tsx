@@ -6,6 +6,7 @@ import React, { Fragment, useContext, useEffect, useRef, useState } from 'react'
 import { ChevronDown, ChevronUp, Trash } from 'react-feather'
 
 import { getProductsByIds } from '@/lib/http'
+import { calculateShipping } from '@/lib/shipping'
 
 import ApplyCoupon from '@/components/ApplyCoupon'
 import Button from '@/components/buttons/Button'
@@ -26,6 +27,7 @@ export default function Cart() {
     shipping,
     subtotal,
     setNumberOfProductsInCart,
+    setShipping,
     productsQuantity,
     setProductsQuantity,
   } = useContext(ProductsContext)
@@ -75,6 +77,10 @@ export default function Cart() {
       catchAsyncFunction(loadProducts)
     }
   }, [setProducts, setLoading, catchAsyncFunction, setProductsQuantity])
+
+  useEffect(() => {
+    setShipping(calculateShipping())
+  }, [])
 
   function handleRemoveProduct(id: string) {
     setProducts(products.filter((p) => p.id !== id))

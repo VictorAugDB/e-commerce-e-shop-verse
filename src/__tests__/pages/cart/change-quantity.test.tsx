@@ -9,6 +9,7 @@ import {
 
 jest.mock('@/lib/http')
 jest.mock('next/navigation')
+jest.mock('@/lib/shipping')
 
 describe('Cart functionalities - change-quantity', () => {
   it('Should increase product quantity', async () => {

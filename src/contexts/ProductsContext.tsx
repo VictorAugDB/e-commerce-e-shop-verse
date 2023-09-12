@@ -46,7 +46,7 @@ interface ProductsContextType {
   products: Product[]
 
   shipping: number
-  calculateShipping: () => void
+  setShipping: (shipping: number) => void
   subtotal: number
   discounts: number
   setProducts: Dispatch<SetStateAction<Product[]>>
@@ -69,7 +69,7 @@ export function ProductsProvider({ children }: ProductsContextProps) {
   const [currentCoupon, setCurrentCoupon] = useState<Coupon | null>(null)
   const [products, setProducts] = useState<Product[]>([])
   // TODO add set state shipping when create the shipping calc
-  const [shipping, setShipping] = useState(20)
+  const [shipping, setShipping] = useState(0)
   const [numberOfProductsInCart, setNumberOfProductsInCart] = useState(0)
   const [productsQuantity, setProductsQuantity] = useState<Map<string, number>>(
     new Map(),
@@ -92,11 +92,6 @@ export function ProductsProvider({ children }: ProductsContextProps) {
       return 0
     }
   }, [currentCoupon, subtotal, shipping])
-
-  function calculateShipping(): void {
-    // get user cep and call the API of the shipping service
-    setShipping(20)
-  }
 
   useEffect(() => {
     const cartProducts: LSCart[] = JSON.parse(
@@ -173,7 +168,7 @@ export function ProductsProvider({ children }: ProductsContextProps) {
     <ProductsContext.Provider
       value={{
         handleApplyCoupon,
-        calculateShipping,
+        setShipping,
         products,
         shipping,
         setProducts,

@@ -4,6 +4,7 @@ import '@/__tests__/__mocks__/matchMedia'
 
 import { Coupon } from '@/lib/db/mongodb/coupons'
 import * as httpUtils from '@/lib/http'
+import * as shipping from '@/lib/shipping'
 
 import Cart from '@/app/cart/page'
 import { ErrorProvider } from '@/contexts/ErrorProvider'
@@ -59,6 +60,9 @@ const setupCart = (
   jest
     .spyOn(httpUtils, 'getCoupons')
     .mockImplementationOnce(jest.fn(() => Promise.resolve(couponsMock ?? [])))
+  jest
+    .spyOn(shipping, 'calculateShipping')
+    .mockImplementationOnce(jest.fn(() => 0))
 
   render(<Cart />, { wrapper: contextProvider })
 }

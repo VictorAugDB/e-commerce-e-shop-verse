@@ -9,6 +9,7 @@ import {
 
 jest.mock('@/lib/http')
 jest.mock('next/navigation')
+jest.mock('@/lib/shipping')
 
 describe('Cart functionalities - subtotal', () => {
   it('Should render product subtotal correctly', async () => {

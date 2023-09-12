@@ -1,9 +1,10 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 
 import { Address } from '@/lib/db/mongodb/addresses'
+import { calculateShipping } from '@/lib/shipping'
 
 import FinishOrderFeedback from '@/components/FinishOrderFeedback'
 import Steps from '@/components/Steps'
@@ -12,7 +13,7 @@ import { CheckoutData } from '@/app/actions'
 import { ListCartProducts } from '@/app/checkout/components/ListCartProducts'
 import { ListUserAddresses } from '@/app/checkout/components/ListUserAddresses'
 import { ShowProduct } from '@/app/checkout/components/ShowProduct'
-import { Product } from '@/contexts/ProductsContext'
+import { Product, ProductsContext } from '@/contexts/ProductsContext'
 
 type ClientSideCheckoutProps = {
   addresses: Address[]
@@ -35,6 +36,8 @@ export function ClientSideCheckout({
 
   const [checkoutData, setCheckoutData] = useState<CheckoutData | null>()
 
+  const { shipping, setShipping } = useContext(ProductsContext)
+
   useEffect(() => {
     if (addresses.length === 0) {
       alert('Please add an address before continue')
@@ -47,6 +50,12 @@ export function ClientSideCheckout({
       )
     }
   }, [addresses, defaultAddressId, router])
+
+  useEffect(() => {
+    if (!shipping) {
+      setShipping(calculateShipping())
+    }
+  }, [shipping, setShipping])
 
   return (
     <>
