@@ -1,0 +1,223 @@
+[{
+  "_id": {
+    "$oid": "64f36d18fa34cf68a6f40e26"
+  },
+  "images": [
+    "https://tinyurl.com/22upjryr",
+    "https://tinyurl.com/22upjryr",
+    "https://tinyurl.com/22upjryr"
+  ],
+  "price": 650,
+  "name": "Monitor LCD Gamer",
+  "description": "Unleash gaming greatness with our HD Monitor! 144Hz refresh rate and FreeSync tech deliver seamless visuals and precision gameplay. Elevate your gaming experience now!",
+  "quantity": 1,
+  "evaluations": 150,
+  "category": "Gaming",
+  "numberOfSales": 10,
+  "discount": 0,
+  "stars": 4,
+  "createdAt": "2023-08-05T17:23:15.512Z"
+},
+{
+  "_id": {
+    "$oid": "64f36d18fa34cf68a6f40e27"
+  },
+  "images": [
+    "https://tinyurl.com/4579cwfj",
+    "https://tinyurl.com/4579cwfj",
+    "https://tinyurl.com/4579cwfj"
+  ],
+  "price": 50,
+  "name": "Stylish Bag",
+  "description": "A fashionable and functional bag for everyday use.",
+  "quantity": 65,
+  "evaluations": 50,
+  "category": "Fashion",
+  "numberOfSales": 150,
+  "discount": 10,
+  "stars": 4.5,
+  "createdAt": "2023-08-05T17:23:15.512Z",
+  "reviews": [
+    {
+      "$oid": "64f5d314c715632b4b86312c"
+    },
+    {
+      "$oid": "64f5d314c715632b4b86312d"
+    },
+    {
+      "$oid": "64f5d314c715632b4b86312e"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "64f36d18fa34cf68a6f40e28"
+  },
+  "images": [
+    "https://tinyurl.com/5n6pkzsb",
+    "https://tinyurl.com/5n6pkzsb",
+    "https://tinyurl.com/5n6pkzsb"
+  ],
+  "price": 120,
+  "name": "Wooden Book Shelf",
+  "description": "An elegant wooden bookshelf to organize your books.",
+  "quantity": 73,
+  "evaluations": 70,
+  "category": "Home & Living",
+  "numberOfSales": 62,
+  "discount": 5,
+  "stars": 4,
+  "createdAt": "2023-08-06T10:45:25.743Z",
+  "reviews": [
+    {
+      "$oid": "64f71ae4b4f6d9858c5b8735"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "64f36d18fa34cf68a6f40e29"
+  },
+  "images": [
+    "https://tinyurl.com/42kt6d23",
+    "https://tinyurl.com/42kt6d23",
+    "https://tinyurl.com/42kt6d23"
+  ],
+  "price": 80,
+  "name": "Warm Winter Coat",
+  "description": "Stay cozy and stylish with this warm winter coat.",
+  "quantity": 78,
+  "evaluations": 40,
+  "category": "Fashion",
+  "numberOfSales": 92,
+  "discount": 15,
+  "stars": 4.2,
+  "sizes": {
+    "xs": 10,
+    "s": 20,
+    "m": 15,
+    "l": 10,
+    "xl": 5
+  },
+  "createdAt": "2023-08-07T08:30:05.982Z"
+},
+{
+  "_id": {
+    "$oid": "64f36d18fa34cf68a6f40e2a"
+  },
+  "images": [
+    "https://tinyurl.com/mtet7juj",
+    "https://tinyurl.com/mtet7juj",
+    "https://tinyurl.com/mtet7juj"
+  ],
+  "price": 35,
+  "name": "Portable Cooler",
+  "description": "Keep your beverages chilled with this portable cooler.",
+  "quantity": 40,
+  "evaluations": 20,
+  "category": "Outdoor & Camping",
+  "numberOfSales": 5,
+  "discount": 0,
+  "stars": 4.8,
+  "createdAt": "2023-08-08T16:10:18.621Z"
+},
+{
+  "_id": {
+    "$oid": "64f36d18fa34cf68a6f40e2b"
+  },
+  "images": [
+    "https://tinyurl.com/5e9ps5yf",
+    "https://tinyurl.com/5e9ps5yf",
+    "https://tinyurl.com/5e9ps5yf"
+  ],
+  "price": 90,
+  "name": "Mechanical Gaming Keyboard",
+  "description": "Experience precise and responsive typing with this mechanical gaming keyboard.",
+  "quantity": 25,
+  "evaluations": 100,
+  "category": "Electronics",
+  "numberOfSales": 50,
+  "discount": 20,
+  "stars": 4.7,
+  "createdAt": "2023-08-09T12:05:59.153Z"
+},
+{
+  "_id": {
+    "$oid": "64f36d18fa34cf68a6f40e2c"
+  },
+  "images": [
+    "https://tinyurl.com/38ky48dv",
+    "https://tinyurl.com/38ky48dv",
+    "https://tinyurl.com/38ky48dv"
+  ],
+  "price": 150,
+  "name": "Ergonomic Office Chair",
+  "description": "Work in comfort with this ergonomic office chair.",
+  "quantity": 12,
+  "evaluations": 60,
+  "category": "Office Furniture",
+  "numberOfSales": 8,
+  "discount": 0,
+  "stars": 4.6,
+  "createdAt": "2023-08-10T09:20:45.398Z"
+},
+{
+  "_id": {
+    "$oid": "64f36d18fa34cf68a6f40e2d"
+  },
+  "images": [
+    "https://tinyurl.com/2t2ft6zw",
+    "https://tinyurl.com/2t2ft6zw",
+    "https://tinyurl.com/2t2ft6zw"
+  ],
+  "price": 40,
+  "name": "Gaming Controller",
+  "description": "Enhance your gaming experience with this advanced gaming controller.",
+  "quantity": 30,
+  "evaluations": 25,
+  "category": "Gaming",
+  "numberOfSales": 12,
+  "discount": 5,
+  "stars": 4.3,
+  "createdAt": "2023-08-11T14:55:37.890Z"
+},
+{
+  "_id": {
+    "$oid": "64f45fedfa34cf68a6bdfab5"
+  },
+  "images": [
+    "https://tinyurl.com/5es94esd",
+    "https://tinyurl.com/5es94esd",
+    "https://tinyurl.com/5es94esd"
+  ],
+  "price": 40,
+  "name": "JBL Radio",
+  "description": "Experience powerful sound with the JBL radio, delivering crystal-clear audio and versatile connectivity in a sleek design.",
+  "quantity": 30,
+  "evaluations": 25,
+  "category": "Electronics",
+  "numberOfSales": 12,
+  "discount": 5,
+  "stars": 4.3,
+  "createdAt": "2023-08-11T14:55:37.890Z"
+},
+{
+  "_id": {
+    "$oid": "64f46537fa34cf68a6c63fc7"
+  },
+  "images": [
+    "https://tinyurl.com/5n78959n",
+    "https://tinyurl.com/5n78959n",
+    "https://tinyurl.com/5n78959n"
+  ],
+  "price": 40,
+  "name": "iPhone 14",
+  "description": "A perfect blend of style and performance, featuring a stunning dual-camera system and Apple's iconic design.",
+  "quantity": 30,
+  "evaluations": 25,
+  "category": "Electronics",
+  "numberOfSales": 12,
+  "discount": 5,
+  "stars": 4.3,
+  "createdAt": "2023-08-11T14:55:37.890Z"
+}]

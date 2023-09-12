@@ -17,7 +17,6 @@
     "format:check": "prettier -c .",
     "postbuild": "next-sitemap --config next-sitemap.config.js",
     "prepare": "husky install",
-    "fake-server": "json-server db.json --port 3002",
     "lint-staged": "lint-staged"
   },
   "dependencies": {
@@ -73,7 +72,6 @@
     "eslint-plugin-unused-imports": "^2.0.0",
     "husky": "^7.0.4",
     "jest": "^27.5.1",
-    "json-server": "^0.17.3",
     "lint-staged": "^12.5.0",
     "next-router-mock": "^0.7.5",
     "next-sitemap": "^2.5.28",
