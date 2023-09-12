@@ -10,12 +10,14 @@ import { IntlHelper } from '@/lib/helpers/Intl'
 import Divider from '@/components/Divider'
 import NextImage from '@/components/NextImage'
 
+import { CheckoutData } from '@/app/actions'
 import { authOptions } from '@/app/api/auth/authOptions'
 import { CancelOrder } from '@/app/orders/[id]/CancelOrder'
 import { DeliveryInfo } from '@/app/orders/[id]/DeliveryInfo'
 import { Detail } from '@/app/orders/[id]/Detail'
 import PaymentButton from '@/app/orders/[id]/PaymentButton'
 import { Order } from '@/app/orders/page'
+import { generateCheckoutProductPayload } from '@/utils/stripeHelpers'
 
 export async function generateStaticParams() {
   const mongoDbOrdersClient = new MongoDBUncanceledOrders()
@@ -56,6 +58,23 @@ export default async function Order({ params }: { params: { id: string } }) {
   const productsQuantity = new Map(
     order.products.map((p) => [p.id, p.quantity]),
   )
+
+  function generateCheckoutData(): CheckoutData {
+    const currOrder = order as Order
+    const percentage = (currOrder.discounts * 100) / currOrder.subtotal
+
+    return {
+      orderId: currOrder.id,
+      checkoutProducts: products.map((p) =>
+        generateCheckoutProductPayload(
+          p,
+          productsQuantity.get(p.id) ?? 1,
+          percentage,
+        ),
+      ),
+      shipping: currOrder.shipping,
+    }
+  }
 
   return (
     <div className="mt-20 space-y-6 px-2 md:px-8 lg:mt-6 2xl:px-[8.4375rem]">
@@ -186,18 +205,7 @@ export default async function Order({ params }: { params: { id: string } }) {
       {order.status === 'Order Placed' && (
         <PaymentButton
           className="mx-auto block"
-          checkoutData={{
-            checkoutProducts: products.map((p) => ({
-              boughtQuantity: productsQuantity.get(p.id) ?? 1,
-              category: p.category,
-              description: p.description,
-              images: p.images,
-              price: p.price,
-              productId: p.id,
-              productName: p.name,
-            })),
-            orderId: order?.id as string,
-          }}
+          checkoutData={generateCheckoutData()}
         />
       )}
     </div>

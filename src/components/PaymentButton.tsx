@@ -21,7 +21,8 @@ export default function PaymentButton({
     alert(
       'The payment is on test mode then you must use this card number in the card on the checkout page: 4242 4242 4242 4242.',
     )
-    createCheckoutSession(checkoutData)
+
+    await createCheckoutSession(checkoutData)
   }
 
   return (

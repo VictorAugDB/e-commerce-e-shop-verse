@@ -5,11 +5,12 @@ import { Address } from '@/lib/db/mongodb/addresses'
 import ApplyCoupon from '@/components/ApplyCoupon'
 import Button from '@/components/buttons/Button'
 
-import { CheckoutData, generateCheckoutProductPayload } from '@/app/actions'
+import { CheckoutData } from '@/app/actions'
 import { PriceDetails } from '@/app/checkout/components/PriceDetails'
 import { ProductDetails } from '@/app/checkout/components/ProductDetails'
 import { Order } from '@/app/orders/page'
 import { Product, ProductsContext } from '@/contexts/ProductsContext'
+import { generateCheckoutProductPayload } from '@/utils/stripeHelpers'
 
 type ShowProductProps = {
   product: Product
@@ -66,8 +67,13 @@ export function ShowProduct({
     setCheckoutData({
       orderId: id,
       checkoutProducts: [
-        await generateCheckoutProductPayload(product, quantity),
+        await generateCheckoutProductPayload(
+          product,
+          quantity,
+          currentCoupon?.percentage,
+        ),
       ],
+      shipping,
     })
 
     cleanup()

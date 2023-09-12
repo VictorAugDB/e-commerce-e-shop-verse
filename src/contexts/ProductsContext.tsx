@@ -69,7 +69,7 @@ export function ProductsProvider({ children }: ProductsContextProps) {
   const [currentCoupon, setCurrentCoupon] = useState<Coupon | null>(null)
   const [products, setProducts] = useState<Product[]>([])
   // TODO add set state shipping when create the shipping calc
-  const [shipping, setShipping] = useState(0)
+  const [shipping, setShipping] = useState(20)
   const [numberOfProductsInCart, setNumberOfProductsInCart] = useState(0)
   const [productsQuantity, setProductsQuantity] = useState<Map<string, number>>(
     new Map(),

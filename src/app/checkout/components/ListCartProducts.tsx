@@ -5,12 +5,13 @@ import { Address } from '@/lib/db/mongodb/addresses'
 import ApplyCoupon from '@/components/ApplyCoupon'
 import Button from '@/components/buttons/Button'
 
-import { CheckoutData, generateCheckoutProductPayload } from '@/app/actions'
+import { CheckoutData } from '@/app/actions'
 import { PriceDetails } from '@/app/checkout/components/PriceDetails'
 import { ProductDetails } from '@/app/checkout/components/ProductDetails'
 import { Order } from '@/app/orders/page'
 import { ProductsContext } from '@/contexts/ProductsContext'
 import { LocalStorage } from '@/models/localStorage'
+import { generateCheckoutProductPayload } from '@/utils/stripeHelpers'
 
 type ListCartProductsProps = {
   selectedAddress: Address | null
@@ -72,9 +73,14 @@ export function ListCartProducts({
       orderId: id,
       checkoutProducts: await Promise.all(
         products.map((p) =>
-          generateCheckoutProductPayload(p, productsQuantity.get(p.id) ?? 1),
+          generateCheckoutProductPayload(
+            p,
+            productsQuantity.get(p.id) ?? 1,
+            currentCoupon?.percentage,
+          ),
         ),
       ),
+      shipping,
     })
 
     if (currentCoupon) {
